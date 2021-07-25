@@ -10,6 +10,8 @@ The easiest way to contribute is by posting an Issue or Pull Request in the repo
 
 All functions in the crate should meet the [Rust API Guidelines](https://rust-lang.github.io/api-guidelines/checklist.html) to the gratest possible extent.
 
+Therefore all functions should validate that their inputs are within a reasonable range.
+
 ### Constants
 
 Moreover, all functions should use pre-defined constants as much as possible. Constants should be hardcoded into function only if they are empirical or used to convert the order-of-magnitude of some value.

@@ -13,7 +13,7 @@
 //!let pressure = 101325.0; //in Pa
 //!
 //!//Compute vapour pressure using Buck (1981) formula
-//!let vapour_pressure = vapour_pressure::buck1(temperature, pressure);
+//!let vapour_pressure = vapour_pressure::buck1(temperature, pressure).unwrap();
 //!let expected = 3550.6603579471303;
 //!
 //!assert_approx_eq!(f64, expected, vapour_pressure, ulps = 2);
@@ -31,7 +31,8 @@
 //! # let temperature = 300.0;
 //! # let pressure = 1000000.0;
 //! # let vp =
-//!vapour_pressure::buck1(temperature, pressure);
+//!vapour_pressure::buck1(temperature, pressure)
+//! # .unwrap();
 //!```
 //!
 //!Where the module name (`vapour_pressure`) indicates the computed quantity, function name (`buck1`) indicates the author of formula
@@ -52,3 +53,4 @@
 
 pub mod constants;
 pub mod vapour_pressure;
+pub mod error_wrapper;
