@@ -1,8 +1,8 @@
-//!Library providing formulae for thermodynamic calculations.
+//!Crate providing formulae for thermodynamic calculations.
 //!
 //!# How to use
 //!
-//!To use this library simply import it with `use` statement and then use desired function from chosen module.
+//!To use this crate simply import it with `use` statement and then use desired function from chosen module.
 //!
 //!```
 //!use floccus::vapour_pressure;
@@ -22,7 +22,7 @@
 //!# Naming of modules and functions
 //!
 //!Because some thermodynamic formulae are empirical there are several ways to compute a value of given quantity.
-//!Therefore there are multiple functions available to compute the same parameter grouped into modules.
+//!Therefore there are multiple functions available to compute the same parameter, which are grouped into modules.
 //!
 //!The naming of modules and functions follows this convention:
 //!
@@ -36,6 +36,19 @@
 //!
 //!Where the module name (`vapour_pressure`) indicates the computed quantity, function name (`buck1`) indicates the author of formula
 //!and the function arguments (`temperature, pressure`) are variables used to compute the quantity.
+//!
+//!# Units
+//!This crate uses basic SI units in the interface.
+//!
+//!Units for each quantity are:
+//!- Pressure: Pascals (Pa)
+//!- Temperature: Kelvins (K)
+//!- Mass: kilograms (kg)
+//!- Length: meters (m)
+//!- Volume: meters cubed (m^3)
+//!- Density: kilograms per meter cubed (kg*m^3)
+//!
+//!If the formula uses numbers of very different scales there can be an exception from that rule described in the function documentation.
 
 pub mod vapour_pressure {
     pub fn buck1(temperature: f64, pressure: f64) -> f64 {
