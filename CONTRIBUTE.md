@@ -12,7 +12,7 @@ All functions in the crate should meet the [Rust API Guidelines](https://rust-la
 
 ### Constants
 
-Moreover, all functions should use pre-defined constants as much as possible. Constants should be hardcoded into function only if they are empirical.
+Moreover, all functions should use pre-defined constants as much as possible. Constants should be hardcoded into function only if they are empirical or used to convert the order-of-magnitude of some value.
 For example, if authors of the formula in the paper use latent heat of vaporization (Lv) constant with different value than used by `floccus` you should still use `floccus::constants::Lv` in your function. You can then open an issue to disscuss the value of `Lv` used in `floccus`.
 
 ### Naming conventions
@@ -49,7 +49,6 @@ Documentation of all functions should contain following information:
 
 - Recommended range of input variables (for which the formula is most accurate)
 - Reference to the paper from which formula is taken
-- Full equation of the formula with explanation for each variable and constant
 
 ## Other questions
 

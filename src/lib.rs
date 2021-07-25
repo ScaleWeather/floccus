@@ -50,10 +50,22 @@
 //!
 //!If the formula uses numbers of very different scales there can be an exception from that rule described in the function documentation.
 
+///Module containing all physical constants
+pub mod constants {
+    ///Temperature in Kelvins of 0 Celsius
+    pub const ZERO_CELSIUS: f64 = 273.15;
+}
+
+///Functions to calculate partial vapour pressure and saturation vapour pressure in the unsaturated air
 pub mod vapour_pressure {
+    use crate::constants::ZERO_CELSIUS;
+
+    ///Formula computing vapour pressure from air temperature and pressure.
+    ///Most accurate in temperature range from 233K to 323K.
+    ///Derived by [A. L. Buck (1981)](https://doi.org/10.1175/1520-0450(1981)020%3C1527:NEFCVP%3E2.0.CO;2).
     pub fn buck1(temperature: f64, pressure: f64) -> f64 {
         //input in K & Pa; output in ratio of Pa
-        let temperature = temperature - 273.15; //convert to C
+        let temperature = temperature - ZERO_CELSIUS; //convert to C
         let pressure = pressure / 100.0; //convert to hPa
 
         let a = 6.1121;
@@ -70,7 +82,10 @@ pub mod vapour_pressure {
 
         (e * f) * 100.0 //return in Pa
     }
-
+    
+    ///Formula computing vapour pressure from air temperature.
+    ///Should be used for temperatures above 273K.
+    ///Derived by O. Tetens (1930).
     pub fn tetens1(temperature: f64) -> f64 {
         //input in K & Pa; output in ratio of Pa
         let temperature = temperature - 273.15; //convert to C
