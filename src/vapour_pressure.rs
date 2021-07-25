@@ -4,6 +4,7 @@ use crate::{constants::ZERO_CELSIUS, error_wrapper::InputError};
 
 ///Formula computing vapour pressure from air temperature and pressure.
 ///Most accurate in temperature range from 233K to 323K.
+///Valid pressure range: 100Pa - 110000Pa 
 ///Derived by [A. L. Buck (1981)](https://doi.org/10.1175/1520-0450(1981)020%3C1527:NEFCVP%3E2.0.CO;2).
 pub fn buck1(temperature: f64, pressure: f64) -> Result<f64, InputError> {
     //validate inputs
@@ -65,6 +66,7 @@ mod tests {
         let result = vapour_pressure::buck1(300.0, 101325.0).unwrap();
         let expected = 3550.6603579471303;
         assert_approx_eq!(f64, expected, result, ulps = 2);
+        todo!("Add error checks");
     }
 
     #[test]

@@ -10,7 +10,9 @@ The easiest way to contribute is by posting an Issue or Pull Request in the repo
 
 All functions in the crate should meet the [Rust API Guidelines](https://rust-lang.github.io/api-guidelines/checklist.html) to the gratest possible extent.
 
-Therefore all functions should validate that their inputs are within a reasonable range.
+## Input checking
+
+All functions should validate that their inputs are within a reasonable range. If values are out of range
 
 ### Constants
 

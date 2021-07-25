@@ -38,6 +38,10 @@
 //!Where the module name (`vapour_pressure`) indicates the computed quantity, function name (`buck1`) indicates the author of formula
 //!and the function arguments (`temperature, pressure`) are variables used to compute the quantity.
 //!
+//!# Input checking
+//!
+//!All functions check whether provided inputs are within a reasonable range.
+//!
 //!# Units
 //!This crate uses basic SI units in the interface.
 //!
