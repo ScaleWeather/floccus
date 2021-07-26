@@ -60,7 +60,7 @@ pub fn tetens1(temperature: f64) -> Result<f64, InputError> {
 
 #[cfg(test)]
 mod tests {
-    use crate::vapour_pressure;
+    use crate::{error_wrapper::InputError, vapour_pressure};
     use float_cmp::assert_approx_eq;
 
     #[test]
@@ -68,7 +68,22 @@ mod tests {
         let result = vapour_pressure::buck1(300.0, 101325.0).unwrap();
         let expected = 3550.6603579471303;
         assert_approx_eq!(f64, expected, result, ulps = 2);
-        todo!("Add error checks");
+
+        let result = vapour_pressure::buck1(231.9, 101325.0).unwrap_err();
+        let expected = InputError::OutOfRange(String::from("temperature"));
+        assert_eq!(result, expected);
+
+        let result = vapour_pressure::buck1(324.1, 101325.0).unwrap_err();
+        let expected = InputError::OutOfRange(String::from("temperature"));
+        assert_eq!(result, expected);
+
+        let result = vapour_pressure::buck1(300.0, 99.9).unwrap_err();
+        let expected = InputError::OutOfRange(String::from("pressure"));
+        assert_eq!(result, expected);
+
+        let result = vapour_pressure::buck1(300.0, 110000.1).unwrap_err();
+        let expected = InputError::OutOfRange(String::from("pressure"));
+        assert_eq!(result, expected);
     }
 
     #[test]
@@ -76,5 +91,13 @@ mod tests {
         let result = vapour_pressure::tetens1(300.0).unwrap();
         let expected = 3533.969137160892;
         assert_approx_eq!(f64, expected, result, ulps = 2);
+
+        let result = vapour_pressure::tetens1(272.9).unwrap_err();
+        let expected = InputError::OutOfRange(String::from("temperature"));
+        assert_eq!(result, expected);
+
+        let result = vapour_pressure::tetens1(354.1).unwrap_err();
+        let expected = InputError::OutOfRange(String::from("temperature"));
+        assert_eq!(result, expected);
     }
 }

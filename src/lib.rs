@@ -29,7 +29,7 @@
 //!```
 //! # use floccus::vapour_pressure;
 //! # let temperature = 300.0;
-//! # let pressure = 1000000.0;
+//! # let pressure = 100000.0;
 //! # let vp =
 //!vapour_pressure::buck1(temperature, pressure)
 //! # .unwrap();
