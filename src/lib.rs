@@ -40,7 +40,9 @@
 //!
 //!# Input checking
 //!
-//!All functions check whether provided inputs are within a reasonable range.
+//!To prevent any unexpected behaviour, all functions check whether provided inputs are within a reasonable range.
+//!Exact limits are specified in the documentation of each function.
+//!If the input is out of range the function will return an [InputError::OutOfRange](error_wrapper::InputError::OutOfRange) with erronous input specified.
 //!
 //!# Units
 //!This crate uses basic SI units in the interface.
@@ -56,5 +58,5 @@
 //!If the formula uses numbers of very different scales there can be an exception from that rule described in the function documentation.
 
 pub mod constants;
-pub mod vapour_pressure;
 pub mod error_wrapper;
+pub mod vapour_pressure;

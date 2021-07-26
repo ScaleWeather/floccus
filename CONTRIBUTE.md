@@ -12,7 +12,7 @@ All functions in the crate should meet the [Rust API Guidelines](https://rust-la
 
 ## Input checking
 
-All functions should validate that their inputs are within a reasonable range. If values are out of range
+All functions should validate that their inputs are within a reasonable range. Exact limits have to be specified in the documentation of function. If values are out of range function should return `InputError::OutOfRange` along with the name of erronous input.
 
 ### Constants
 
@@ -46,6 +46,8 @@ fn vapour_pressure_buck1() {
     assert_approx_eq!(f64, expected, result, ulps = 2);
 }
 ```
+
+Moreover, tests should check whether the function correctly returns the error when provided input is out of range.
 
 ### Documentation
 

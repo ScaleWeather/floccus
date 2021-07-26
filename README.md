@@ -44,3 +44,9 @@ vapour_pressure::buck1(temperature, pressure);
 
 Where the module name (`vapour_pressure`) indicates the computed quantity, function name (`buck1`) indicates the author of formula
 and the function arguments (`temperature, pressure`) are variables used to compute the quantity.
+
+# Input checking
+
+To prevent any unexpected behaviour, all functions check whether provided inputs are within a reasonable range.
+Exact limits are specified in the documentation of each function.
+If the input is out of range the function will return an `InputError::OutOfRange` with erronous input specified.
