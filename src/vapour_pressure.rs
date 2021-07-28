@@ -34,13 +34,14 @@ pub fn buck1(temperature: f64, pressure: f64) -> Result<f64, InputError> {
     let upper_b = 0.000_003_2;
     let upper_c = 0.000_000_000_59;
 
-    let lower_e = lower_a * (((lower_b - (temperature / lower_d)) * temperature) / (temperature + lower_c)).exp();
+    let lower_e = lower_a
+        * (((lower_b - (temperature / lower_d)) * temperature) / (temperature + lower_c)).exp();
     let lower_f = 1.0 + upper_a + (pressure * (upper_b + (upper_c * temperature * temperature)));
 
     Ok((lower_e * lower_f) * 100.0) //return in Pa
 }
 
-///Formula for computing vapour pressure from air temperature over water. 
+///Formula for computing vapour pressure from air temperature over water.
 ///Should be used for temperatures above 273K.
 ///
 ///Derived by O. Tetens (1930).
@@ -77,21 +78,17 @@ mod tests {
         let expected = 3550.6603579471303;
         assert_approx_eq!(f64, expected, result, ulps = 2);
 
-        let result = vapour_pressure::buck1(231.9, 101325.0).unwrap_err();
-        let expected = InputError::OutOfRange(String::from("temperature"));
-        assert_eq!(result, expected);
+        for &temperature in [231.9f64, 324.1f64].iter() {
+            let result = vapour_pressure::buck1(temperature, 101325.0).unwrap_err();
+            let expected = InputError::OutOfRange(String::from("temperature"));
+            assert_eq!(result, expected);
+        }
 
-        let result = vapour_pressure::buck1(324.1, 101325.0).unwrap_err();
-        let expected = InputError::OutOfRange(String::from("temperature"));
-        assert_eq!(result, expected);
-
-        let result = vapour_pressure::buck1(300.0, 99.9).unwrap_err();
-        let expected = InputError::OutOfRange(String::from("pressure"));
-        assert_eq!(result, expected);
-
-        let result = vapour_pressure::buck1(300.0, 150000.1).unwrap_err();
-        let expected = InputError::OutOfRange(String::from("pressure"));
-        assert_eq!(result, expected);
+        for &pressure in [99.9f64, 150000.1f64].iter() {
+            let result = vapour_pressure::buck1(300.0, pressure).unwrap_err();
+            let expected = InputError::OutOfRange(String::from("pressure"));
+            assert_eq!(result, expected);
+        }
     }
 
     #[test]
@@ -100,12 +97,10 @@ mod tests {
         let expected = 3533.969137160892;
         assert_approx_eq!(f64, expected, result, ulps = 2);
 
-        let result = vapour_pressure::tetens1(272.9).unwrap_err();
-        let expected = InputError::OutOfRange(String::from("temperature"));
-        assert_eq!(result, expected);
-
-        let result = vapour_pressure::tetens1(354.1).unwrap_err();
-        let expected = InputError::OutOfRange(String::from("temperature"));
-        assert_eq!(result, expected);
+        for &temperature in [272.9f64, 354.1f64].iter() {
+            let result = vapour_pressure::tetens1(temperature).unwrap_err();
+            let expected = InputError::OutOfRange(String::from("temperature"));
+            assert_eq!(result, expected);
+        }
     }
 }
