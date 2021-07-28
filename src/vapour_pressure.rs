@@ -2,23 +2,23 @@
 
 use crate::{constants::ZERO_CELSIUS, error_wrapper::InputError};
 
-///Formula computing vapour pressure from air temperature and pressure.
+///Formula for computing vapour pressure from air temperature and pressure.
 ///Most accurate in temperature range from 233K to 323K.
 ///
 ///Derived by A. L. Buck (1981) [(doi: 10.1175/1520-0450(1981)020<1527:nefcvp>2.0.co;2)](https://doi.org/10.1175/1520-0450(1981)020%3C1527:NEFCVP%3E2.0.CO;2).
 ///
 ///# Errors
 ///
-///Return [`InputError::OutOfRange`] when one of inputs is out of range.\
+///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid temperature range: 232K - 324K\
-///Valid pressure range: 100Pa - 110000Pa
+///Valid pressure range: 100Pa - 150000Pa
 pub fn buck1(temperature: f64, pressure: f64) -> Result<f64, InputError> {
     //validate inputs
     if !(232.0..=324.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));
     }
 
-    if !(100.0..=110_000.0).contains(&pressure) {
+    if !(100.0..=150_000.0).contains(&pressure) {
         return Err(InputError::OutOfRange(String::from("pressure")));
     }
 
@@ -40,14 +40,14 @@ pub fn buck1(temperature: f64, pressure: f64) -> Result<f64, InputError> {
     Ok((lower_e * lower_f) * 100.0) //return in Pa
 }
 
-///Formula computing vapour pressure from air temperature over water. 
+///Formula for computing vapour pressure from air temperature over water. 
 ///Should be used for temperatures above 273K.
 ///
 ///Derived by O. Tetens (1930).
 ///
 ///# Errors
 ///
-///Return [`InputError::OutOfRange`] when input is out of range.\
+///Returns [`InputError::OutOfRange`] when input is out of range.\
 ///Valid temperature range: 273K - 353K
 pub fn tetens1(temperature: f64) -> Result<f64, InputError> {
     //validate inputs
@@ -89,7 +89,7 @@ mod tests {
         let expected = InputError::OutOfRange(String::from("pressure"));
         assert_eq!(result, expected);
 
-        let result = vapour_pressure::buck1(300.0, 110000.1).unwrap_err();
+        let result = vapour_pressure::buck1(300.0, 150000.1).unwrap_err();
         let expected = InputError::OutOfRange(String::from("pressure"));
         assert_eq!(result, expected);
     }

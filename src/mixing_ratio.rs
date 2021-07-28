@@ -2,20 +2,40 @@
 
 use crate::{constants::EPSILON, error_wrapper::InputError, vapour_pressure};
 
-///General air
+///Formula for computing mixing ratio of unsaturated air from air pressure and vapour pressure
+///
+///# Errors
+///
+///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
+///Valid pressure range: 100Pa - 150000Pa\
+///Valid vapour pressure range: 0Pa - 10000Pa
 pub fn air_general1(pressure: f64, vapour_pressure: f64) -> Result<f64, InputError> {
     let result = EPSILON * (vapour_pressure / (pressure - vapour_pressure));
     Ok(result)
 }
 
-///Performance air
+///Formula for computing mixing ratio of unsaturated air from air temperature and pressure.
+///Optimised by performance
+///
+///# Errors
+///
+///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
+///Valid temperature range: 273K - 353K\
+///Valid pressure range: 100Pa - 150000Pa
 pub fn air_performance1(temperature: f64, pressure: f64) -> Result<f64, InputError> {
     let vapour_pressure = vapour_pressure::tetens1(temperature)?;
     let result = air_general1(pressure, vapour_pressure)?;
     Ok(result)
 }
 
-///Accuracy air
+///Formula for computing mixing ratio of unsaturated air from air temperature and pressure.
+///Optimised by accuracy
+///
+///# Errors
+///
+///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
+///Valid temperature range: 232K - 324K\
+///Valid pressure range: 100Pa - 150000Pa
 pub fn air_accuracy1(temperature: f64, pressure: f64) -> Result<f64, InputError> {
     let vapour_pressure = vapour_pressure::buck1(temperature, pressure)?;
     let result = air_general1(pressure, vapour_pressure)?;
