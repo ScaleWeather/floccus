@@ -54,6 +54,7 @@
 //!- Length: meters (m)
 //!- Volume: meters cubed (m^3)
 //!- Density: kilograms per meter cubed (kg*m^3)
+//!- Mixing ratio: kilograms per kilogram (kg*kg^-1)
 //!
 //!If the formula uses numbers of very different scales there can be an exception from that rule described in the function documentation.
 

@@ -72,7 +72,7 @@ mod tests {
     use float_cmp::assert_approx_eq;
 
     #[test]
-    fn vapour_pressure_buck1() {
+    fn test_buck1() {
         let result = vapour_pressure::buck1(300.0, 101325.0).unwrap();
         let expected = 3550.6603579471303;
         assert_approx_eq!(f64, expected, result, ulps = 2);
@@ -95,7 +95,7 @@ mod tests {
     }
 
     #[test]
-    fn vapour_pressure_tetens1() {
+    fn test_tetens1() {
         let result = vapour_pressure::tetens1(300.0).unwrap();
         let expected = 3533.969137160892;
         assert_approx_eq!(f64, expected, result, ulps = 2);
