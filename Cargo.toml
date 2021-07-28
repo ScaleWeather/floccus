@@ -20,3 +20,8 @@ thiserror = "1.0.26"
 
 [dev-dependencies]
 float-cmp = "0.9.0"
+criterion = "0.3.5"
+
+[[bench]]
+name = "vapour pressure"
+harness = false
