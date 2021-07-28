@@ -26,12 +26,14 @@ jobs:
       run: |
         cargo build --release
         cargo clean
-    - name: Test with cargo
-      run: |
-        cargo test
-        cargo clean
     - name: Check with clippy
       run: |
         cargo clippy -- -W clippy::pedantic
         cargo clean
-        
+    - name: Test with cargo
+      run: |
+        cargo test
+        cargo clean
+    - name: Benchmark with criterion
+      run: |
+        cargo bench
