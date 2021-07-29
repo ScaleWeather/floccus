@@ -1,4 +1,4 @@
-//!Crate providing formulae for thermodynamic calculations.
+//!Crate providing formulae for air thermodynamic calculations.
 //!
 //!# How to use
 //!

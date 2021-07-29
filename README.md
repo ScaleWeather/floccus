@@ -5,9 +5,9 @@
 [![dependency status](https://deps.rs/crate/floccus/0.1.0/status.svg)](https://deps.rs/crate/floccus)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ScaleWeather/floccus/cargo?label=cargo%20build)](https://github.com/ScaleWeather/floccus/actions)
 
-Rust crate providing formulae for thermodynamic calculations.
+Rust crate providing formulae for air thermodynamic calculations.
 
-This crate contains functions for computing thermodynamic quantities commonly used in meteorology, oceangraphy and other fields. It is mainly developed by a meteorologist so **if there is a function you would like to be added do not hesitate to post an issue or pull request in the [Github repository](https://github.com/ScaleWeather/floccus)**. 
+This crate contains functions for computing thermodynamic quantities commonly used in atmospheric sciences. It is currently developed by one person so **if there is a function you would like to be added do not hesitate to post an issue or pull request in the [Github repository](https://github.com/ScaleWeather/floccus)**. 
 
 The purpose of this crate is to be an academic reference of thermodynamic formulae, 
 so that researchers looking for a particular formula do not need to search it in the literature. 
