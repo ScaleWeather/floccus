@@ -81,7 +81,7 @@ mod tests {
 
         for &dewpoint in [231.9f64, 324.1f64].iter() {
             let result = vapour_pressure::buck1(dewpoint, 101325.0).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("temperature"));
+            let expected = InputError::OutOfRange(String::from("dewpoint"));
             assert_eq!(result, expected);
         }
 
@@ -100,7 +100,7 @@ mod tests {
 
         for &dewpoint in [272.9f64, 353.1f64].iter() {
             let result = vapour_pressure::tetens1(dewpoint).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("temperature"));
+            let expected = InputError::OutOfRange(String::from("dewpoint"));
             assert_eq!(result, expected);
         }
     }

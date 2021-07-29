@@ -35,7 +35,7 @@ pub fn general1(pressure: f64, vapour_pressure: f64) -> Result<f64, InputError> 
 pub fn performance1(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
     //validate inputs
     if !(273.0..=353.0).contains(&dewpoint) {
-        return Err(InputError::OutOfRange(String::from("temperature")));
+        return Err(InputError::OutOfRange(String::from("dewpoint")));
     }
 
     if !(100.0..=150_000.0).contains(&pressure) {
@@ -58,7 +58,7 @@ pub fn performance1(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
 pub fn accuracy1(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
     //validate inputs
     if !(232.0..=324.0).contains(&dewpoint) {
-        return Err(InputError::OutOfRange(String::from("temperature")));
+        return Err(InputError::OutOfRange(String::from("dewpoint")));
     }
 
     if !(100.0..=150_000.0).contains(&pressure) {
@@ -103,7 +103,7 @@ mod tests {
 
         for &dewpoint in [272.9f64, 353.1f64].iter() {
             let result = mixing_ratio::performance1(dewpoint, 101325.0).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("temperature"));
+            let expected = InputError::OutOfRange(String::from("dewpoint"));
             assert_eq!(result, expected);
         }
 
@@ -122,7 +122,7 @@ mod tests {
 
         for &dewpoint in [231.9f64, 324.1f64].iter() {
             let result = mixing_ratio::accuracy1(dewpoint, 101325.0).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("temperature"));
+            let expected = InputError::OutOfRange(String::from("dewpoint"));
             assert_eq!(result, expected);
         }
 
