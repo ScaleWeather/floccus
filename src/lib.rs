@@ -1,4 +1,4 @@
-//!Crate providing formulae for thermodynamic calculations.
+//!Crate providing formulae for air thermodynamic calculations.
 //!
 //!# How to use
 //!
@@ -62,3 +62,6 @@ pub mod constants;
 pub mod error_wrapper;
 pub mod vapour_pressure;
 pub mod mixing_ratio;
+pub mod virtual_temperature;
+pub mod wet_bulb_temperature;
+pub mod relative_humidity;
