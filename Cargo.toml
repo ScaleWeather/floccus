@@ -29,3 +29,7 @@ harness = false
 [[bench]]
 name = "mixing_ratio"
 harness = false
+
+[[bench]]
+name = "wet_bulb_temperature"
+harness = false
