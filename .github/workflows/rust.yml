@@ -21,6 +21,9 @@ jobs:
         sudo apt-get update
         sudo apt-get install clang
         sudo apt-get install libclang1
+        sudo apt-get install gnuplot
+        rustup update stable
+        cargo install criterion
         cargo clean
     - name: Build with cargo
       run: |
@@ -36,4 +39,4 @@ jobs:
         cargo clean
     - name: Benchmark with criterion
       run: |
-        cargo bench
+        cargo criterion
