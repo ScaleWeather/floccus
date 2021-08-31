@@ -1,4 +1,5 @@
 //!Functions to calculate partial vapour pressure of the unsaturated air.
+//!
 //!To compute saturation vapour pressure input dry-bulb temperature in place of dewpoint temperature.
 
 use crate::{constants::ZERO_CELSIUS, error_wrapper::InputError};
