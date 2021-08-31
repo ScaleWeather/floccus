@@ -9,8 +9,8 @@ use crate::{constants::EPSILON, error_wrapper::InputError, vapour_pressure};
 ///# Errors
 ///
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
-///Valid pressure range: 100Pa - 150000Pa\
-///Valid vapour pressure range: 0Pa - 10000Pa
+///Valid `pressure` range: 100Pa - 150000Pa\
+///Valid `vapour_pressure` range: 0Pa - 10000Pa
 pub fn general1(pressure: f64, vapour_pressure: f64) -> Result<f64, InputError> {
     //validate inputs
     if !(100.0..=150_000.0).contains(&pressure) {
@@ -18,7 +18,7 @@ pub fn general1(pressure: f64, vapour_pressure: f64) -> Result<f64, InputError> 
     }
 
     if !(0.0..=10_000.0).contains(&vapour_pressure) {
-        return Err(InputError::OutOfRange(String::from("vapour pressure")));
+        return Err(InputError::OutOfRange(String::from("vapour_pressure")));
     }
 
     let result = EPSILON * (vapour_pressure / (pressure - vapour_pressure));
@@ -31,8 +31,8 @@ pub fn general1(pressure: f64, vapour_pressure: f64) -> Result<f64, InputError> 
 ///# Errors
 ///
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
-///Valid dewpoint range: 273K - 353K\
-///Valid pressure range: 100Pa - 150000Pa
+///Valid `dewpoint` range: 273K - 353K\
+///Valid `pressure` range: 100Pa - 150000Pa
 pub fn performance1(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
     //validate inputs
     if !(273.0..=353.0).contains(&dewpoint) {
@@ -54,8 +54,8 @@ pub fn performance1(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
 ///# Errors
 ///
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
-///Valid dewpoint range: 232K - 324K\
-///Valid pressure range: 100Pa - 150000Pa
+///Valid `dewpoint` range: 232K - 324K\
+///Valid `pressure` range: 100Pa - 150000Pa
 pub fn accuracy1(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
     //validate inputs
     if !(232.0..=324.0).contains(&dewpoint) {
@@ -91,7 +91,7 @@ mod tests {
 
         for &vapour_pressure in [-0.1f64, 10000.1f64].iter() {
             let result = mixing_ratio::general1(101325.0, vapour_pressure).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("vapour pressure"));
+            let expected = InputError::OutOfRange(String::from("vapour_pressure"));
             assert_eq!(result, expected);
         }
     }

@@ -5,15 +5,14 @@
 use crate::{constants::ZERO_CELSIUS, error_wrapper::InputError};
 
 ///Formula for computing vapour pressure from dewpoint temperature and pressure.
-///Most accurate in temperature range from 233K to 323K.
+///Should be used for air over water when accuracy is desired.
 ///
 ///Derived by A. L. Buck (1981) [(doi: 10.1175/1520-0450(1981)020<1527:nefcvp>2.0.co;2)](https://doi.org/10.1175/1520-0450(1981)020%3C1527:NEFCVP%3E2.0.CO;2).
-///
 ///# Errors
 ///
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
-///Valid dewpoint range: 232K - 324K\
-///Valid pressure range: 100Pa - 150000Pa
+///Valid `dewpoint` range: 232K - 324K\
+///Valid `pressure` range: 100Pa - 150000Pa
 pub fn buck1(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
     //validate inputs
     if !(232.0..=324.0).contains(&dewpoint) {
@@ -51,7 +50,7 @@ pub fn buck1(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
 ///# Errors
 ///
 ///Returns [`InputError::OutOfRange`] when input is out of range.\
-///Valid dewpoint range: 273K - 353K
+///Valid `dewpoint` range: 273K - 353K
 pub fn tetens1(dewpoint: f64) -> Result<f64, InputError> {
     //validate inputs
     if !(273.0..=353.0).contains(&dewpoint) {
