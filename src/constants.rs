@@ -27,7 +27,7 @@ pub const C_PV: f64 = 1846.1;
 ///Specific heat capacity of water vapour at constant volume in `J kg^-1 K^-1` (ECMWF, 2020)
 pub const C_VV: f64 = 1384.575;
 
-///Latent heat of vapourization of water in `J kg^1`  (ECMWF, 2020)
+///Mass latent heat of vapourization of water in `J kg^1`  (ECMWF, 2020)
 pub const L_V: f64 = 2_500_800.0;
 
 ///Ratio of molar masses of dry air and water vapour

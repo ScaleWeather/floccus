@@ -1,4 +1,4 @@
-//!Functions to calculate relative humidity
+//!Functions to calculate relative humidity in %/100
 
 use crate::{error_wrapper::InputError, mixing_ratio, vapour_pressure};
 

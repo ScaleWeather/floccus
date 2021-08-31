@@ -1,4 +1,4 @@
-//!Functions to calculate partial vapour pressure of the unsaturated air.
+//!Functions to calculate partial vapour pressure of the unsaturated air in Pa.
 //!
 //!To compute saturation vapour pressure input dry-bulb temperature in place of dewpoint temperature.
 
@@ -208,7 +208,7 @@ pub fn saturation_specific1(
 ///
 ///Returns [`InputError::OutOfRange`] when input is out of range.\
 ///Valid `vapour_pressure` range: 0Pa - 10000Pa\
-///Valid `relative_humidity` range: 0.0 - 1.0
+///Valid `relative_humidity` range: 0.00001 - 1.0
 pub fn saturation_specific2(
     vapour_pressure: f64,
     relative_humidity: f64,

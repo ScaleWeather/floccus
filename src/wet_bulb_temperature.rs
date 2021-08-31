@@ -1,4 +1,4 @@
-//!Functions to calculate wet bulb temperature of unsaturated air.
+//!Functions to calculate wet bulb temperature of unsaturated air in K.
 
 use crate::{constants::ZERO_CELSIUS, error_wrapper::InputError};
 

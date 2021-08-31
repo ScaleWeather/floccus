@@ -1,4 +1,4 @@
-//!Functions to calculate mixing ratio of air.
+//!Functions to calculate mixing ratio of air in kg*kg^-1.
 //!
 //!To calculate saturation mixing ratio input dry-bulb temperature in place of dewpoint
 //!or saturation vapour pressure in place of vapour pressure.

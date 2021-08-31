@@ -21,6 +21,14 @@ pub fn vapour_pressure_benchmark(c: &mut Criterion) {
     c.bench_function("vapour_pressure::buck4", |b| {
         b.iter(|| vapour_pressure::buck4(black_box(250.0), black_box(101325.0)))
     });
+
+    c.bench_function("vapour_pressure::saturation_specific2", |b| {
+        b.iter(|| vapour_pressure::saturation_specific1(black_box(3000.0), black_box(0.5)))
+    });
+
+    c.bench_function("vapour_pressure::saturation_specific2", |b| {
+        b.iter(|| vapour_pressure::saturation_specific2(black_box(3000.0), black_box(0.5)))
+    });
 }
 
 criterion_group!(benches, vapour_pressure_benchmark);

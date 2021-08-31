@@ -1,4 +1,4 @@
-//!Functions to calculate virtual temperature of air.
+//!Functions to calculate virtual temperature of air in K.
 //!
 //!In atmospheric thermodynamics, the virtual temperature of a moist air parcel is the temperature
 //!at which a theoretical dry air parcel would have a total pressure and density equal
