@@ -3,7 +3,8 @@
 use thiserror::Error;
 
 #[derive(Error, Debug, PartialEq, Eq)]
-///Error enum returned when provided input out of reasonable range
+///Error enum returned when provided input is out of reasonable range.
+///Contains the name of variable that is out of range.
 ///
 ///In theory, all formulae should provide a result, although in some cases physically unreasonable, for any inputs.
 ///However, due to the nature of floating-point arithmetic ([read more about it here](https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html))
