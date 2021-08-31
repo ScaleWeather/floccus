@@ -52,6 +52,7 @@
 //!- Temperature: Kelvins (K)
 //!- Mass: kilograms (kg)
 //!- Length: meters (m)
+//!- Relative humidity: ratio (%/100)
 //!- Volume: meters cubed (m^3)
 //!- Density: kilograms per meter cubed (kg*m^3)
 //!- Mixing ratio: kilograms per kilogram (kg*kg^-1)
