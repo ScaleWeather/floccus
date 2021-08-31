@@ -2,10 +2,11 @@
 
 use crate::{error_wrapper::InputError, mixing_ratio, vapour_pressure};
 
-///Formula for computing relative humidity from mixing ratio and saturation mixing ratio
+///Formula for computing relative humidity from mixing ratio and saturation mixing ratio.
+///Can be used interchangeably with [`general2`].
 ///
-///According to [Rogers & Yau, 1989](https://www.elsevier.com/books/a-short-course-in-cloud-physics/yau/978-0-08-057094-5)
-///this formula is "the correct one" for calculating relative humidity.
+///By the definition of mixing ratio, this formula is mathematically equivalent of
+///formula used in [`general2`].
 ///
 ///# Errors
 ///
@@ -24,10 +25,8 @@ pub fn general1(mixing_ratio: f64, saturation_mixing_ratio: f64) -> Result<f64, 
     Ok(mixing_ratio / saturation_mixing_ratio)
 }
 
-///Formula for computing relative humidity from vapour pressure ratio and saturation vapour pressure
-///
-///According to some sources this formula is a simplification of formula used in [`general1`].
-///Although, both formulae are commonly used in literature.
+///Formula for computing relative humidity from vapour pressure and saturation vapour pressure.
+///Can be used interchangeably with [`general1`].
 ///
 ///# Errors
 ///
