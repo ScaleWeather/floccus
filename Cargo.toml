@@ -37,3 +37,7 @@ harness = false
 [[bench]]
 name = "wet_bulb_temperature"
 harness = false
+
+[[bench]]
+name = "relative_humidity"
+harness = false
