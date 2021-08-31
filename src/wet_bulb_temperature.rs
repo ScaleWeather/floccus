@@ -46,13 +46,13 @@ mod tests {
         let expected = 292.73867410526674;
         assert_approx_eq!(f64, expected, result, ulps = 2);
 
-        for &temperature in [252.9f64, 324.1f64].iter() {
+        for &temperature in [252.9, 324.1].iter() {
             let result = wet_bulb_temperature::stull1(temperature, 0.5).unwrap_err();
             let expected = InputError::OutOfRange(String::from("temperature"));
             assert_eq!(result, expected);
         }
 
-        for &relative_humidity in [0.04f64, 1.0f64].iter() {
+        for &relative_humidity in [0.04, 1.0].iter() {
             let result = wet_bulb_temperature::stull1(300.0, relative_humidity).unwrap_err();
             let expected = InputError::OutOfRange(String::from("relative_humidity"));
             assert_eq!(result, expected);

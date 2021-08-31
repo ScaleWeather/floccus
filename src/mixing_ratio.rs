@@ -83,13 +83,13 @@ mod tests {
         let expected = 0.022253316630823517;
         assert_approx_eq!(f64, expected, result, ulps = 2);
 
-        for &pressure in [99.9f64, 150000.1f64].iter() {
+        for &pressure in [99.9, 150000.1].iter() {
             let result = mixing_ratio::general1(pressure, 3500.0).unwrap_err();
             let expected = InputError::OutOfRange(String::from("pressure"));
             assert_eq!(result, expected);
         }
 
-        for &vapour_pressure in [-0.1f64, 10000.1f64].iter() {
+        for &vapour_pressure in [-0.1, 10000.1].iter() {
             let result = mixing_ratio::general1(101325.0, vapour_pressure).unwrap_err();
             let expected = InputError::OutOfRange(String::from("vapour_pressure"));
             assert_eq!(result, expected);
@@ -102,13 +102,13 @@ mod tests {
         let expected = 0.022477100514593465;
         assert_approx_eq!(f64, expected, result, ulps = 2);
 
-        for &dewpoint in [272.9f64, 353.1f64].iter() {
+        for &dewpoint in [272.9, 353.1].iter() {
             let result = mixing_ratio::performance1(dewpoint, 101325.0).unwrap_err();
             let expected = InputError::OutOfRange(String::from("dewpoint"));
             assert_eq!(result, expected);
         }
 
-        for &pressure in [99.9f64, 150000.1f64].iter() {
+        for &pressure in [99.9, 150000.1].iter() {
             let result = mixing_ratio::performance1(300.0, pressure).unwrap_err();
             let expected = InputError::OutOfRange(String::from("pressure"));
             assert_eq!(result, expected);
@@ -121,13 +121,13 @@ mod tests {
         let expected = 0.022587116896465847;
         assert_approx_eq!(f64, expected, result, ulps = 2);
 
-        for &dewpoint in [231.9f64, 324.1f64].iter() {
+        for &dewpoint in [231.9, 324.1].iter() {
             let result = mixing_ratio::accuracy1(dewpoint, 101325.0).unwrap_err();
             let expected = InputError::OutOfRange(String::from("dewpoint"));
             assert_eq!(result, expected);
         }
 
-        for &pressure in [99.9f64, 150000.1f64].iter() {
+        for &pressure in [99.9, 150000.1].iter() {
             let result = mixing_ratio::accuracy1(300.0, pressure).unwrap_err();
             let expected = InputError::OutOfRange(String::from("pressure"));
             assert_eq!(result, expected);
