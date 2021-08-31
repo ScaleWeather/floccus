@@ -78,7 +78,7 @@ mod tests {
     use crate::{error_wrapper::InputError, mixing_ratio};
 
     #[test]
-    fn air_general1() {
+    fn general1() {
         let result = mixing_ratio::general1(101325.0, 3500.0).unwrap();
         let expected = 0.022253316630823517;
         assert_approx_eq!(f64, expected, result, ulps = 2);
@@ -97,7 +97,7 @@ mod tests {
     }
 
     #[test]
-    fn air_performance1() {
+    fn performance1() {
         let result = mixing_ratio::performance1(300.0, 101325.0).unwrap();
         let expected = 0.022477100514593465;
         assert_approx_eq!(f64, expected, result, ulps = 2);
@@ -116,7 +116,7 @@ mod tests {
     }
 
     #[test]
-    fn air_accuracy1() {
+    fn accuracy1() {
         let result = mixing_ratio::accuracy1(300.0, 101325.0).unwrap();
         let expected = 0.022587116896465847;
         assert_approx_eq!(f64, expected, result, ulps = 2);
