@@ -35,13 +35,12 @@ pub fn buck1(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
     let upper_b = 0.000_003_2;
     let upper_c = 0.000_000_000_59;
 
-    let lower_e = lower_a
-        * (((lower_b - (dewpoint / lower_d)) * dewpoint) / (dewpoint + lower_c)).exp();
+    let lower_e =
+        lower_a * (((lower_b - (dewpoint / lower_d)) * dewpoint) / (dewpoint + lower_c)).exp();
     let lower_f = 1.0 + upper_a + (pressure * (upper_b + (upper_c * dewpoint * dewpoint)));
 
     Ok((lower_e * lower_f) * 100.0) //return in Pa
 }
-
 
 ///Formula for computing vapour pressure from dewpoint temperature and pressure.
 ///Should be used for air over ice when accuracy is desired.
@@ -74,8 +73,8 @@ pub fn buck2(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
     let upper_b = 0.000_003_83;
     let upper_c = 0.000_000_000_64;
 
-    let lower_e = lower_a
-        * (((lower_b - (dewpoint / lower_d)) * dewpoint) / (dewpoint + lower_c)).exp();
+    let lower_e =
+        lower_a * (((lower_b - (dewpoint / lower_d)) * dewpoint) / (dewpoint + lower_c)).exp();
     let lower_f = 1.0 + upper_a + (pressure * (upper_b + (upper_c * dewpoint * dewpoint)));
 
     Ok((lower_e * lower_f) * 100.0) //return in Pa
@@ -110,8 +109,7 @@ pub fn buck3(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
     let upper_a = 0.000_7;
     let upper_b = 0.000_003_46;
 
-    let lower_e = lower_a
-        * ((lower_b * dewpoint) / (dewpoint + lower_c)).exp();
+    let lower_e = lower_a * ((lower_b * dewpoint) / (dewpoint + lower_c)).exp();
     let lower_f = 1.0 + upper_a + (pressure * upper_b);
 
     Ok((lower_e * lower_f) * 100.0) //return in Pa
@@ -146,8 +144,7 @@ pub fn buck4(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
     let upper_a = 0.000_3;
     let upper_b = 0.000_004_18;
 
-    let lower_e = lower_a
-        * ((lower_b * dewpoint) / (dewpoint + lower_c)).exp();
+    let lower_e = lower_a * ((lower_b * dewpoint) / (dewpoint + lower_c)).exp();
     let lower_f = 1.0 + upper_a + (pressure * upper_b);
 
     Ok((lower_e * lower_f) * 100.0) //return in Pa
@@ -177,6 +174,54 @@ pub fn tetens1(dewpoint: f64) -> Result<f64, InputError> {
     let result = lower_a * ((lower_b * dewpoint) / (dewpoint + lower_c)).exp();
 
     Ok(result * 1000.0) //return in Pa
+}
+
+///Formula for computing **ONLY** vapour pressure from saturation vapour pressure and relative humidity.
+///For saturation vapour pressure use [`saturation_specific2`]
+///
+///# Errors
+///
+///Returns [`InputError::OutOfRange`] when input is out of range.\
+///Valid `saturation_vapour_pressure` range: 0Pa - 10000Pa\
+///Valid `relative_humidity` range: 0.0 - 1.0
+pub fn saturation_specific1(
+    saturation_vapour_pressure: f64,
+    relative_humidity: f64,
+) -> Result<f64, InputError> {
+    if !(0.0..=1.0).contains(&relative_humidity) {
+        return Err(InputError::OutOfRange(String::from("relative_humidity")));
+    }
+
+    if !(0.0..=10_000.0).contains(&saturation_vapour_pressure) {
+        return Err(InputError::OutOfRange(String::from(
+            "saturation_vapour_pressure",
+        )));
+    }
+
+    Ok(saturation_vapour_pressure * relative_humidity)
+}
+
+///Formula for computing **ONLY** saturation vapour pressure from vapour pressure and relative humidity.
+///For vapour pressure use [`saturation_specific1`]
+///
+///# Errors
+///
+///Returns [`InputError::OutOfRange`] when input is out of range.\
+///Valid `vapour_pressure` range: 0Pa - 10000Pa\
+///Valid `relative_humidity` range: 0.0 - 1.0
+pub fn saturation_specific2(
+    vapour_pressure: f64,
+    relative_humidity: f64,
+) -> Result<f64, InputError> {
+    if !(0.00001..=1.0).contains(&relative_humidity) {
+        return Err(InputError::OutOfRange(String::from("relative_humidity")));
+    }
+
+    if !(0.0..=10_000.0).contains(&vapour_pressure) {
+        return Err(InputError::OutOfRange(String::from("vapour_pressure")));
+    }
+
+    Ok(vapour_pressure / relative_humidity)
 }
 
 #[cfg(test)]
@@ -269,6 +314,69 @@ mod tests {
         for &dewpoint in [272.9, 353.1].iter() {
             let result = vapour_pressure::tetens1(dewpoint).unwrap_err();
             let expected = InputError::OutOfRange(String::from("dewpoint"));
+            assert_eq!(result, expected);
+        }
+    }
+
+    #[test]
+    fn saturation_specific1() {
+        let result = vapour_pressure::saturation_specific1(3550.0, 0.4).unwrap();
+        let expected = 1420.0;
+        assert_approx_eq!(f64, expected, result, ulps = 2);
+
+        for saturation_vapour_pressure in 0..=10_000 {
+            for relative_humidity in 0..=100 {
+                let result = vapour_pressure::saturation_specific1(
+                    saturation_vapour_pressure as f64,
+                    relative_humidity as f64 / 100.0,
+                )
+                .unwrap();
+                assert!(result.is_finite());
+            }
+        }
+
+        for &saturation_vapour_pressure in [-0.1, 10_000.1].iter() {
+            let result =
+                vapour_pressure::saturation_specific1(saturation_vapour_pressure, 0.4).unwrap_err();
+            let expected = InputError::OutOfRange(String::from("saturation_vapour_pressure"));
+            assert_eq!(result, expected);
+        }
+
+        for &relative_humidity in [-0.1, 1.1].iter() {
+            let result =
+                vapour_pressure::saturation_specific1(3550.0, relative_humidity).unwrap_err();
+            let expected = InputError::OutOfRange(String::from("relative_humidity"));
+            assert_eq!(result, expected);
+        }
+    }
+
+    #[test]
+    fn saturation_specific2() {
+        let result = vapour_pressure::saturation_specific2(3000.0, 0.4).unwrap();
+        let expected = 7500.0;
+        assert_approx_eq!(f64, expected, result, ulps = 2);
+
+        for vapour_pressure in 0..=10_000 {
+            for relative_humidity in 1..=100 {
+                let result = vapour_pressure::saturation_specific2(
+                    vapour_pressure as f64,
+                    relative_humidity as f64 / 100.0,
+                )
+                .unwrap();
+                assert!(result.is_finite());
+            }
+        }
+
+        for &vapour_pressure in [-0.1, 10_000.1].iter() {
+            let result = vapour_pressure::saturation_specific2(vapour_pressure, 0.4).unwrap_err();
+            let expected = InputError::OutOfRange(String::from("vapour_pressure"));
+            assert_eq!(result, expected);
+        }
+
+        for &relative_humidity in [-0.1, 1.1].iter() {
+            let result =
+                vapour_pressure::saturation_specific2(3000.0, relative_humidity).unwrap_err();
+            let expected = InputError::OutOfRange(String::from("relative_humidity"));
             assert_eq!(result, expected);
         }
     }
