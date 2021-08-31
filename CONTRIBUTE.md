@@ -2,15 +2,15 @@
 
 Thank you for considering contributing to this crate. Here are some basic rules when writing a code for this library.
 
-## How to contribute
+### How to contribute
 
 The easiest way to contribute is by posting an Issue or Pull Request in the repository.
 
-## Code standards
+### Code standards
 
 All functions in the crate should meet the [Rust API Guidelines](https://rust-lang.github.io/api-guidelines/checklist.html) to the gratest possible extent.
 
-## Input checking
+### Input checking
 
 All functions should validate that their inputs are within a reasonable range. Exact limits have to be specified in the documentation of function. If values are out of range function should return `InputError::OutOfRange` along with the name of erronous input.
 
@@ -56,6 +56,6 @@ Documentation of all functions should contain following information:
 - Recommended range of input variables (for which the formula is most accurate)
 - Reference to the paper from which formula is taken
 
-## Other questions
+### Other questions
 
 If you are unsure how to write your own function take a look at the current code in repository. Also, do not hesitate to ask a question by posting an Issue. Finally, all pull requests are warmly welcome and we will help you if they need any improvements.
