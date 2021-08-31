@@ -42,6 +42,117 @@ pub fn buck1(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
     Ok((lower_e * lower_f) * 100.0) //return in Pa
 }
 
+
+///Formula for computing vapour pressure from dewpoint temperature and pressure.
+///Should be used for air over ice when accuracy is desired.
+///
+///Derived by A. L. Buck (1981) [(doi: 10.1175/1520-0450(1981)020<1527:nefcvp>2.0.co;2)](https://doi.org/10.1175/1520-0450(1981)020%3C1527:NEFCVP%3E2.0.CO;2).
+///# Errors
+///
+///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
+///Valid `dewpoint` range: 193K - 274K\
+///Valid `pressure` range: 100Pa - 150000Pa
+pub fn buck2(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
+    //validate inputs
+    if !(193.0..=274.0).contains(&dewpoint) {
+        return Err(InputError::OutOfRange(String::from("dewpoint")));
+    }
+
+    if !(100.0..=150_000.0).contains(&pressure) {
+        return Err(InputError::OutOfRange(String::from("pressure")));
+    }
+
+    let dewpoint = dewpoint - ZERO_CELSIUS; //convert to C
+    let pressure = pressure / 100.0; //convert to hPa
+
+    let lower_a = 6.1115;
+    let lower_b = 23.036;
+    let lower_c = 279.82;
+    let lower_d = 333.7;
+
+    let upper_a = 0.000_22;
+    let upper_b = 0.000_003_83;
+    let upper_c = 0.000_000_000_64;
+
+    let lower_e = lower_a
+        * (((lower_b - (dewpoint / lower_d)) * dewpoint) / (dewpoint + lower_c)).exp();
+    let lower_f = 1.0 + upper_a + (pressure * (upper_b + (upper_c * dewpoint * dewpoint)));
+
+    Ok((lower_e * lower_f) * 100.0) //return in Pa
+}
+
+///Formula for computing vapour pressure from dewpoint temperature and pressure.
+///Should be used for air over water for general use.
+///
+///Derived by A. L. Buck (1981) [(doi: 10.1175/1520-0450(1981)020<1527:nefcvp>2.0.co;2)](https://doi.org/10.1175/1520-0450(1981)020%3C1527:NEFCVP%3E2.0.CO;2).
+///# Errors
+///
+///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
+///Valid `dewpoint` range: 253K - 324K\
+///Valid `pressure` range: 100Pa - 150000Pa
+pub fn buck3(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
+    //validate inputs
+    if !(253.0..=324.0).contains(&dewpoint) {
+        return Err(InputError::OutOfRange(String::from("dewpoint")));
+    }
+
+    if !(100.0..=150_000.0).contains(&pressure) {
+        return Err(InputError::OutOfRange(String::from("pressure")));
+    }
+
+    let dewpoint = dewpoint - ZERO_CELSIUS; //convert to C
+    let pressure = pressure / 100.0; //convert to hPa
+
+    let lower_a = 6.1121;
+    let lower_b = 17.502;
+    let lower_c = 240.97;
+
+    let upper_a = 0.000_7;
+    let upper_b = 0.000_003_46;
+
+    let lower_e = lower_a
+        * ((lower_b * dewpoint) / (dewpoint + lower_c)).exp();
+    let lower_f = 1.0 + upper_a + (pressure * upper_b);
+
+    Ok((lower_e * lower_f) * 100.0) //return in Pa
+}
+
+///Formula for computing vapour pressure from dewpoint temperature and pressure.
+///Should be used for air over ice for general use.
+///
+///Derived by A. L. Buck (1981) [(doi: 10.1175/1520-0450(1981)020<1527:nefcvp>2.0.co;2)](https://doi.org/10.1175/1520-0450(1981)020%3C1527:NEFCVP%3E2.0.CO;2).
+///# Errors
+///
+///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
+///Valid `dewpoint` range: 223K - 274K\
+///Valid `pressure` range: 100Pa - 150000Pa
+pub fn buck4(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
+    //validate inputs
+    if !(223.0..=274.0).contains(&dewpoint) {
+        return Err(InputError::OutOfRange(String::from("dewpoint")));
+    }
+
+    if !(100.0..=150_000.0).contains(&pressure) {
+        return Err(InputError::OutOfRange(String::from("pressure")));
+    }
+
+    let dewpoint = dewpoint - ZERO_CELSIUS; //convert to C
+    let pressure = pressure / 100.0; //convert to hPa
+
+    let lower_a = 6.1115;
+    let lower_b = 22.452;
+    let lower_c = 272.55;
+
+    let upper_a = 0.000_3;
+    let upper_b = 0.000_004_18;
+
+    let lower_e = lower_a
+        * ((lower_b * dewpoint) / (dewpoint + lower_c)).exp();
+    let lower_f = 1.0 + upper_a + (pressure * upper_b);
+
+    Ok((lower_e * lower_f) * 100.0) //return in Pa
+}
+
 ///Formula for computing vapour pressure over water from dewpoint temperature.
 ///Should be used for temperatures above 273K.
 ///
@@ -79,14 +190,71 @@ mod tests {
         let expected = 3550.6603579471303;
         assert_approx_eq!(f64, expected, result, ulps = 2);
 
-        for &dewpoint in [231.9f64, 324.1f64].iter() {
+        for &dewpoint in [231.9, 324.1].iter() {
             let result = vapour_pressure::buck1(dewpoint, 101325.0).unwrap_err();
             let expected = InputError::OutOfRange(String::from("dewpoint"));
             assert_eq!(result, expected);
         }
 
-        for &pressure in [99.9f64, 150000.1f64].iter() {
+        for &pressure in [99.9, 150000.1].iter() {
             let result = vapour_pressure::buck1(300.0, pressure).unwrap_err();
+            let expected = InputError::OutOfRange(String::from("pressure"));
+            assert_eq!(result, expected);
+        }
+    }
+
+    #[test]
+    fn buck2() {
+        let result = vapour_pressure::buck2(250.0, 101325.0).unwrap();
+        let expected = 76.38781790372722;
+        assert_approx_eq!(f64, expected, result, ulps = 2);
+
+        for &dewpoint in [192.9, 274.1].iter() {
+            let result = vapour_pressure::buck2(dewpoint, 101325.0).unwrap_err();
+            let expected = InputError::OutOfRange(String::from("dewpoint"));
+            assert_eq!(result, expected);
+        }
+
+        for &pressure in [99.9, 150000.1].iter() {
+            let result = vapour_pressure::buck2(250.0, pressure).unwrap_err();
+            let expected = InputError::OutOfRange(String::from("pressure"));
+            assert_eq!(result, expected);
+        }
+    }
+
+    #[test]
+    fn buck3() {
+        let result = vapour_pressure::buck3(300.0, 101325.0).unwrap();
+        let expected = 3548.5041048035896;
+        assert_approx_eq!(f64, expected, result, ulps = 2);
+
+        for &dewpoint in [252.9, 324.1].iter() {
+            let result = vapour_pressure::buck3(dewpoint, 101325.0).unwrap_err();
+            let expected = InputError::OutOfRange(String::from("dewpoint"));
+            assert_eq!(result, expected);
+        }
+
+        for &pressure in [99.9, 150000.1].iter() {
+            let result = vapour_pressure::buck3(300.0, pressure).unwrap_err();
+            let expected = InputError::OutOfRange(String::from("pressure"));
+            assert_eq!(result, expected);
+        }
+    }
+
+    #[test]
+    fn buck4() {
+        let result = vapour_pressure::buck4(250.0, 101325.0).unwrap();
+        let expected = 76.38685471836712;
+        assert_approx_eq!(f64, expected, result, ulps = 2);
+
+        for &dewpoint in [222.9, 274.1].iter() {
+            let result = vapour_pressure::buck4(dewpoint, 101325.0).unwrap_err();
+            let expected = InputError::OutOfRange(String::from("dewpoint"));
+            assert_eq!(result, expected);
+        }
+
+        for &pressure in [99.9, 150000.1].iter() {
+            let result = vapour_pressure::buck4(250.0, pressure).unwrap_err();
             let expected = InputError::OutOfRange(String::from("pressure"));
             assert_eq!(result, expected);
         }
@@ -98,7 +266,7 @@ mod tests {
         let expected = 3533.969137160892;
         assert_approx_eq!(f64, expected, result, ulps = 2);
 
-        for &dewpoint in [272.9f64, 353.1f64].iter() {
+        for &dewpoint in [272.9, 353.1].iter() {
             let result = vapour_pressure::tetens1(dewpoint).unwrap_err();
             let expected = InputError::OutOfRange(String::from("dewpoint"));
             assert_eq!(result, expected);
