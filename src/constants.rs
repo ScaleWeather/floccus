@@ -1,6 +1,6 @@
 //!Module containing physical constants
 
-///Temperature in Kelvins of 0 Celsius
+///Temperature of 0 Celsius in `K`
 pub const ZERO_CELSIUS: f64 = 273.15;
 
 ///Gravitational acceleration in `m s^-2`
@@ -30,8 +30,8 @@ pub const C_VV: f64 = 1384.575;
 ///Mass latent heat of vapourization of water in `J kg^1`  (ECMWF, 2020)
 pub const L_V: f64 = 2_500_800.0;
 
-///Ratio of molar masses of dry air and water vapour
+///Ratio of molar masses of dry air and water vapour in `no unit`
 pub const EPSILON: f64 = M_V / M_D;
 
-///Specific gas constant for dry air
+///Specific gas constant for dry air in `J kg^-1 K^-1`
 pub const R_D: f64 = R / M_D;
