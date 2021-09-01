@@ -2,7 +2,36 @@
 //!
 //!To compute saturation vapour pressure input dry-bulb temperature in place of dewpoint temperature.
 
-use crate::{constants::ZERO_CELSIUS, error_wrapper::InputError};
+use crate::{
+    constants::{EPSILON, ZERO_CELSIUS},
+    error_wrapper::InputError,
+};
+
+///Formula for computing vapour pressure from specific humidity and pressure.
+///This function is theoretical not empirical.
+///
+///Provided by [Rogers & Yau (1989)](https://www.elsevier.com/books/a-short-course-in-cloud-physics/yau/978-0-08-057094-5).
+///
+///# Errors
+///
+///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
+///Valid `specific_humidity` range: 0.00001 - 2.0\
+///Valid `pressure` range: 100Pa - 150000Pa
+pub fn general1(specific_humidity: f64, pressure: f64) -> Result<f64, InputError> {
+    //validate inputs
+    if !(0.00001..=2.0).contains(&specific_humidity) {
+        return Err(InputError::OutOfRange(String::from("specific_humidity")));
+    }
+
+    if !(100.0..=150_000.0).contains(&pressure) {
+        return Err(InputError::OutOfRange(String::from("pressure")));
+    }
+
+    let result =
+        -((pressure * specific_humidity) / ((specific_humidity * (EPSILON - 1.0)) - EPSILON));
+
+    Ok(result)
+}
 
 ///Formula for computing vapour pressure from dewpoint temperature and pressure.
 ///Should be used for air over water when accuracy is desired.
@@ -115,6 +144,31 @@ pub fn buck3(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
     Ok((lower_e * lower_f) * 100.0) //return in Pa
 }
 
+///Formula for computing vapour pressure from dewpoint temperature.
+///Simplified version of [`buck3`]. Very popular in meteorological sources.
+///
+///Derived by A. L. Buck (1981) [(doi: 10.1175/1520-0450(1981)020<1527:nefcvp>2.0.co;2)](https://doi.org/10.1175/1520-0450(1981)020%3C1527:NEFCVP%3E2.0.CO;2).
+///# Errors
+///
+///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
+///Valid `dewpoint` range: 253K - 324K
+pub fn buck3_simplified(dewpoint: f64) -> Result<f64, InputError> {
+    //validate inputs
+    if !(253.0..=324.0).contains(&dewpoint) {
+        return Err(InputError::OutOfRange(String::from("dewpoint")));
+    }
+
+    let dewpoint = dewpoint - ZERO_CELSIUS; //convert to C
+
+    let lower_a = 6.1121;
+    let lower_b = 17.502;
+    let lower_c = 240.97;
+
+    let lower_e = lower_a * ((lower_b * dewpoint) / (dewpoint + lower_c)).exp();
+
+    Ok(lower_e * 100.0) //return in Pa
+}
+
 ///Formula for computing vapour pressure from dewpoint temperature and pressure.
 ///Should be used for air over ice for general use.
 ///
@@ -148,6 +202,31 @@ pub fn buck4(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
     let lower_f = 1.0 + upper_a + (pressure * upper_b);
 
     Ok((lower_e * lower_f) * 100.0) //return in Pa
+}
+
+///Formula for computing vapour pressure from dewpoint temperature.
+///Simplified version of [`buck4`], analogical to [`buck3_simplified`].
+///
+///Derived by A. L. Buck (1981) [(doi: 10.1175/1520-0450(1981)020<1527:nefcvp>2.0.co;2)](https://doi.org/10.1175/1520-0450(1981)020%3C1527:NEFCVP%3E2.0.CO;2).
+///# Errors
+///
+///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
+///Valid `dewpoint` range: 223K - 274K
+pub fn buck4_simplified(dewpoint: f64) -> Result<f64, InputError> {
+    //validate inputs
+    if !(223.0..=274.0).contains(&dewpoint) {
+        return Err(InputError::OutOfRange(String::from("dewpoint")));
+    }
+
+    let dewpoint = dewpoint - ZERO_CELSIUS; //convert to C
+
+    let lower_a = 6.1115;
+    let lower_b = 22.452;
+    let lower_c = 272.55;
+
+    let lower_e = lower_a * ((lower_b * dewpoint) / (dewpoint + lower_c)).exp();
+
+    Ok(lower_e * 100.0) //return in Pa
 }
 
 ///Formula for computing vapour pressure over water from dewpoint temperature.
@@ -232,6 +311,24 @@ mod tests {
     };
 
     #[test]
+    fn general1() {
+        assert!(tests_framework::test_with_2args(
+            &vapour_pressure::general1,
+            Argument {
+                name: "specific_humidity",
+                def_val: 0.022,
+                range: [0.00001, 2.0]
+            },
+            Argument {
+                name: "pressure",
+                def_val: 101325.0,
+                range: [100.0, 150_000.0]
+            },
+            3536.6680935251343
+        ));
+    }
+
+    #[test]
     fn buck1() {
         assert!(tests_framework::test_with_2args(
             &vapour_pressure::buck1,
@@ -300,6 +397,32 @@ mod tests {
                 range: [100.0, 150_000.0]
             },
             76.38685471836712
+        ));
+    }
+
+    #[test]
+    fn buck3_simplified() {
+        assert!(tests_framework::test_with_1arg(
+            &vapour_pressure::buck3_simplified,
+            Argument {
+                name: "dewpoint",
+                def_val: 300.0,
+                range: [253.0, 324.0]
+            },
+            3533.6421536199978
+        ));
+    }
+
+    #[test]
+    fn buck4_simplified() {
+        assert!(tests_framework::test_with_1arg(
+            &vapour_pressure::buck4_simplified,
+            Argument {
+                name: "dewpoint",
+                def_val: 250.0,
+                range: [223.0, 274.0]
+            },
+            76.04197508519536
         ));
     }
 
