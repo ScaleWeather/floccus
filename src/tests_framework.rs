@@ -23,7 +23,7 @@ pub fn test_with_2args(
     //the first promise of the crate is that returned value
     //is calculated correctly
     let result = tested_function(arg1.def_val, arg2.def_val).unwrap();
-    assert_approx_eq!(f64, result, expected_result, epsilon = 0.000001);
+    assert_approx_eq!(f64, result, expected_result, epsilon = 0.000_001);
 
     //the second promise of the crate is to never return NaN or Inf
     //here we check several edge cases for that
@@ -60,7 +60,7 @@ pub fn test_with_2args(
                 assert!(
                     discriminant(&InputError::IncorrectArgumentSet(String::from("")))
                         == discriminant(&result.unwrap_err())
-                )
+                );
             } else {
                 assert!(result.unwrap().is_finite());
             }
@@ -91,7 +91,7 @@ pub fn test_with_1arg(
     expected_result: f64,
 ) -> bool {
     let result = tested_function(arg1.def_val).unwrap();
-    assert_approx_eq!(f64, result, expected_result, epsilon = 0.000001);
+    assert_approx_eq!(f64, result, expected_result, epsilon = 0.000_001);
 
     let results = vec![tested_function(0.0)];
 
@@ -111,7 +111,7 @@ pub fn test_with_1arg(
             assert!(
                 discriminant(&InputError::IncorrectArgumentSet(String::from("")))
                     == discriminant(&result.unwrap_err())
-            )
+            );
         } else {
             assert!(result.unwrap().is_finite());
         }
@@ -135,7 +135,7 @@ pub fn test_with_3args(
     expected_result: f64,
 ) -> bool {
     let result = tested_function(arg1.def_val, arg2.def_val, arg3.def_val).unwrap();
-    assert_approx_eq!(f64, result, expected_result, epsilon = 0.000001);
+    assert_approx_eq!(f64, result, expected_result, epsilon = 0.000_001);
 
     let results = vec![
         tested_function(0.0, arg2.def_val, arg3.def_val),
@@ -166,7 +166,7 @@ pub fn test_with_3args(
                     assert!(
                         discriminant(&InputError::IncorrectArgumentSet(String::from("")))
                             == discriminant(&result.unwrap_err())
-                    )
+                    );
                 } else {
                     assert!(result.unwrap().is_finite());
                 }

@@ -192,7 +192,7 @@ pub fn saturation_specific1(
         return Err(InputError::OutOfRange(String::from("relative_humidity")));
     }
 
-    if !(0.0..=10_000.0).contains(&saturation_vapour_pressure) {
+    if !(0.0..=50_000.0).contains(&saturation_vapour_pressure) {
         return Err(InputError::OutOfRange(String::from(
             "saturation_vapour_pressure",
         )));
@@ -323,7 +323,7 @@ mod tests {
             Argument {
                 name: "saturation_vapour_pressure",
                 def_val: 3550.0,
-                range: [0.0, 10_000.0]
+                range: [0.0, 50_000.0]
             },
             Argument {
                 name: "relative_humidity",
