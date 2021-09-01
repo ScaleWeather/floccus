@@ -32,22 +32,11 @@ and the function arguments (`temperature, pressure`) are variables used to compu
 
 ### Tests
 
-All functions should be tested with unit tests to check if they are working correctly. `cargo check` will issue a dead code warning if any test is missing.
+All functions should be tested with unit tests to check if they are working correctly and if they meet the promises of crate. `cargo check` will issue a dead code warning if any test is missing.
 
 There is a [`float-cmp`](https://crates.io/crates/float-cmp) crate available as developmental dependency to compare floating-point numbers in tests.
 
-The basic test can have a structure similar to this:
-
-```Rust
-#[test]
-fn vapour_pressure_buck1() {
-    let result = vapour_pressure::buck1(300.0, 101325.0);
-    let expected = 3550.6603579471303;
-    assert_approx_eq!(f64, expected, result, ulps = 2);
-}
-```
-
-Moreover, tests should check whether the function correctly returns the error when provided input is out of range.
+A refrence test functions are provided in `tests_framework.rs`. Unit test for a function can simply call appropriate framework function with adequate parameters.
 
 ### Documentation
 
@@ -55,6 +44,15 @@ Documentation of all functions should contain following information:
 
 - Recommended range of input variables (for which the formula is most accurate)
 - Reference to the paper from which formula is taken
+- In which conditions function returns an error and of what kind
+
+### Benchmarks
+
+To provide the user information about performance overhead of each function all functions must be benchmarked. This is done using [criterion.rs](https://github.com/bheisler/criterion.rs).
+
+To add a new benchmark simply copy existing one and adapt it to benchmark the added function. Also, if neccessary, add appropriate entry in `Cargo.toml`. Github Actions will automatically run all benchmarks.
+
+To learn more about criterion read its [guide](https://bheisler.github.io/criterion.rs/book/index.html).
 
 ### Other questions
 

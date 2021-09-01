@@ -51,3 +51,8 @@ and the function arguments (`temperature, pressure`) are variables used to compu
 To prevent any unexpected behaviour, all functions check whether provided inputs are within a reasonable range.
 Exact limits are specified in the documentation of each function.
 If the input is out of range the function will return an `InputError::OutOfRange` with erronous input specified.
+
+# Benchmarks
+Functions provided in this crate are inteded for use in, i. a., numerical models. To provide the user information about performance overhead of each function all functions are benchmarked using [criterion.rs](https://bheisler.github.io/criterion.rs/book/index.html). Github Actions automatically runs all benchmarks.
+
+To check the latest benchmark results the newest workflow on [Github Actions page of floccus](https://github.com/ScaleWeather/floccus/actions).
