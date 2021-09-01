@@ -20,6 +20,9 @@ use crate::{
 ///
 ///Returns [`InputError::IncorrectArgumentSet`] when `pressure` and `vapour_pressure` are equal,
 ///in which case division by 0 occurs.
+///
+///Returns [`InputError::IncorrectArgumentSet`] when `pressure` is lower than `vapour_pressure`,
+///in which case floating-point exponentation of negative number occurs.
 pub fn davies_jones1(
     temperature: f64,
     pressure: f64,
@@ -43,6 +46,12 @@ pub fn davies_jones1(
         )));
     }
 
+    if vapour_pressure > pressure {
+        return Err(InputError::IncorrectArgumentSet(String::from(
+            "vapour_pressure cannot be higher than pressure",
+        )));
+    }
+
     let kappa = R_D / C_P;
 
     let result = temperature * (100000.0 / (pressure - vapour_pressure)).powf(kappa);
@@ -54,24 +63,29 @@ pub fn davies_jones1(
 mod tests {
     use crate::{
         tests_framework::{self, Argument},
-        wet_bulb_temperature,
+        potential_temperature,
     };
 
     #[test]
-    fn stull1() {
-        assert!(tests_framework::test_with_2args(
-            &wet_bulb_temperature::stull1,
+    fn davies_jones1() {
+        assert!(tests_framework::test_with_3args(
+            &potential_temperature::davies_jones1,
             Argument {
                 name: "temperature",
                 def_val: 300.0,
                 range: [253.0, 324.0]
             },
             Argument {
-                name: "relative_humidity",
-                def_val: 0.5,
-                range: [0.05, 0.99]
+                name: "pressure",
+                def_val: 101325.0,
+                range: [100.0, 150_000.0]
             },
-            292.73867410526674
+            Argument {
+                name: "vapour_pressure",
+                def_val: 3000.0,
+                range: [0.0, 10_000.0]
+            },
+            301.45136519081666
         ));
     }
 }

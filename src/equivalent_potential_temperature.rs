@@ -56,24 +56,29 @@ pub fn bryan1(
 mod tests {
     use crate::{
         tests_framework::{self, Argument},
-        wet_bulb_temperature,
+        equivalent_potential_temperature,
     };
 
     #[test]
-    fn stull1() {
-        assert!(tests_framework::test_with_2args(
-            &wet_bulb_temperature::stull1,
+    fn bryan1() {
+        assert!(tests_framework::test_with_3args(
+            &equivalent_potential_temperature::bryan1,
             Argument {
                 name: "temperature",
                 def_val: 300.0,
                 range: [253.0, 324.0]
             },
             Argument {
-                name: "relative_humidity",
-                def_val: 0.5,
-                range: [0.05, 0.99]
+                name: "pressure",
+                def_val: 101325.0,
+                range: [100.0, 150_000.0]
             },
-            292.73867410526674
+            Argument {
+                name: "vapour_pressure",
+                def_val: 3000.0,
+                range: [0.0, 10_000.0]
+            },
+            353.37350501059836
         ));
     }
 }
