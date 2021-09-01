@@ -22,7 +22,7 @@ pub fn vapour_pressure_benchmark(c: &mut Criterion) {
         b.iter(|| vapour_pressure::buck4(black_box(250.0), black_box(101325.0)))
     });
 
-    c.bench_function("vapour_pressure::saturation_specific2", |b| {
+    c.bench_function("vapour_pressure::saturation_specific1", |b| {
         b.iter(|| vapour_pressure::saturation_specific1(black_box(3000.0), black_box(0.5)))
     });
 

@@ -31,6 +31,10 @@ name = "vapour_pressure"
 harness = false
 
 [[bench]]
+name = "vapour_pressure_deficit"
+harness = false
+
+[[bench]]
 name = "mixing_ratio"
 harness = false
 
