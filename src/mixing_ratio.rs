@@ -12,6 +12,9 @@ use crate::{constants::EPSILON, error_wrapper::InputError, vapour_pressure};
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `pressure` range: 100Pa - 150000Pa\
 ///Valid `vapour_pressure` range: 0Pa - 10000Pa
+///
+///Returns [`InputError::IncorrectArgumentSet`] when inputs are equal, in which
+///case division by 0 occurs.
 pub fn general1(pressure: f64, vapour_pressure: f64) -> Result<f64, InputError> {
     //validate inputs
     if !(100.0..=150_000.0).contains(&pressure) {
@@ -76,7 +79,11 @@ pub fn accuracy1(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
 mod tests {
     use float_cmp::assert_approx_eq;
 
-    use crate::{error_wrapper::InputError, mixing_ratio};
+    use crate::{
+        error_wrapper::InputError,
+        mixing_ratio,
+        tests_framework::{self, Argument},
+    };
 
     #[test]
     fn general1() {
@@ -95,6 +102,21 @@ mod tests {
             let expected = InputError::OutOfRange(String::from("vapour_pressure"));
             assert_eq!(result, expected);
         }
+
+        assert!(tests_framework::test_with_2args(
+            &mixing_ratio::general1,
+            Argument {
+                name: "pressure",
+                def_val: 101325.0,
+                range: [100.0, 150_000.0]
+            },
+            Argument {
+                name: "vapour_pressure",
+                def_val: 3500.0,
+                range: [0.0, 10_000.0]
+            },
+            0.022253316630823517
+        ));
     }
 
     #[test]

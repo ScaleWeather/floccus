@@ -188,7 +188,7 @@ pub fn saturation_specific1(
     saturation_vapour_pressure: f64,
     relative_humidity: f64,
 ) -> Result<f64, InputError> {
-    if !(0.0..=1.0).contains(&relative_humidity) {
+    if !(0.0..=2.0).contains(&relative_humidity) {
         return Err(InputError::OutOfRange(String::from("relative_humidity")));
     }
 
@@ -213,7 +213,7 @@ pub fn saturation_specific2(
     vapour_pressure: f64,
     relative_humidity: f64,
 ) -> Result<f64, InputError> {
-    if !(0.00001..=1.0).contains(&relative_humidity) {
+    if !(0.00001..=2.0).contains(&relative_humidity) {
         return Err(InputError::OutOfRange(String::from("relative_humidity")));
     }
 
@@ -226,158 +226,129 @@ pub fn saturation_specific2(
 
 #[cfg(test)]
 mod tests {
-    use crate::{error_wrapper::InputError, vapour_pressure};
-    use float_cmp::assert_approx_eq;
+    use crate::{
+        tests_framework::{self, Argument},
+        vapour_pressure,
+    };
 
     #[test]
     fn buck1() {
-        let result = vapour_pressure::buck1(300.0, 101325.0).unwrap();
-        let expected = 3550.6603579471303;
-        assert_approx_eq!(f64, expected, result, ulps = 2);
-
-        for &dewpoint in [231.9, 324.1].iter() {
-            let result = vapour_pressure::buck1(dewpoint, 101325.0).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("dewpoint"));
-            assert_eq!(result, expected);
-        }
-
-        for &pressure in [99.9, 150000.1].iter() {
-            let result = vapour_pressure::buck1(300.0, pressure).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("pressure"));
-            assert_eq!(result, expected);
-        }
+        assert!(tests_framework::test_with_2args(
+            &vapour_pressure::buck1,
+            Argument {
+                name: "dewpoint",
+                def_val: 101325.0,
+                range: [232.0, 324.0]
+            },
+            Argument {
+                name: "pressure",
+                def_val: 3500.0,
+                range: [100.0, 150_000.0]
+            },
+            3550.6603579471303
+        ));
     }
 
     #[test]
     fn buck2() {
-        let result = vapour_pressure::buck2(250.0, 101325.0).unwrap();
-        let expected = 76.38781790372722;
-        assert_approx_eq!(f64, expected, result, ulps = 2);
-
-        for &dewpoint in [192.9, 274.1].iter() {
-            let result = vapour_pressure::buck2(dewpoint, 101325.0).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("dewpoint"));
-            assert_eq!(result, expected);
-        }
-
-        for &pressure in [99.9, 150000.1].iter() {
-            let result = vapour_pressure::buck2(250.0, pressure).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("pressure"));
-            assert_eq!(result, expected);
-        }
+        assert!(tests_framework::test_with_2args(
+            &vapour_pressure::buck2,
+            Argument {
+                name: "dewpoint",
+                def_val: 250.0,
+                range: [193.0, 274.0]
+            },
+            Argument {
+                name: "pressure",
+                def_val: 101325.0,
+                range: [100.0, 150_000.0]
+            },
+            76.38781790372722
+        ));
     }
 
     #[test]
     fn buck3() {
-        let result = vapour_pressure::buck3(300.0, 101325.0).unwrap();
-        let expected = 3548.5041048035896;
-        assert_approx_eq!(f64, expected, result, ulps = 2);
-
-        for &dewpoint in [252.9, 324.1].iter() {
-            let result = vapour_pressure::buck3(dewpoint, 101325.0).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("dewpoint"));
-            assert_eq!(result, expected);
-        }
-
-        for &pressure in [99.9, 150000.1].iter() {
-            let result = vapour_pressure::buck3(300.0, pressure).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("pressure"));
-            assert_eq!(result, expected);
-        }
+        assert!(tests_framework::test_with_2args(
+            &vapour_pressure::buck3,
+            Argument {
+                name: "dewpoint",
+                def_val: 300.0,
+                range: [253.0, 324.0]
+            },
+            Argument {
+                name: "pressure",
+                def_val: 101325.0,
+                range: [100.0, 150_000.0]
+            },
+            3548.5041048035896
+        ));
     }
 
     #[test]
     fn buck4() {
-        let result = vapour_pressure::buck4(250.0, 101325.0).unwrap();
-        let expected = 76.38685471836712;
-        assert_approx_eq!(f64, expected, result, ulps = 2);
-
-        for &dewpoint in [222.9, 274.1].iter() {
-            let result = vapour_pressure::buck4(dewpoint, 101325.0).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("dewpoint"));
-            assert_eq!(result, expected);
-        }
-
-        for &pressure in [99.9, 150000.1].iter() {
-            let result = vapour_pressure::buck4(250.0, pressure).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("pressure"));
-            assert_eq!(result, expected);
-        }
+        assert!(tests_framework::test_with_2args(
+            &vapour_pressure::buck4,
+            Argument {
+                name: "dewpoint",
+                def_val: 250.0,
+                range: [223.0, 274.0]
+            },
+            Argument {
+                name: "pressure",
+                def_val: 101325.0,
+                range: [100.0, 150_000.0]
+            },
+            76.38685471836712
+        ));
     }
 
     #[test]
     fn tetens1() {
-        let result = vapour_pressure::tetens1(300.0).unwrap();
-        let expected = 3533.969137160892;
-        assert_approx_eq!(f64, expected, result, ulps = 2);
-
-        for &dewpoint in [272.9, 353.1].iter() {
-            let result = vapour_pressure::tetens1(dewpoint).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("dewpoint"));
-            assert_eq!(result, expected);
-        }
+        assert!(tests_framework::test_with_1arg(
+            &vapour_pressure::tetens1,
+            Argument {
+                name: "dewpoint",
+                def_val: 300.0,
+                range: [273.0, 353.0]
+            },
+            3533.969137160892
+        ));
     }
 
     #[test]
     fn saturation_specific1() {
-        let result = vapour_pressure::saturation_specific1(3550.0, 0.4).unwrap();
-        let expected = 1420.0;
-        assert_approx_eq!(f64, expected, result, ulps = 2);
-
-        for saturation_vapour_pressure in 0..=10_000 {
-            for relative_humidity in 0..=100 {
-                let result = vapour_pressure::saturation_specific1(
-                    saturation_vapour_pressure as f64,
-                    relative_humidity as f64 / 100.0,
-                )
-                .unwrap();
-                assert!(result.is_finite());
-            }
-        }
-
-        for &saturation_vapour_pressure in [-0.1, 10_000.1].iter() {
-            let result =
-                vapour_pressure::saturation_specific1(saturation_vapour_pressure, 0.4).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("saturation_vapour_pressure"));
-            assert_eq!(result, expected);
-        }
-
-        for &relative_humidity in [-0.1, 1.1].iter() {
-            let result =
-                vapour_pressure::saturation_specific1(3550.0, relative_humidity).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("relative_humidity"));
-            assert_eq!(result, expected);
-        }
+        assert!(tests_framework::test_with_2args(
+            &vapour_pressure::saturation_specific1,
+            Argument {
+                name: "saturation_vapour_pressure",
+                def_val: 3550.0,
+                range: [0.0, 10_000.0]
+            },
+            Argument {
+                name: "relative_humidity",
+                def_val: 0.5,
+                range: [0.0, 2.0]
+            },
+            1775.0
+        ));
     }
 
     #[test]
     fn saturation_specific2() {
-        let result = vapour_pressure::saturation_specific2(3000.0, 0.4).unwrap();
-        let expected = 7500.0;
-        assert_approx_eq!(f64, expected, result, ulps = 2);
-
-        for vapour_pressure in 0..=10_000 {
-            for relative_humidity in 1..=100 {
-                let result = vapour_pressure::saturation_specific2(
-                    vapour_pressure as f64,
-                    relative_humidity as f64 / 100.0,
-                )
-                .unwrap();
-                assert!(result.is_finite());
-            }
-        }
-
-        for &vapour_pressure in [-0.1, 10_000.1].iter() {
-            let result = vapour_pressure::saturation_specific2(vapour_pressure, 0.4).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("vapour_pressure"));
-            assert_eq!(result, expected);
-        }
-
-        for &relative_humidity in [-0.1, 1.1].iter() {
-            let result =
-                vapour_pressure::saturation_specific2(3000.0, relative_humidity).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("relative_humidity"));
-            assert_eq!(result, expected);
-        }
+        assert!(tests_framework::test_with_2args(
+            &vapour_pressure::saturation_specific2,
+            Argument {
+                name: "vapour_pressure",
+                def_val: 3000.0,
+                range: [0.0, 10_000.0]
+            },
+            Argument {
+                name: "relative_humidity",
+                def_val: 0.5,
+                range: [0.00001, 2.0]
+            },
+            6000.0
+        ));
     }
 }
