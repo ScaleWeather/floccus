@@ -21,7 +21,7 @@ pub fn stull1(temperature: f64, relative_humidity: f64) -> Result<f64, InputErro
     if !(0.05..=0.99).contains(&relative_humidity) {
         return Err(InputError::OutOfRange(String::from("relative_humidity")));
     }
-    
+
     //convert units
     let temperature = temperature - ZERO_CELSIUS;
     let relative_humidity = relative_humidity * 100.0;
@@ -37,25 +37,26 @@ pub fn stull1(temperature: f64, relative_humidity: f64) -> Result<f64, InputErro
 
 #[cfg(test)]
 mod tests {
-    use crate::{error_wrapper::InputError, wet_bulb_temperature};
-    use float_cmp::assert_approx_eq;
+    use crate::{
+        tests_framework::{self, Argument},
+        wet_bulb_temperature,
+    };
 
     #[test]
     fn stull1() {
-        let result = wet_bulb_temperature::stull1(300.0, 0.5).unwrap();
-        let expected = 292.73867410526674;
-        assert_approx_eq!(f64, expected, result, ulps = 2);
-
-        for &temperature in [252.9, 324.1].iter() {
-            let result = wet_bulb_temperature::stull1(temperature, 0.5).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("temperature"));
-            assert_eq!(result, expected);
-        }
-
-        for &relative_humidity in [0.04, 1.0].iter() {
-            let result = wet_bulb_temperature::stull1(300.0, relative_humidity).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("relative_humidity"));
-            assert_eq!(result, expected);
-        }
+        assert!(tests_framework::test_with_2args(
+            &wet_bulb_temperature::stull1,
+            Argument {
+                name: "temperature",
+                def_val: 300.0,
+                range: [253.0, 324.0]
+            },
+            Argument {
+                name: "relative_humidity",
+                def_val: 0.5,
+                range: [0.05, 0.99]
+            },
+            292.73867410526674
+        ));
     }
 }

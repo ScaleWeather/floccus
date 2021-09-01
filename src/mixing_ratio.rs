@@ -22,7 +22,7 @@ pub fn general1(pressure: f64, vapour_pressure: f64) -> Result<f64, InputError> 
         return Err(InputError::OutOfRange(String::from("pressure")));
     }
 
-    if !(0.0..=10_000.0).contains(&vapour_pressure) {
+    if !(0.0..=50_000.0).contains(&vapour_pressure) {
         return Err(InputError::OutOfRange(String::from("vapour_pressure")));
     }
 
@@ -84,32 +84,13 @@ pub fn accuracy1(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
 
 #[cfg(test)]
 mod tests {
-    use float_cmp::assert_approx_eq;
-
     use crate::{
-        error_wrapper::InputError,
         mixing_ratio,
         tests_framework::{self, Argument},
     };
 
     #[test]
     fn general1() {
-        let result = mixing_ratio::general1(101325.0, 3500.0).unwrap();
-        let expected = 0.022253316630823517;
-        assert_approx_eq!(f64, expected, result, ulps = 2);
-
-        for &pressure in [99.9, 150000.1].iter() {
-            let result = mixing_ratio::general1(pressure, 3500.0).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("pressure"));
-            assert_eq!(result, expected);
-        }
-
-        for &vapour_pressure in [-0.1, 10000.1].iter() {
-            let result = mixing_ratio::general1(101325.0, vapour_pressure).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("vapour_pressure"));
-            assert_eq!(result, expected);
-        }
-
         assert!(tests_framework::test_with_2args(
             &mixing_ratio::general1,
             Argument {
@@ -120,7 +101,7 @@ mod tests {
             Argument {
                 name: "vapour_pressure",
                 def_val: 3500.0,
-                range: [0.0, 10_000.0]
+                range: [0.0, 50_000.0]
             },
             0.022253316630823517
         ));
@@ -128,39 +109,37 @@ mod tests {
 
     #[test]
     fn performance1() {
-        let result = mixing_ratio::performance1(300.0, 101325.0).unwrap();
-        let expected = 0.022477100514593465;
-        assert_approx_eq!(f64, expected, result, ulps = 2);
-
-        for &dewpoint in [272.9, 353.1].iter() {
-            let result = mixing_ratio::performance1(dewpoint, 101325.0).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("dewpoint"));
-            assert_eq!(result, expected);
-        }
-
-        for &pressure in [99.9, 150000.1].iter() {
-            let result = mixing_ratio::performance1(300.0, pressure).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("pressure"));
-            assert_eq!(result, expected);
-        }
+        assert!(tests_framework::test_with_2args(
+            &mixing_ratio::performance1,
+            Argument {
+                name: "dewpoint",
+                def_val: 300.0,
+                range: [273.0, 353.0]
+            },
+            Argument {
+                name: "pressure",
+                def_val: 101325.0,
+                range: [100.0, 150_000.0]
+            },
+            0.022477100514593465
+        ));
     }
 
     #[test]
     fn accuracy1() {
-        let result = mixing_ratio::accuracy1(300.0, 101325.0).unwrap();
-        let expected = 0.022587116896465847;
-        assert_approx_eq!(f64, expected, result, ulps = 2);
-
-        for &dewpoint in [231.9, 324.1].iter() {
-            let result = mixing_ratio::accuracy1(dewpoint, 101325.0).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("dewpoint"));
-            assert_eq!(result, expected);
-        }
-
-        for &pressure in [99.9, 150000.1].iter() {
-            let result = mixing_ratio::accuracy1(300.0, pressure).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("pressure"));
-            assert_eq!(result, expected);
-        }
+        assert!(tests_framework::test_with_2args(
+            &mixing_ratio::accuracy1,
+            Argument {
+                name: "dewpoint",
+                def_val: 300.0,
+                range: [232.0, 324.0]
+            },
+            Argument {
+                name: "pressure",
+                def_val: 101325.0,
+                range: [100.0, 150_000.0]
+            },
+            0.022587116896465847
+        ));
     }
 }

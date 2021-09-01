@@ -14,7 +14,7 @@ use crate::{constants::EPSILON, error_wrapper::InputError};
 ///Valid `temperature` range: 173K - 373K\
 ///Valid `mixing_ratio` range: 0.00001 - 0.5
 pub fn general1(temperature: f64, mixing_ratio: f64) -> Result<f64, InputError> {
-    if !(173.0..=373.0).contains(&temperature) {
+    if !(173.0..=354.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));
     }
 
@@ -36,7 +36,7 @@ pub fn general1(temperature: f64, mixing_ratio: f64) -> Result<f64, InputError> 
 ///Valid `pressure` range: 100Pa - 150000Pa\
 ///Valid `vapour_pressure` range: 0Pa - 10000Pa
 pub fn general2(temperature: f64, pressure: f64, vapour_pressure: f64) -> Result<f64, InputError> {
-    if !(173.0..=373.0).contains(&temperature) {
+    if !(173.0..=354.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));
     }
 
@@ -55,50 +55,49 @@ pub fn general2(temperature: f64, pressure: f64, vapour_pressure: f64) -> Result
 
 #[cfg(test)]
 mod tests {
-    use crate::{error_wrapper::InputError, virtual_temperature};
-    use float_cmp::assert_approx_eq;
+    use crate::{
+        tests_framework::{self, Argument},
+        virtual_temperature,
+    };
 
     #[test]
     fn general1() {
-        let result = virtual_temperature::general1(300.0, 0.022).unwrap();
-        let expected = 303.9249219815806;
-        assert_approx_eq!(f64, expected, result, ulps = 2);
-
-        for &temperature in [172.9, 374.1].iter() {
-            let result = virtual_temperature::general1(temperature, 0.022).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("temperature"));
-            assert_eq!(result, expected);
-        }
-
-        for &mixing_ratio in [0.000009, 0.51].iter() {
-            let result = virtual_temperature::general1(300.0, mixing_ratio).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("mixing_ratio"));
-            assert_eq!(result, expected);
-        }
+        assert!(tests_framework::test_with_2args(
+            &virtual_temperature::general1,
+            Argument {
+                name: "temperature",
+                def_val: 300.0,
+                range: [173.0, 354.0]
+            },
+            Argument {
+                name: "mixing_ratio",
+                def_val: 0.022,
+                range: [0.00001, 0.5]
+            },
+            303.9249219815806
+        ));
     }
 
     #[test]
     fn general2() {
-        let result = virtual_temperature::general2(300.0, 101325.0, 3550.0).unwrap();
-        let expected = 304.0265941965307;
-        assert_approx_eq!(f64, expected, result, ulps = 2);
-
-        for &temperature in [172.9, 374.1].iter() {
-            let result = virtual_temperature::general2(temperature, 101325.0, 3550.0).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("temperature"));
-            assert_eq!(result, expected);
-        }
-
-        for &pressure in [99.9, 150_000.1].iter() {
-            let result = virtual_temperature::general2(300.0, pressure, 3550.0).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("pressure"));
-            assert_eq!(result, expected);
-        }
-
-        for &vapour_pressure in [-0.1, 10_000.1].iter() {
-            let result = virtual_temperature::general2(300.0, 101325.0, vapour_pressure).unwrap_err();
-            let expected = InputError::OutOfRange(String::from("vapour_pressure"));
-            assert_eq!(result, expected);
-        }
+        assert!(tests_framework::test_with_3args(
+            &virtual_temperature::general2,
+            Argument {
+                name: "temperature",
+                def_val: 300.0,
+                range: [173.0, 354.0]
+            },
+            Argument {
+                name: "pressure",
+                def_val: 101325.0,
+                range: [100.0, 150_000.0]
+            },
+            Argument {
+                name: "vapour_pressure",
+                def_val: 3550.0,
+                range: [0.0, 10_000.0]
+            },
+            304.0265941965307
+        ));
     }
 }

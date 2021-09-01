@@ -23,7 +23,7 @@ pub fn test_with_2args(
     //the first promise of the crate is that returned value
     //is calculated correctly
     let result = tested_function(arg1.def_val, arg2.def_val).unwrap();
-    assert_approx_eq!(f64, result, expected_result, epsilon = 0.0001);
+    assert_approx_eq!(f64, result, expected_result, epsilon = 0.000001);
 
     //the second promise of the crate is to never return NaN or Inf
     //here we check several edge cases for that
@@ -49,12 +49,12 @@ pub fn test_with_2args(
     //for values within valid range
     for arg1_itr in 0..=100 {
         for arg2_itr in 0..=100 {
-            let arg1 =
+            let arg1_tmp =
                 (((arg1.range[1] - arg1.range[0]) / 100.0) * f64::from(arg1_itr)) + arg1.range[0];
-            let arg2 =
+            let arg2_tmp =
                 (((arg2.range[1] - arg2.range[0]) / 100.0) * f64::from(arg2_itr)) + arg2.range[0];
 
-            let result = tested_function(arg1, arg2);
+            let result = tested_function(arg1_tmp, arg2_tmp);
 
             if result.is_err() {
                 assert!(
@@ -91,7 +91,7 @@ pub fn test_with_1arg(
     expected_result: f64,
 ) -> bool {
     let result = tested_function(arg1.def_val).unwrap();
-    assert_approx_eq!(f64, result, expected_result, epsilon = 0.0001);
+    assert_approx_eq!(f64, result, expected_result, epsilon = 0.000001);
 
     let results = vec![tested_function(0.0)];
 
@@ -102,10 +102,10 @@ pub fn test_with_1arg(
     }
 
     for arg1_itr in 0..=100 {
-        let arg1 =
+        let arg1_tmp =
             (((arg1.range[1] - arg1.range[0]) / 100.0) * f64::from(arg1_itr)) + arg1.range[0];
 
-        let result = tested_function(arg1);
+        let result = tested_function(arg1_tmp);
 
         if result.is_err() {
             assert!(
@@ -135,7 +135,7 @@ pub fn test_with_3args(
     expected_result: f64,
 ) -> bool {
     let result = tested_function(arg1.def_val, arg2.def_val, arg3.def_val).unwrap();
-    assert_approx_eq!(f64, result, expected_result, epsilon = 0.0001);
+    assert_approx_eq!(f64, result, expected_result, epsilon = 0.000001);
 
     let results = vec![
         tested_function(0.0, arg2.def_val, arg3.def_val),
@@ -153,14 +153,14 @@ pub fn test_with_3args(
     for arg1_itr in 0..=100 {
         for arg2_itr in 0..=100 {
             for arg3_itr in 0..=100 {
-                let arg1 = (((arg1.range[1] - arg1.range[0]) / 100.0) * f64::from(arg1_itr))
+                let arg1_tmp = (((arg1.range[1] - arg1.range[0]) / 100.0) * f64::from(arg1_itr))
                     + arg1.range[0];
-                let arg2 = (((arg2.range[1] - arg2.range[0]) / 100.0) * f64::from(arg2_itr))
+                let arg2_tmp = (((arg2.range[1] - arg2.range[0]) / 100.0) * f64::from(arg2_itr))
                     + arg2.range[0];
-                let arg3 = (((arg3.range[1] - arg3.range[0]) / 100.0) * f64::from(arg3_itr))
+                let arg3_tmp = (((arg3.range[1] - arg3.range[0]) / 100.0) * f64::from(arg3_itr))
                     + arg3.range[0];
 
-                let result = tested_function(arg1, arg2, arg3);
+                let result = tested_function(arg1_tmp, arg2_tmp, arg3_tmp);
 
                 if result.is_err() {
                     assert!(
@@ -187,9 +187,9 @@ pub fn test_with_3args(
     assert_eq!(result, expected);
 
     let expected = InputError::OutOfRange(String::from(arg3.name));
-    let result = tested_function(arg1.def_val, arg2.def_val, arg2.range[0] - 0.1).unwrap_err();
+    let result = tested_function(arg1.def_val, arg2.def_val, arg3.range[0] - 0.1).unwrap_err();
     assert_eq!(result, expected);
-    let result = tested_function(arg1.def_val, arg2.def_val, arg2.range[1] + 0.1).unwrap_err();
+    let result = tested_function(arg1.def_val, arg2.def_val, arg3.range[1] + 0.1).unwrap_err();
     assert_eq!(result, expected);
 
     true
