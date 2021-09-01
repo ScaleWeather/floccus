@@ -67,3 +67,4 @@ pub mod virtual_temperature;
 pub mod wet_bulb_temperature;
 pub mod relative_humidity;
 pub mod vapour_pressure_deficit;
+mod tests_framework;
