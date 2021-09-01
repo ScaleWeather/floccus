@@ -54,7 +54,7 @@ pub fn davies_jones1(
 
     let kappa = R_D / C_P;
 
-    let result = temperature * (100000.0 / (pressure - vapour_pressure)).powf(kappa);
+    let result = temperature * (100_000.0 / (pressure - vapour_pressure)).powf(kappa);
 
     Ok(result)
 }

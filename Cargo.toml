@@ -45,3 +45,19 @@ harness = false
 [[bench]]
 name = "relative_humidity"
 harness = false
+
+[[bench]]
+name = "specific_humidity"
+harness = false
+
+[[bench]]
+name = "potential_temperature"
+harness = false
+
+[[bench]]
+name = "equivalent_potential_temperature"
+harness = false
+
+[[bench]]
+name = "wet_bulb_potential_temperature"
+harness = false
