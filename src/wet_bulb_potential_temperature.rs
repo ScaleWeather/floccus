@@ -30,24 +30,19 @@ pub fn davies_jones1(equivalent_potential_temperature: f64) -> Result<f64, Input
 mod tests {
     use crate::{
         tests_framework::{self, Argument},
-        wet_bulb_temperature,
+        wet_bulb_potential_temperature,
     };
 
     #[test]
     fn stull1() {
-        assert!(tests_framework::test_with_2args(
-            &wet_bulb_temperature::stull1,
+        assert!(tests_framework::test_with_1arg(
+            &wet_bulb_potential_temperature::davies_jones1,
             Argument {
-                name: "temperature",
+                name: "equivalent_potential_temperature",
                 def_val: 300.0,
-                range: [253.0, 324.0]
+                range: [257.0, 377.0]
             },
-            Argument {
-                name: "relative_humidity",
-                def_val: 0.5,
-                range: [0.05, 0.99]
-            },
-            292.73867410526674
+            281.17941447108467
         ));
     }
 }
