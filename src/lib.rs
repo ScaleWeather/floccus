@@ -72,3 +72,4 @@ mod tests_framework;
 pub mod wet_bulb_potential_temperature;
 pub mod potential_temperature;
 pub mod equivalent_potential_temperature;
+pub mod specific_humidity;

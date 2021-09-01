@@ -34,7 +34,7 @@ mod tests {
     };
 
     #[test]
-    fn stull1() {
+    fn davies_jones1() {
         assert!(tests_framework::test_with_1arg(
             &wet_bulb_potential_temperature::davies_jones1,
             Argument {
