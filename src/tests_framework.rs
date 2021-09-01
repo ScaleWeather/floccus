@@ -1,5 +1,6 @@
 use crate::error_wrapper::InputError;
 use float_cmp::assert_approx_eq;
+use std::mem::discriminant;
 
 #[derive(Copy, Clone, Debug, Default)]
 pub struct Argument {
@@ -44,7 +45,8 @@ pub fn test_with_2args(
 
     //the third promise of the crate is to always return finite f64
     //if all inputs are within the range
-    //the check for returned value being Ok(f64) is implicit
+    //the only allowed error is InccorectArgumentsSet as it can occur
+    //for values within valid range
     for arg1_itr in 0..=100 {
         for arg2_itr in 0..=100 {
             let arg1 =
@@ -52,8 +54,16 @@ pub fn test_with_2args(
             let arg2 =
                 (((arg2.range[1] - arg2.range[0]) / 100.0) * f64::from(arg2_itr)) + arg2.range[0];
 
-            let result = tested_function(arg1, arg2).unwrap();
-            assert!(result.is_finite());
+            let result = tested_function(arg1, arg2);
+
+            if result.is_err() {
+                assert!(
+                    discriminant(&InputError::IncorrectArgumentSet(String::from("")))
+                        == discriminant(&result.unwrap_err())
+                )
+            } else {
+                assert!(result.unwrap().is_finite());
+            }
         }
     }
 
@@ -92,10 +102,19 @@ pub fn test_with_1arg(
     }
 
     for arg1_itr in 0..=100 {
-        let arg1 = (((arg1.range[1] - arg1.range[0]) / 100.0) * f64::from(arg1_itr)) + arg1.range[0];
+        let arg1 =
+            (((arg1.range[1] - arg1.range[0]) / 100.0) * f64::from(arg1_itr)) + arg1.range[0];
 
-        let result = tested_function(arg1).unwrap();
-        assert!(result.is_finite());
+        let result = tested_function(arg1);
+
+        if result.is_err() {
+            assert!(
+                discriminant(&InputError::IncorrectArgumentSet(String::from("")))
+                    == discriminant(&result.unwrap_err())
+            )
+        } else {
+            assert!(result.unwrap().is_finite());
+        }
     }
 
     let expected = InputError::OutOfRange(String::from(arg1.name));
@@ -134,15 +153,23 @@ pub fn test_with_3args(
     for arg1_itr in 0..=100 {
         for arg2_itr in 0..=100 {
             for arg3_itr in 0..=100 {
-                let arg1 =
-                    (((arg1.range[1] - arg1.range[0]) / 100.0) * f64::from(arg1_itr)) + arg1.range[0];
-                let arg2 =
-                    (((arg2.range[1] - arg2.range[0]) / 100.0) * f64::from(arg2_itr)) + arg2.range[0];
-                let arg3 =
-                    (((arg3.range[1] - arg3.range[0]) / 100.0) * f64::from(arg3_itr)) + arg3.range[0];
+                let arg1 = (((arg1.range[1] - arg1.range[0]) / 100.0) * f64::from(arg1_itr))
+                    + arg1.range[0];
+                let arg2 = (((arg2.range[1] - arg2.range[0]) / 100.0) * f64::from(arg2_itr))
+                    + arg2.range[0];
+                let arg3 = (((arg3.range[1] - arg3.range[0]) / 100.0) * f64::from(arg3_itr))
+                    + arg3.range[0];
 
-                let result = tested_function(arg1, arg2, arg3).unwrap();
-                assert!(result.is_finite());
+                let result = tested_function(arg1, arg2, arg3);
+
+                if result.is_err() {
+                    assert!(
+                        discriminant(&InputError::IncorrectArgumentSet(String::from("")))
+                            == discriminant(&result.unwrap_err())
+                    )
+                } else {
+                    assert!(result.unwrap().is_finite());
+                }
             }
         }
     }

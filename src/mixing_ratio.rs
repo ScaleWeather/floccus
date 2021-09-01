@@ -4,6 +4,7 @@
 //!or saturation vapour pressure in place of vapour pressure.
 
 use crate::{constants::EPSILON, error_wrapper::InputError, vapour_pressure};
+use float_cmp::approx_eq;
 
 ///Formula for computing mixing ratio of unsaturated air from air pressure and vapour pressure
 ///
@@ -23,6 +24,12 @@ pub fn general1(pressure: f64, vapour_pressure: f64) -> Result<f64, InputError> 
 
     if !(0.0..=10_000.0).contains(&vapour_pressure) {
         return Err(InputError::OutOfRange(String::from("vapour_pressure")));
+    }
+
+    if approx_eq!(f64, pressure, vapour_pressure, ulps = 2) {
+        return Err(InputError::IncorrectArgumentSet(String::from(
+            "pressure and vapour_pressure cannot be equal",
+        )));
     }
 
     let result = EPSILON * (vapour_pressure / (pressure - vapour_pressure));

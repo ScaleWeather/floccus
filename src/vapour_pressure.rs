@@ -237,12 +237,12 @@ mod tests {
             &vapour_pressure::buck1,
             Argument {
                 name: "dewpoint",
-                def_val: 101325.0,
+                def_val: 300.0,
                 range: [232.0, 324.0]
             },
             Argument {
                 name: "pressure",
-                def_val: 3500.0,
+                def_val: 101325.0,
                 range: [100.0, 150_000.0]
             },
             3550.6603579471303
