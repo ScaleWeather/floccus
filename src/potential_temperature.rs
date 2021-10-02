@@ -1,6 +1,7 @@
 //!Functions to calculate potential temperature of dry air in K.
 
 use float_cmp::approx_eq;
+use crate::Float;
 
 use crate::{
     constants::{C_P, R_D},
@@ -24,10 +25,10 @@ use crate::{
 ///Returns [`InputError::IncorrectArgumentSet`] when `pressure` is lower than `vapour_pressure`,
 ///in which case floating-point exponentation of negative number occurs.
 pub fn davies_jones1(
-    temperature: f64,
-    pressure: f64,
-    vapour_pressure: f64,
-) -> Result<f64, InputError> {
+    temperature: Float,
+    pressure: Float,
+    vapour_pressure: Float,
+) -> Result<Float, InputError> {
     if !(253.0..=324.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));
     }
@@ -40,7 +41,7 @@ pub fn davies_jones1(
         return Err(InputError::OutOfRange(String::from("vapour_pressure")));
     }
 
-    if approx_eq!(f64, pressure, vapour_pressure, ulps = 2) {
+    if approx_eq!(Float, pressure, vapour_pressure, ulps = 2) {
         return Err(InputError::IncorrectArgumentSet(String::from(
             "pressure and vapour_pressure cannot be equal",
         )));

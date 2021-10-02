@@ -1,6 +1,7 @@
 //!Functions to calculate relative humidity in %/100
 
 use crate::{error_wrapper::InputError, mixing_ratio, vapour_pressure};
+use crate::Float;
 
 ///Formula for computing relative humidity from mixing ratio and saturation mixing ratio.
 ///Can be used interchangeably with [`general2`].
@@ -13,7 +14,7 @@ use crate::{error_wrapper::InputError, mixing_ratio, vapour_pressure};
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `mixing_ratio` range: 0.00001 - 0.5\
 ///Valid `saturation_mixing_ratio` range: 0.00001 - 0.5
-pub fn general1(mixing_ratio: f64, saturation_mixing_ratio: f64) -> Result<f64, InputError> {
+pub fn general1(mixing_ratio: Float, saturation_mixing_ratio: Float) -> Result<Float, InputError> {
     if !(0.00001..=10.0).contains(&mixing_ratio) {
         return Err(InputError::OutOfRange(String::from("mixing_ratio")));
     }
@@ -35,7 +36,7 @@ pub fn general1(mixing_ratio: f64, saturation_mixing_ratio: f64) -> Result<f64, 
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `vapour_pressure` range: 0Pa - 10000Pa
 ///Valid `saturation_vapour_pressure` range: 0Pa - 10000Pa
-pub fn general2(vapour_pressure: f64, saturation_vapour_pressure: f64) -> Result<f64, InputError> {
+pub fn general2(vapour_pressure: Float, saturation_vapour_pressure: Float) -> Result<Float, InputError> {
     if !(0.0..=50_000.0).contains(&vapour_pressure) {
         return Err(InputError::OutOfRange(String::from("vapour_pressure")));
     }
@@ -57,7 +58,7 @@ pub fn general2(vapour_pressure: f64, saturation_vapour_pressure: f64) -> Result
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `temperature` range: 273K - 353K
 ///Valid `dewpoint` range: 273K - 353K
-pub fn general3(temperature: f64, dewpoint: f64) -> Result<f64, InputError> {
+pub fn general3(temperature: Float, dewpoint: Float) -> Result<Float, InputError> {
     if !(273.0..=353.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));
     }
@@ -82,7 +83,7 @@ pub fn general3(temperature: f64, dewpoint: f64) -> Result<f64, InputError> {
 ///Valid `temperature` range: 253K - 324K\
 ///Valid `dewpoint` range: 253K - 324K\
 ///Valid `pressure` range: 100Pa - 150000Pa
-pub fn general4(temperature: f64, dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
+pub fn general4(temperature: Float, dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
     if !(253.0..=324.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));
     }
@@ -111,7 +112,7 @@ pub fn general4(temperature: f64, dewpoint: f64, pressure: f64) -> Result<f64, I
 ///Valid `temperature` range: 232K - 324K\
 ///Valid `dewpoint` range: 232K - 324K\
 ///Valid `pressure` range: 100Pa - 150000Pa
-pub fn general5(temperature: f64, dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
+pub fn general5(temperature: Float, dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
     if !(232.0..=314.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));
     }

@@ -14,9 +14,7 @@
 //!
 //!//Compute vapour pressure using Buck (1981) formula
 //!let vapour_pressure = vapour_pressure::buck1(temperature, pressure).unwrap();
-//!let expected = 3550.6603579471303;
-//!
-//!assert_approx_eq!(f64, expected, vapour_pressure, ulps = 2);
+//!println!("{}", vapour_pressure); // 3550.662 (f32) or 3550.6603579471303 (f64)
 //!```
 //!
 //!# Naming of modules and functions
@@ -37,6 +35,12 @@
 //!
 //!Where the module name (`vapour_pressure`) indicates the computed quantity, function name (`buck1`) indicates the author of formula
 //!and the function arguments (`temperature, pressure`) are variables used to compute the quantity.
+//!
+//!# Double precision
+//!
+//!By default floccus uses single-precision (32-bit) floating-point variables. 
+//!If increased accuracy is needed (at the cost of performance) `double_precision` feature can be enabled
+//!to use double-precision (64-bit) floating point.
 //!
 //!# Input checking
 //!
@@ -73,3 +77,9 @@ pub mod wet_bulb_potential_temperature;
 pub mod potential_temperature;
 pub mod equivalent_potential_temperature;
 pub mod specific_humidity;
+
+#[cfg(not(feature="double_precision"))]
+type Float = f32;
+
+#[cfg(feature="double_precision")]
+type Float = f64;

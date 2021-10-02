@@ -6,6 +6,7 @@
 //!Specific humidity is approximately equal to mixing ratio.
 
 use crate::{constants::EPSILON, error_wrapper::InputError};
+use crate::Float;
 
 ///Formula for computing specific humidity from vapour pressure and pressure.
 ///Reverse function of [`vapour_pressure::general1`](crate::vapour_pressure::general1).
@@ -18,7 +19,7 @@ use crate::{constants::EPSILON, error_wrapper::InputError};
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `vapour_pressure` range: 0Pa - 50000OPa\,
 ///Valid `pressure` range: 100Pa - 150000Pa
-pub fn general1(vapour_pressure: f64, pressure: f64) -> Result<f64, InputError> {
+pub fn general1(vapour_pressure: Float, pressure: Float) -> Result<Float, InputError> {
     if !(0.0..=50_000.0).contains(&vapour_pressure) {
         return Err(InputError::OutOfRange(String::from("vapour_pressure")));
     }

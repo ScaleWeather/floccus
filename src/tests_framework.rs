@@ -1,12 +1,13 @@
 use crate::error_wrapper::InputError;
+use crate::Float;
 use float_cmp::assert_approx_eq;
 use std::mem::discriminant;
 
 #[derive(Copy, Clone, Debug, Default)]
 pub struct Argument {
     pub name: &'static str,
-    pub def_val: f64,
-    pub range: [f64; 2],
+    pub def_val: Float,
+    pub range: [Float; 2],
 }
 
 //due to a bug [https://github.com/rust-lang/rust/issues/46379]
@@ -15,15 +16,15 @@ pub struct Argument {
 #[allow(dead_code)]
 //this function should work as a reference for other test functions below
 pub fn test_with_2args(
-    tested_function: &dyn Fn(f64, f64) -> Result<f64, InputError>,
+    tested_function: &dyn Fn(Float, Float) -> Result<Float, InputError>,
     arg1: Argument,
     arg2: Argument,
-    expected_result: f64,
+    expected_result: Float,
 ) -> bool {
     //the first promise of the crate is that returned value
     //is calculated correctly
     let result = tested_function(arg1.def_val, arg2.def_val).unwrap();
-    assert_approx_eq!(f64, result, expected_result, epsilon = 0.000_001);
+    assert_approx_eq!(Float, result, expected_result, epsilon = 0.01);
 
     //the second promise of the crate is to never return NaN or Inf
     //here we check several edge cases for that
@@ -50,9 +51,9 @@ pub fn test_with_2args(
     for arg1_itr in 0..=100 {
         for arg2_itr in 0..=100 {
             let arg1_tmp =
-                (((arg1.range[1] - arg1.range[0]) / 100.0) * f64::from(arg1_itr)) + arg1.range[0];
+                (((arg1.range[1] - arg1.range[0]) / 100.0) * arg1_itr as Float) + arg1.range[0];
             let arg2_tmp =
-                (((arg2.range[1] - arg2.range[0]) / 100.0) * f64::from(arg2_itr)) + arg2.range[0];
+                (((arg2.range[1] - arg2.range[0]) / 100.0) * arg2_itr as Float) + arg2.range[0];
 
             let result = tested_function(arg1_tmp, arg2_tmp);
 
@@ -86,12 +87,12 @@ pub fn test_with_2args(
 
 #[allow(dead_code)]
 pub fn test_with_1arg(
-    tested_function: &dyn Fn(f64) -> Result<f64, InputError>,
+    tested_function: &dyn Fn(Float) -> Result<Float, InputError>,
     arg1: Argument,
-    expected_result: f64,
+    expected_result: Float,
 ) -> bool {
     let result = tested_function(arg1.def_val).unwrap();
-    assert_approx_eq!(f64, result, expected_result, epsilon = 0.000_001);
+    assert_approx_eq!(Float, result, expected_result, epsilon = 0.01);
 
     let results = vec![tested_function(0.0)];
 
@@ -103,7 +104,7 @@ pub fn test_with_1arg(
 
     for arg1_itr in 0..=100 {
         let arg1_tmp =
-            (((arg1.range[1] - arg1.range[0]) / 100.0) * f64::from(arg1_itr)) + arg1.range[0];
+            (((arg1.range[1] - arg1.range[0]) / 100.0) * arg1_itr as Float) + arg1.range[0];
 
         let result = tested_function(arg1_tmp);
 
@@ -128,14 +129,14 @@ pub fn test_with_1arg(
 
 #[allow(dead_code)]
 pub fn test_with_3args(
-    tested_function: &dyn Fn(f64, f64, f64) -> Result<f64, InputError>,
+    tested_function: &dyn Fn(Float, Float, Float) -> Result<Float, InputError>,
     arg1: Argument,
     arg2: Argument,
     arg3: Argument,
-    expected_result: f64,
+    expected_result: Float,
 ) -> bool {
     let result = tested_function(arg1.def_val, arg2.def_val, arg3.def_val).unwrap();
-    assert_approx_eq!(f64, result, expected_result, epsilon = 0.000_001);
+    assert_approx_eq!(Float, result, expected_result, epsilon = 0.01);
 
     let results = vec![
         tested_function(0.0, arg2.def_val, arg3.def_val),
@@ -153,12 +154,12 @@ pub fn test_with_3args(
     for arg1_itr in 0..=100 {
         for arg2_itr in 0..=100 {
             for arg3_itr in 0..=100 {
-                let arg1_tmp = (((arg1.range[1] - arg1.range[0]) / 100.0) * f64::from(arg1_itr))
-                    + arg1.range[0];
-                let arg2_tmp = (((arg2.range[1] - arg2.range[0]) / 100.0) * f64::from(arg2_itr))
-                    + arg2.range[0];
-                let arg3_tmp = (((arg3.range[1] - arg3.range[0]) / 100.0) * f64::from(arg3_itr))
-                    + arg3.range[0];
+                let arg1_tmp =
+                    (((arg1.range[1] - arg1.range[0]) / 100.0) * arg1_itr as Float) + arg1.range[0];
+                let arg2_tmp =
+                    (((arg2.range[1] - arg2.range[0]) / 100.0) * arg2_itr as Float) + arg2.range[0];
+                let arg3_tmp =
+                    (((arg3.range[1] - arg3.range[0]) / 100.0) * arg3_itr as Float) + arg3.range[0];
 
                 let result = tested_function(arg1_tmp, arg2_tmp, arg3_tmp);
 
@@ -168,6 +169,7 @@ pub fn test_with_3args(
                             == discriminant(&result.unwrap_err())
                     );
                 } else {
+                    println!("{} {} {} {:?}", arg1_tmp, arg2_tmp, arg3_tmp, result);
                     assert!(result.unwrap().is_finite());
                 }
             }

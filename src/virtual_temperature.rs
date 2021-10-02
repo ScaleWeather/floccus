@@ -5,6 +5,7 @@
 //!to the moist parcel of air ([Wikipedia](https://en.wikipedia.org/wiki/Virtual_temperature)).
 
 use crate::{constants::EPSILON, error_wrapper::InputError};
+use crate::Float;
 
 ///Formula for computing virtual temperature from temperature and mixing ratio.
 ///
@@ -13,7 +14,7 @@ use crate::{constants::EPSILON, error_wrapper::InputError};
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `temperature` range: 173K - 373K\
 ///Valid `mixing_ratio` range: 0.00001 - 0.5
-pub fn general1(temperature: f64, mixing_ratio: f64) -> Result<f64, InputError> {
+pub fn general1(temperature: Float, mixing_ratio: Float) -> Result<Float, InputError> {
     if !(173.0..=354.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));
     }
@@ -35,7 +36,7 @@ pub fn general1(temperature: f64, mixing_ratio: f64) -> Result<f64, InputError> 
 ///Valid `temperature` range: 173K - 373K\
 ///Valid `pressure` range: 100Pa - 150000Pa\
 ///Valid `vapour_pressure` range: 0Pa - 10000Pa
-pub fn general2(temperature: f64, pressure: f64, vapour_pressure: f64) -> Result<f64, InputError> {
+pub fn general2(temperature: Float, pressure: Float, vapour_pressure: Float) -> Result<Float, InputError> {
     if !(173.0..=354.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));
     }
@@ -60,7 +61,7 @@ pub fn general2(temperature: f64, pressure: f64, vapour_pressure: f64) -> Result
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `temperature` range: 173K - 373K\
 ///Valid `specific_humidity` range: 100Pa - 150000Pa\
-pub fn general3(temperature: f64, specific_humidity: f64) -> Result<f64, InputError> {
+pub fn general3(temperature: Float, specific_humidity: Float) -> Result<Float, InputError> {
     if !(173.0..=354.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));
     }

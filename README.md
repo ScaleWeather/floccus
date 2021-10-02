@@ -29,7 +29,7 @@ let pressure = 101325.0; //in Pa
 //Compute vapour pressure using Buck (1981) formula
 let vapour_pressure = vapour_pressure::buck1(temperature, pressure);
 
-//The result is 3550.6603579471303
+//The result is 3550.662 (f32) or 3550.6603579471303 (f64)
 ```
 
 ## Naming of modules and functions
@@ -45,6 +45,12 @@ vapour_pressure::buck1(temperature, pressure);
 
 Where the module name (`vapour_pressure`) indicates the computed quantity, function name (`buck1`) indicates the author of formula
 and the function arguments (`temperature, pressure`) are variables used to compute the quantity.
+
+# Double precision
+
+By default floccus uses single-precision (32-bit) floating-point variables. 
+If increased accuracy is needed (at the cost of performance) `double_precision` feature can be enabled
+to use double-precision (64-bit) floating point.
 
 # Input checking
 

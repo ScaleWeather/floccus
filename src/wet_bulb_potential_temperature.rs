@@ -1,5 +1,6 @@
 //!Functions to calculate dry bulb potential temperature of unsaturated air in K.
 
+use crate::Float;
 use crate::{
     constants::{C_P, R_D, ZERO_CELSIUS},
     error_wrapper::InputError,
@@ -13,7 +14,7 @@ use crate::{
 ///
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `temperature` range: 257K - 377K\
-pub fn davies_jones1(equivalent_potential_temperature: f64) -> Result<f64, InputError> {
+pub fn davies_jones1(equivalent_potential_temperature: Float) -> Result<Float, InputError> {
     if !(257.0..=377.0).contains(&equivalent_potential_temperature) {
         return Err(InputError::OutOfRange(String::from(
             "equivalent_potential_temperature",

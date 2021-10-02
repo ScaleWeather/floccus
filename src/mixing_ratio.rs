@@ -5,6 +5,7 @@
 
 use crate::{constants::EPSILON, error_wrapper::InputError, vapour_pressure};
 use float_cmp::approx_eq;
+use crate::Float;
 
 ///Formula for computing mixing ratio of unsaturated air from air pressure and vapour pressure
 ///
@@ -16,7 +17,7 @@ use float_cmp::approx_eq;
 ///
 ///Returns [`InputError::IncorrectArgumentSet`] when inputs are equal, in which
 ///case division by 0 occurs.
-pub fn general1(pressure: f64, vapour_pressure: f64) -> Result<f64, InputError> {
+pub fn general1(pressure: Float, vapour_pressure: Float) -> Result<Float, InputError> {
     //validate inputs
     if !(100.0..=150_000.0).contains(&pressure) {
         return Err(InputError::OutOfRange(String::from("pressure")));
@@ -26,7 +27,7 @@ pub fn general1(pressure: f64, vapour_pressure: f64) -> Result<f64, InputError> 
         return Err(InputError::OutOfRange(String::from("vapour_pressure")));
     }
 
-    if approx_eq!(f64, pressure, vapour_pressure, ulps = 2) {
+    if approx_eq!(Float, pressure, vapour_pressure, ulps = 2) {
         return Err(InputError::IncorrectArgumentSet(String::from(
             "pressure and vapour_pressure cannot be equal",
         )));
@@ -44,7 +45,7 @@ pub fn general1(pressure: f64, vapour_pressure: f64) -> Result<f64, InputError> 
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `dewpoint` range: 273K - 353K\
 ///Valid `pressure` range: 100Pa - 150000Pa
-pub fn performance1(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
+pub fn performance1(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
     //validate inputs
     if !(273.0..=353.0).contains(&dewpoint) {
         return Err(InputError::OutOfRange(String::from("dewpoint")));
@@ -67,7 +68,7 @@ pub fn performance1(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `dewpoint` range: 232K - 324K\
 ///Valid `pressure` range: 100Pa - 150000Pa
-pub fn accuracy1(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
+pub fn accuracy1(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
     //validate inputs
     if !(232.0..=324.0).contains(&dewpoint) {
         return Err(InputError::OutOfRange(String::from("dewpoint")));

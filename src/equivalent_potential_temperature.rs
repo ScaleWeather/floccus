@@ -1,5 +1,5 @@
 //!Functions to calculate equivalent potential temperature of air in K.
-
+use crate::Float;
 use crate::{
     constants::{C_P, EPSILON, L_V, R_D},
     error_wrapper::InputError,
@@ -18,15 +18,15 @@ use crate::{
 ///Valid `pressure` range: 100Pa - 150000Pa\
 ///Valid `vapour_pressure` range: 0Pa - 10000Pa
 pub fn bryan1(
-    temperature: f64,
-    pressure: f64,
-    vapour_pressure: f64,
-) -> Result<f64, InputError> {
+    temperature: Float,
+    pressure: Float,
+    vapour_pressure: Float,
+) -> Result<Float, InputError> {
     if !(253.0..=324.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));
     }
 
-    if !(100.0..=150_000.0).contains(&pressure) {
+    if !(20000.0..=150_000.0).contains(&pressure) {
         return Err(InputError::OutOfRange(String::from("pressure")));
     }
 
@@ -71,7 +71,7 @@ mod tests {
             Argument {
                 name: "pressure",
                 def_val: 101325.0,
-                range: [100.0, 150_000.0]
+                range: [20000.0, 150_000.0]
             },
             Argument {
                 name: "vapour_pressure",

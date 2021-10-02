@@ -6,6 +6,7 @@ use crate::{
     constants::{EPSILON, ZERO_CELSIUS},
     error_wrapper::InputError,
 };
+use crate::Float;
 
 ///Formula for computing vapour pressure from specific humidity and pressure.
 ///This function is theoretical not empirical.
@@ -17,7 +18,7 @@ use crate::{
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `specific_humidity` range: 0.00001 - 2.0\
 ///Valid `pressure` range: 100Pa - 150000Pa
-pub fn general1(specific_humidity: f64, pressure: f64) -> Result<f64, InputError> {
+pub fn general1(specific_humidity: Float, pressure: Float) -> Result<Float, InputError> {
     //validate inputs
     if !(0.00001..=2.0).contains(&specific_humidity) {
         return Err(InputError::OutOfRange(String::from("specific_humidity")));
@@ -42,7 +43,7 @@ pub fn general1(specific_humidity: f64, pressure: f64) -> Result<f64, InputError
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `dewpoint` range: 232K - 324K\
 ///Valid `pressure` range: 100Pa - 150000Pa
-pub fn buck1(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
+pub fn buck1(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
     //validate inputs
     if !(232.0..=324.0).contains(&dewpoint) {
         return Err(InputError::OutOfRange(String::from("dewpoint")));
@@ -80,7 +81,7 @@ pub fn buck1(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `dewpoint` range: 193K - 274K\
 ///Valid `pressure` range: 100Pa - 150000Pa
-pub fn buck2(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
+pub fn buck2(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
     //validate inputs
     if !(193.0..=274.0).contains(&dewpoint) {
         return Err(InputError::OutOfRange(String::from("dewpoint")));
@@ -118,7 +119,7 @@ pub fn buck2(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `dewpoint` range: 253K - 324K\
 ///Valid `pressure` range: 100Pa - 150000Pa
-pub fn buck3(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
+pub fn buck3(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
     //validate inputs
     if !(253.0..=324.0).contains(&dewpoint) {
         return Err(InputError::OutOfRange(String::from("dewpoint")));
@@ -152,7 +153,7 @@ pub fn buck3(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
 ///
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `dewpoint` range: 253K - 324K
-pub fn buck3_simplified(dewpoint: f64) -> Result<f64, InputError> {
+pub fn buck3_simplified(dewpoint: Float) -> Result<Float, InputError> {
     //validate inputs
     if !(253.0..=324.0).contains(&dewpoint) {
         return Err(InputError::OutOfRange(String::from("dewpoint")));
@@ -178,7 +179,7 @@ pub fn buck3_simplified(dewpoint: f64) -> Result<f64, InputError> {
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `dewpoint` range: 223K - 274K\
 ///Valid `pressure` range: 100Pa - 150000Pa
-pub fn buck4(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
+pub fn buck4(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
     //validate inputs
     if !(223.0..=274.0).contains(&dewpoint) {
         return Err(InputError::OutOfRange(String::from("dewpoint")));
@@ -212,7 +213,7 @@ pub fn buck4(dewpoint: f64, pressure: f64) -> Result<f64, InputError> {
 ///
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `dewpoint` range: 223K - 274K
-pub fn buck4_simplified(dewpoint: f64) -> Result<f64, InputError> {
+pub fn buck4_simplified(dewpoint: Float) -> Result<Float, InputError> {
     //validate inputs
     if !(223.0..=274.0).contains(&dewpoint) {
         return Err(InputError::OutOfRange(String::from("dewpoint")));
@@ -238,7 +239,7 @@ pub fn buck4_simplified(dewpoint: f64) -> Result<f64, InputError> {
 ///
 ///Returns [`InputError::OutOfRange`] when input is out of range.\
 ///Valid `dewpoint` range: 273K - 353K
-pub fn tetens1(dewpoint: f64) -> Result<f64, InputError> {
+pub fn tetens1(dewpoint: Float) -> Result<Float, InputError> {
     //validate inputs
     if !(273.0..=353.0).contains(&dewpoint) {
         return Err(InputError::OutOfRange(String::from("dewpoint")));
@@ -264,9 +265,9 @@ pub fn tetens1(dewpoint: f64) -> Result<f64, InputError> {
 ///Valid `saturation_vapour_pressure` range: 0Pa - 10000Pa\
 ///Valid `relative_humidity` range: 0.0 - 1.0
 pub fn saturation_specific1(
-    saturation_vapour_pressure: f64,
-    relative_humidity: f64,
-) -> Result<f64, InputError> {
+    saturation_vapour_pressure: Float,
+    relative_humidity: Float,
+) -> Result<Float, InputError> {
     if !(0.0..=2.0).contains(&relative_humidity) {
         return Err(InputError::OutOfRange(String::from("relative_humidity")));
     }
@@ -289,9 +290,9 @@ pub fn saturation_specific1(
 ///Valid `vapour_pressure` range: 0Pa - 10000Pa\
 ///Valid `relative_humidity` range: 0.00001 - 1.0
 pub fn saturation_specific2(
-    vapour_pressure: f64,
-    relative_humidity: f64,
-) -> Result<f64, InputError> {
+    vapour_pressure: Float,
+    relative_humidity: Float,
+) -> Result<Float, InputError> {
     if !(0.00001..=2.0).contains(&relative_humidity) {
         return Err(InputError::OutOfRange(String::from("relative_humidity")));
     }
