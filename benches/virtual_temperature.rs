@@ -9,6 +9,10 @@ pub fn virtual_temperature_benchmark(c: &mut Criterion) {
     c.bench_function("virtual_temperature::general2", |b| {
         b.iter(|| virtual_temperature::general2(black_box(300.0), black_box(101325.0), black_box(3550.0)))
     });
+
+    c.bench_function("virtual_temperature::general3", |b| {
+        b.iter(|| virtual_temperature::general3(black_box(300.0), black_box(0.022)))
+    });
 }
 
 criterion_group!(benches, virtual_temperature_benchmark);

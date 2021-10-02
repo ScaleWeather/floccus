@@ -53,6 +53,27 @@ pub fn general2(temperature: f64, pressure: f64, vapour_pressure: f64) -> Result
     Ok(result)
 }
 
+///Formula for computing virtual temperature from air temperature and specific humidity.
+///
+///# Errors
+///
+///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
+///Valid `temperature` range: 173K - 373K\
+///Valid `specific_humidity` range: 100Pa - 150000Pa\
+pub fn general3(temperature: f64, specific_humidity: f64) -> Result<f64, InputError> {
+    if !(173.0..=354.0).contains(&temperature) {
+        return Err(InputError::OutOfRange(String::from("temperature")));
+    }
+
+    if !(0.00001..=2.0).contains(&specific_humidity) {
+        return Err(InputError::OutOfRange(String::from("specific_humidity")));
+    }
+
+    let result = temperature * (1.0 + (specific_humidity * ((1.0 / EPSILON) - 1.0)));
+
+    Ok(result)
+}
+
 #[cfg(test)]
 mod tests {
     use crate::{
@@ -98,6 +119,24 @@ mod tests {
                 range: [0.0, 10_000.0]
             },
             304.0265941965307
+        ));
+    }
+
+    #[test]
+    fn general3() {
+        assert!(tests_framework::test_with_2args(
+            &virtual_temperature::general3,
+            Argument {
+                name: "temperature",
+                def_val: 300.0,
+                range: [173.0, 354.0]
+            },
+            Argument {
+                name: "specific_humidity",
+                def_val: 0.022,
+                range: [0.00001, 2.0]
+            },
+            304.0112702651753
         ));
     }
 }
