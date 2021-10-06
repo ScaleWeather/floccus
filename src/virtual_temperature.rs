@@ -66,7 +66,7 @@ pub fn general3(temperature: Float, specific_humidity: Float) -> Result<Float, I
         return Err(InputError::OutOfRange(String::from("temperature")));
     }
 
-    if !(0.00001..=2.0).contains(&specific_humidity) {
+    if !(0.000000001..=2.0).contains(&specific_humidity) {
         return Err(InputError::OutOfRange(String::from("specific_humidity")));
     }
 
@@ -135,7 +135,7 @@ mod tests {
             Argument {
                 name: "specific_humidity",
                 def_val: 0.022,
-                range: [0.00001, 2.0]
+                range: [0.000000001, 2.0]
             },
             304.0112702651753
         ));
