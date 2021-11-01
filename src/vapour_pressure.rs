@@ -2,11 +2,11 @@
 //!
 //!To compute saturation vapour pressure input dry-bulb temperature in place of dewpoint temperature.
 
+use crate::Float;
 use crate::{
     constants::{EPSILON, ZERO_CELSIUS},
     error_wrapper::InputError,
 };
-use crate::Float;
 
 ///Formula for computing vapour pressure from specific humidity and pressure.
 ///This function is theoretical not empirical.
@@ -304,6 +304,76 @@ pub fn saturation_specific2(
     Ok(vapour_pressure / relative_humidity)
 }
 
+///Formula for computing vapour pressure over water from dewpoint temperature.
+///Should be used when accuracy is required as it is
+///computationally expensive.
+///
+///Derived by A. Wexler (1976) [(doi: 10.6028/jres.080A.071)](https://dx.doi.org/10.6028%2Fjres.080A.071).
+///
+///# Errors
+///
+///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
+///Valid `dewpoint` range: 273K - 374K
+pub fn wexler1(dewpoint: Float) -> Result<Float, InputError> {
+    if !(273.0..=374.0).contains(&dewpoint) {
+        return Err(InputError::OutOfRange(String::from("dewpoint")));
+    }
+
+    // constants from the paper
+    let g: [Float; 8] = [
+        -2991.2729,
+        -6017.0128,
+        18.87643854,
+        -0.028354721,
+        0.0000178383,
+        -0.00000000084150417,
+        0.00000000000044412543,
+        2.858487,
+    ];
+
+    let mut ln_p = g[7] * dewpoint.ln();
+
+    for i in 0..=6 {
+        ln_p += g[i] * dewpoint.powi(i as i32 - 2);
+    }
+
+    Ok(ln_p.exp())
+}
+
+///Formula for computing vapour over ice pressure from dewpoint temperature.
+///Should be used when accuracy is required as it is
+///computationally expensive.
+///
+///Derived by A. Wexler (1977) [(doi: 10.6028/jres.081A.003)](https://dx.doi.org/10.6028%2Fjres.081A.003).
+///
+///# Errors
+///
+///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
+///Valid `dewpoint` range: 173K - 274K
+pub fn wexler2(dewpoint: Float) -> Result<Float, InputError> {
+    if !(173.0..=274.0).contains(&dewpoint) {
+        return Err(InputError::OutOfRange(String::from("dewpoint")));
+    }
+
+    // constants from the paper
+    let big_k: [Float; 6] = [
+        -5865.3696,
+        22.241033,
+        0.013749042,
+        -0.00003403177,
+        0.000000026967687,
+        0.6918651,
+    ];
+
+    let mut ln_p = big_k[5] * dewpoint.ln();
+
+    for j in 0..=4 {
+        ln_p += big_k[j] * dewpoint.powi(j as i32 - 1);
+    }
+
+    Ok(ln_p.exp())
+}
+
 #[cfg(test)]
 mod tests {
     use crate::{
@@ -473,6 +543,32 @@ mod tests {
                 range: [0.00001, 2.0]
             },
             6000.0
+        ));
+    }
+
+    #[test]
+    fn wexler1() {
+        assert!(tests_framework::test_with_1arg(
+            &vapour_pressure::wexler1,
+            Argument {
+                name: "dewpoint",
+                def_val: 300.0,
+                range: [273.0, 374.0]
+            },
+            3535.4235919263083
+        ));
+    }
+
+    #[test]
+    fn wexler2() {
+        assert!(tests_framework::test_with_1arg(
+            &vapour_pressure::wexler2,
+            Argument {
+                name: "dewpoint",
+                def_val: 250.0,
+                range: [173.0, 274.0]
+            },
+            76.04351136780438
         ));
     }
 }
