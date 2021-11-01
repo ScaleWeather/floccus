@@ -13,13 +13,13 @@ use crate::Float;
 ///
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `temperature` range: 173K - 373K\
-///Valid `mixing_ratio` range: 0.00001 - 0.5
+///Valid `mixing_ratio` range: 0.0000000001 - 0.5
 pub fn general1(temperature: Float, mixing_ratio: Float) -> Result<Float, InputError> {
     if !(173.0..=354.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));
     }
 
-    if !(0.00001..=0.5).contains(&mixing_ratio) {
+    if !(0.000_000_000_1..=0.5).contains(&mixing_ratio) {
         return Err(InputError::OutOfRange(String::from("mixing_ratio")));
     }
 
@@ -60,7 +60,7 @@ pub fn general2(temperature: Float, pressure: Float, vapour_pressure: Float) -> 
 ///
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `temperature` range: 173K - 373K\
-///Valid `specific_humidity` range: 100Pa - 150000Pa\
+///Valid `specific_humidity` range: 100Pa - 150000Pa
 pub fn general3(temperature: Float, specific_humidity: Float) -> Result<Float, InputError> {
     if !(173.0..=354.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));
@@ -94,7 +94,7 @@ mod tests {
             Argument {
                 name: "mixing_ratio",
                 def_val: 0.022,
-                range: [0.00001, 0.5]
+                range: [0.000_000_000_1, 0.5]
             },
             303.9249219815806
         ));
