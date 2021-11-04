@@ -58,7 +58,14 @@ To prevent any unexpected behaviour, all functions check whether provided inputs
 Exact limits are specified in the documentation of each function.
 If the input is out of range the function will return an `InputError::OutOfRange` with erronous input specified.
 
+# Debugging
+
+If additional information is needed about which function returns the error and why, `debug` feature can be enabled.
+With that feature when returning the error function will also print the error message to `log` with additional
+information about the error. This feature potentially is not zero-cost so it is optional. 
+
 # Benchmarks
+
 Functions provided in this crate are inteded for use in, i. a., numerical models. To provide the user information about performance overhead of each function all functions are benchmarked using [criterion.rs](https://bheisler.github.io/criterion.rs/book/index.html). Github Actions automatically runs all benchmarks.
 
 To check the latest benchmark results the newest workflow on [Github Actions page of floccus](https://github.com/ScaleWeather/floccus/actions).
