@@ -4,7 +4,7 @@
 //!the amount of moisture in the air and how much moisture the air can hold
 //!when it is saturated ([Wikipedia](https://en.wikipedia.org/wiki/Vapour-pressure_deficit)).
 
-use crate::{error_wrapper::InputError, vapour_pressure};
+use crate::{errors::InputError, vapour_pressure};
 use crate::Float;
 
 #[cfg(feature="debug")]

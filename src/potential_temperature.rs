@@ -4,7 +4,7 @@ use float_cmp::approx_eq;
 use crate::Float;
 use crate::{
     constants::{C_P, R_D},
-    error_wrapper::InputError,
+    errors::InputError,
 };
 
 #[cfg(feature="debug")]

@@ -1,6 +1,6 @@
 [package]
 name = "floccus"
-version = "0.2.5"
+version = "0.3.5"
 authors = ["Jakub Lewandowski <scaleweather@gmail.com>"]
 edition = "2021"
 description = "Formulae for air thermodynamic calculations"

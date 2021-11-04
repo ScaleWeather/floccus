@@ -73,7 +73,7 @@
 
 pub mod constants;
 pub mod equivalent_potential_temperature;
-pub mod error_wrapper;
+pub mod errors;
 pub mod mixing_ratio;
 pub mod potential_temperature;
 pub mod relative_humidity;

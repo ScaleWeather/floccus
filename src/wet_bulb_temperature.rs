@@ -1,6 +1,6 @@
 //!Functions to calculate wet bulb temperature of unsaturated air in K.
 
-use crate::{constants::ZERO_CELSIUS, error_wrapper::InputError};
+use crate::{constants::ZERO_CELSIUS, errors::InputError};
 use crate::Float;
 
 #[cfg(feature="debug")]

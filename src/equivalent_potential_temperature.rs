@@ -2,7 +2,7 @@
 use crate::Float;
 use crate::{
     constants::{C_P, EPSILON, L_V, R_D},
-    error_wrapper::InputError,
+    errors::InputError,
     mixing_ratio, potential_temperature, relative_humidity, vapour_pressure,
 };
 

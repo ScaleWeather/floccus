@@ -3,7 +3,7 @@
 //!To calculate saturation mixing ratio input dry-bulb temperature in place of dewpoint
 //!or saturation vapour pressure in place of vapour pressure.
 
-use crate::{constants::EPSILON, error_wrapper::InputError, vapour_pressure};
+use crate::{constants::EPSILON, errors::InputError, vapour_pressure};
 use float_cmp::approx_eq;
 use crate::Float;
 

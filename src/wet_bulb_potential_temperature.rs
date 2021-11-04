@@ -3,7 +3,7 @@
 use crate::Float;
 use crate::{
     constants::{C_P, R_D, ZERO_CELSIUS},
-    error_wrapper::InputError,
+    errors::InputError,
 };
 
 #[cfg(feature="debug")]

@@ -4,7 +4,7 @@
 //!at which a theoretical dry air parcel would have a total pressure and density equal
 //!to the moist parcel of air ([Wikipedia](https://en.wikipedia.org/wiki/Virtual_temperature)).
 
-use crate::{constants::EPSILON, error_wrapper::InputError};
+use crate::{constants::EPSILON, errors::InputError};
 use crate::Float;
 
 #[cfg(feature="debug")]

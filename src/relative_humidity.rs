@@ -1,6 +1,6 @@
 //!Functions to calculate relative humidity in %/100
 
-use crate::{error_wrapper::InputError, mixing_ratio, vapour_pressure};
+use crate::{errors::InputError, mixing_ratio, vapour_pressure};
 use crate::Float;
 
 #[cfg(feature="debug")]

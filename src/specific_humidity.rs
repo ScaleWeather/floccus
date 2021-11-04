@@ -5,7 +5,7 @@
 //!
 //!Specific humidity is approximately equal to mixing ratio.
 
-use crate::{constants::EPSILON, error_wrapper::InputError};
+use crate::{constants::EPSILON, errors::InputError};
 use crate::Float;
 
 #[cfg(feature="debug")]

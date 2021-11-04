@@ -1,4 +1,4 @@
-use crate::error_wrapper::InputError;
+use crate::errors::InputError;
 use crate::Float;
 use float_cmp::assert_approx_eq;
 use std::mem::discriminant;
