@@ -46,25 +46,25 @@ vapour_pressure::buck1(temperature, pressure);
 Where the module name (`vapour_pressure`) indicates the computed quantity, function name (`buck1`) indicates the author of formula
 and the function arguments (`temperature, pressure`) are variables used to compute the quantity.
 
-# Double precision
+## Double precision
 
 By default floccus uses single-precision (32-bit) floating-point variables. 
 If increased accuracy is needed (at the cost of performance) `double_precision` feature can be enabled
 to use double-precision (64-bit) floating point.
 
-# Input checking
+## Input checking
 
 To prevent any unexpected behaviour, all functions check whether provided inputs are within a reasonable range.
 Exact limits are specified in the documentation of each function.
 If the input is out of range the function will return an `InputError::OutOfRange` with erronous input specified.
 
-# Debugging
+## Debugging
 
 If additional information is needed about which function returns the error and why, `debug` feature can be enabled.
 With that feature when returning the error function will also print the error message to `log` with additional
 information about the error. This feature potentially is not zero-cost so it is optional. 
 
-# Benchmarks
+## Benchmarks
 
 Functions provided in this crate are inteded for use in, i. a., numerical models. To provide the user information about performance overhead of each function all functions are benchmarked using [criterion.rs](https://bheisler.github.io/criterion.rs/book/index.html). Github Actions automatically runs all benchmarks.
 
