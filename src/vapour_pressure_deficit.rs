@@ -7,6 +7,9 @@
 use crate::{error_wrapper::InputError, vapour_pressure};
 use crate::Float;
 
+#[cfg(feature="debug")]
+use floccus_proc::logerr;
+
 ///Formula for computing vapour pressure deficit from vapour pressure and saturation vapour pressure
 ///
 ///# Errors
@@ -14,6 +17,7 @@ use crate::Float;
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `vapour_pressure` range: 0Pa - 10000Pa
 ///Valid `saturation_vapour_pressure` range: 0Pa - 10000Pa
+#[cfg_attr(feature = "debug", logerr)]
 pub fn general1(vapour_pressure: Float, saturation_vapour_pressure: Float) -> Result<Float, InputError> {
     if !(0.0..=50_000.0).contains(&vapour_pressure) {
         return Err(InputError::OutOfRange(String::from("vapour_pressure")));
@@ -36,6 +40,7 @@ pub fn general1(vapour_pressure: Float, saturation_vapour_pressure: Float) -> Re
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `vapour_pressure` range: 0Pa - 10000Pa
 ///Valid `saturation_vapour_pressure` range: 0Pa - 10000Pa
+#[cfg_attr(feature = "debug", logerr)]
 pub fn general2(temperature: Float, dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
     if !(253.0..=324.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));
@@ -65,6 +70,7 @@ pub fn general2(temperature: Float, dewpoint: Float, pressure: Float) -> Result<
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `vapour_pressure` range: 0Pa - 10000Pa
 ///Valid `saturation_vapour_pressure` range: 0Pa - 10000Pa
+#[cfg_attr(feature = "debug", logerr)]
 pub fn general3(
     temperature: Float,
     relative_humidity: Float,

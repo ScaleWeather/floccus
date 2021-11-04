@@ -7,6 +7,9 @@
 use crate::{constants::EPSILON, error_wrapper::InputError};
 use crate::Float;
 
+#[cfg(feature="debug")]
+use floccus_proc::logerr;
+
 ///Formula for computing virtual temperature from temperature and mixing ratio.
 ///
 ///# Errors
@@ -14,6 +17,7 @@ use crate::Float;
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `temperature` range: 173K - 373K\
 ///Valid `mixing_ratio` range: 0.0000000001 - 0.5
+#[cfg_attr(feature = "debug", logerr)]
 pub fn general1(temperature: Float, mixing_ratio: Float) -> Result<Float, InputError> {
     if !(173.0..=354.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));
@@ -36,6 +40,7 @@ pub fn general1(temperature: Float, mixing_ratio: Float) -> Result<Float, InputE
 ///Valid `temperature` range: 173K - 373K\
 ///Valid `pressure` range: 100Pa - 150000Pa\
 ///Valid `vapour_pressure` range: 0Pa - 10000Pa
+#[cfg_attr(feature = "debug", logerr)]
 pub fn general2(temperature: Float, pressure: Float, vapour_pressure: Float) -> Result<Float, InputError> {
     if !(173.0..=354.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));
@@ -61,6 +66,7 @@ pub fn general2(temperature: Float, pressure: Float, vapour_pressure: Float) -> 
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `temperature` range: 173K - 373K\
 ///Valid `specific_humidity` range: 100Pa - 150000Pa
+#[cfg_attr(feature = "debug", logerr)]
 pub fn general3(temperature: Float, specific_humidity: Float) -> Result<Float, InputError> {
     if !(173.0..=354.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));

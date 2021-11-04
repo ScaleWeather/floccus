@@ -6,6 +6,9 @@ use crate::{
     error_wrapper::InputError,
 };
 
+#[cfg(feature="debug")]
+use floccus_proc::logerr;
+
 ///Formula for computing wet bulb potential temperature from equivalent potential temperature.
 ///
 ///Derived by R. Davies-Jones (2008) [(doi:10.1175/2007MWR2224.1)](https://doi.org/10.1175/2007MWR2224.1)
@@ -14,6 +17,7 @@ use crate::{
 ///
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `temperature` range: 257K - 377K\
+#[cfg_attr(feature = "debug", logerr)]
 pub fn davies_jones1(equivalent_potential_temperature: Float) -> Result<Float, InputError> {
     if !(257.0..=377.0).contains(&equivalent_potential_temperature) {
         return Err(InputError::OutOfRange(String::from(

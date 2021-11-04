@@ -7,6 +7,9 @@ use crate::{constants::EPSILON, error_wrapper::InputError, vapour_pressure};
 use float_cmp::approx_eq;
 use crate::Float;
 
+#[cfg(feature="debug")]
+use floccus_proc::logerr;
+
 ///Formula for computing mixing ratio of unsaturated air from air pressure and vapour pressure
 ///
 ///# Errors
@@ -17,6 +20,7 @@ use crate::Float;
 ///
 ///Returns [`InputError::IncorrectArgumentSet`] when inputs are equal, in which
 ///case division by 0 occurs.
+#[cfg_attr(feature = "debug", logerr)]
 pub fn general1(pressure: Float, vapour_pressure: Float) -> Result<Float, InputError> {
     //validate inputs
     if !(100.0..=150_000.0).contains(&pressure) {
@@ -45,6 +49,7 @@ pub fn general1(pressure: Float, vapour_pressure: Float) -> Result<Float, InputE
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `dewpoint` range: 273K - 353K\
 ///Valid `pressure` range: 100Pa - 150000Pa
+#[cfg_attr(feature = "debug", logerr)]
 pub fn performance1(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
     //validate inputs
     if !(273.0..=353.0).contains(&dewpoint) {
@@ -68,6 +73,7 @@ pub fn performance1(dewpoint: Float, pressure: Float) -> Result<Float, InputErro
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `dewpoint` range: 232K - 324K\
 ///Valid `pressure` range: 100Pa - 150000Pa
+#[cfg_attr(feature = "debug", logerr)]
 pub fn accuracy1(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
     //validate inputs
     if !(232.0..=324.0).contains(&dewpoint) {

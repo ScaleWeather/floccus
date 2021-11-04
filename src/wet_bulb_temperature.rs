@@ -3,6 +3,9 @@
 use crate::{constants::ZERO_CELSIUS, error_wrapper::InputError};
 use crate::Float;
 
+#[cfg(feature="debug")]
+use floccus_proc::logerr;
+
 ///Formula for computing wet bulb temperature pressure from dry bulb temperature and relative humidity.
 ///
 ///Derived by R. Stull (2011) [(doi:10.1175/JAMC-D-11-0143.1)](https://doi.org/10.1175/JAMC-D-11-0143.1)
@@ -14,6 +17,7 @@ use crate::Float;
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `temperature` range: 253K - 324K\
 ///Valid `relative_humidity` range: 0.05 - 0.99
+#[cfg_attr(feature = "debug", logerr)]
 pub fn stull1(temperature: Float, relative_humidity: Float) -> Result<Float, InputError> {
     if !(253.0..=324.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));

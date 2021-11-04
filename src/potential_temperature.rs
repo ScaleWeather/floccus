@@ -2,11 +2,13 @@
 
 use float_cmp::approx_eq;
 use crate::Float;
-
 use crate::{
     constants::{C_P, R_D},
     error_wrapper::InputError,
 };
+
+#[cfg(feature="debug")]
+use floccus_proc::logerr;
 
 ///Formula for computing potential temperature of dry air from temperature, pressure and vapour pressure.
 ///
@@ -24,6 +26,7 @@ use crate::{
 ///
 ///Returns [`InputError::IncorrectArgumentSet`] when `pressure` is lower than `vapour_pressure`,
 ///in which case floating-point exponentation of negative number occurs.
+#[cfg_attr(feature = "debug", logerr)]
 pub fn davies_jones1(
     temperature: Float,
     pressure: Float,

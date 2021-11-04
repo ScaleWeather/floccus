@@ -6,6 +6,9 @@ use crate::{
     mixing_ratio, potential_temperature, relative_humidity, vapour_pressure,
 };
 
+#[cfg(feature="debug")]
+use floccus_proc::logerr;
+
 ///Formula for computing equivalent potential temperature of dry air from
 ///temperature, pressure and vapour pressure.
 ///
@@ -17,6 +20,7 @@ use crate::{
 ///Valid `temperature` range: 253K - 324K\
 ///Valid `pressure` range: 100Pa - 150000Pa\
 ///Valid `vapour_pressure` range: 0Pa - 10000Pa
+#[cfg_attr(feature = "debug", logerr)]
 pub fn bryan1(
     temperature: Float,
     pressure: Float,
@@ -55,8 +59,8 @@ pub fn bryan1(
 #[cfg(test)]
 mod tests {
     use crate::{
-        tests_framework::{self, Argument},
         equivalent_potential_temperature,
+        tests_framework::{self, Argument},
     };
 
     #[test]

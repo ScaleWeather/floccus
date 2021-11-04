@@ -8,6 +8,9 @@
 use crate::{constants::EPSILON, error_wrapper::InputError};
 use crate::Float;
 
+#[cfg(feature="debug")]
+use floccus_proc::logerr;
+
 ///Formula for computing specific humidity from vapour pressure and pressure.
 ///Reverse function of [`vapour_pressure::general1`](crate::vapour_pressure::general1).
 ///This function is theoretical not empirical.
@@ -19,6 +22,7 @@ use crate::Float;
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `vapour_pressure` range: 0Pa - 50000OPa\,
 ///Valid `pressure` range: 100Pa - 150000Pa
+#[cfg_attr(feature = "debug", logerr)]
 pub fn general1(vapour_pressure: Float, pressure: Float) -> Result<Float, InputError> {
     if !(0.0..=50_000.0).contains(&vapour_pressure) {
         return Err(InputError::OutOfRange(String::from("vapour_pressure")));
