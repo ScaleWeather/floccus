@@ -29,6 +29,12 @@ pub const C_PV: Float = 1846.1;
 ///Specific heat capacity of water vapour at constant volume in `J kg^-1 K^-1` (ECMWF, 2020)
 pub const C_VV: Float = 1384.575;
 
+///Specific heat capacity of liquid water in `J kg^-1 K^-1` (ECMWF, 2020)
+pub const C_L: Float = 4218.0;
+
+///Specific heat capacity of solid water in `J kg^-1 K^-1` (ECMWF, 2020)
+pub const C_S: Float = 2106.0;
+
 ///Mass latent heat of vapourization of water in `J kg^1`  (ECMWF, 2020)
 pub const L_V: Float = 2_500_800.0;
 
@@ -37,3 +43,6 @@ pub const EPSILON: Float = M_V / M_D;
 
 ///Specific gas constant for dry air in `J kg^-1 K^-1`
 pub const R_D: Float = R / M_D;
+
+///Specific gas constant for water vapour in `J kg^-1 K^-1`
+pub const R_V: Float = R / M_V;

@@ -46,7 +46,7 @@
 //!
 //! To prevent any unexpected behaviour, all functions check whether provided inputs are within a reasonable range.
 //! Exact limits are specified in the documentation of each function.
-//! If the input is out of range the function will return an [`InputError::OutOfRange`](error_wrapper::InputError::OutOfRange) with erronous input specified.
+//! If the input is out of range the function will return an [`InputError::OutOfRange`](errors::InputError::OutOfRange) with erronous input specified.
 //!
 //! # Units
 //!
