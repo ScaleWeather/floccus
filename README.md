@@ -3,14 +3,14 @@
 [![License](https://img.shields.io/github/license/ScaleWeather/floccus)](https://choosealicense.com/licenses/apache-2.0/)
 [![Crates.io](https://img.shields.io/crates/v/floccus)](https://crates.io/crates/floccus)
 [![dependency status](https://deps.rs/repo/github/ScaleWeather/floccus/status.svg)](https://deps.rs/repo/github/ScaleWeather/floccus)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ScaleWeather/floccus/cargo?label=cargo%20build)](https://github.com/ScaleWeather/floccus/actions)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/ScaleWeather/floccus/rust.yml?branch=main&label=cargo%20build)](https://github.com/ScaleWeather/floccus/actions)
 
 Rust crate providing formulae for air thermodynamic calculations.
 
-This crate contains functions for computing thermodynamic quantities commonly used in atmospheric sciences. It is currently developed by one person so **if there is a function you would like to be added do not hesitate to post an issue or pull request in the [Github repository](https://github.com/ScaleWeather/floccus)**. 
+This crate contains functions for computing thermodynamic quantities commonly used in atmospheric sciences. It is currently developed by one person so **if there is a function you would like to be added do not hesitate to post an issue or pull request in the [Github repository](https://github.com/ScaleWeather/floccus)**.
 
-The purpose of this crate is to be an academic reference of thermodynamic formulae, 
-so that researchers looking for a particular formula do not need to search it in the literature. 
+The purpose of this crate is to be an academic reference of thermodynamic formulae,
+so that researchers looking for a particular formula do not need to search it in the literature.
 Therefore all functions documentation provides a reference to the paper from which formula is taken.
 
 Also, check the [contributors guide](https://github.com/ScaleWeather/floccus/blob/main/CONTRIBUTE.md) of this crate.
@@ -48,24 +48,24 @@ and the function arguments (`temperature, pressure`) are variables used to compu
 
 ## Double precision
 
-By default floccus uses single-precision (32-bit) floating-point variables. 
+By default floccus uses single-precision (32-bit) floating-point variables.
 If increased accuracy is needed (at the cost of performance) `double_precision` feature can be enabled
 to use double-precision (64-bit) floating point.
 
 ## Input checking
 
-To prevent any unexpected behaviour, all functions check whether provided inputs are within a reasonable range.
+To prevent any unexpected behavior, all functions check whether provided inputs are within a reasonable range.
 Exact limits are specified in the documentation of each function.
-If the input is out of range the function will return an `InputError::OutOfRange` with erronous input specified.
+If the input is out of range the function will return an `InputError::OutOfRange` with erroneous input specified.
 
 ## Debugging
 
 If additional information is needed about which function returns the error and why, `debug` feature can be enabled.
 With that feature when returning the error function will also print the error message to `log` with additional
-information about the error. This feature potentially is not zero-cost so it is optional. 
+information about the error. This feature potentially is not zero-cost so it is optional.
 
 ## Benchmarks
 
-Functions provided in this crate are inteded for use in, i. a., numerical models. To provide the user information about performance overhead of each function all functions are benchmarked using [criterion.rs](https://bheisler.github.io/criterion.rs/book/index.html). Github Actions automatically runs all benchmarks.
+Functions provided in this crate are intended for use in, i. a., numerical models. To provide the user information about performance overhead of each function all functions are benchmarked using [criterion.rs](https://bheisler.github.io/criterion.rs/book/index.html). Github Actions automatically runs all benchmarks.
 
 To check the latest benchmark results the newest workflow on [Github Actions page of floccus](https://github.com/ScaleWeather/floccus/actions).
