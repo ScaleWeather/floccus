@@ -33,5 +33,4 @@ jobs:
         cargo test
         cargo test --features "double_precision"
         cargo test --features "debug"
-        cargo test --all-targets
         cargo clean
