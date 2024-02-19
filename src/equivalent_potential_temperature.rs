@@ -139,7 +139,7 @@ pub fn bolton1(pressure: Float, temperature: Float, dewpoint: Float) -> Result<F
         (1.0 / ((1.0 / (dewpoint - 56.0)) + ((temperature / dewpoint).ln() / 800.0))) + 56.0;
 
     let theta_dl = temperature
-        * (100000.0 / (pressure - vapour_pressure)).powf(kappa)
+        * (100_000.0 / (pressure - vapour_pressure)).powf(kappa)
         * (temperature / lcl_temp).powf(0.28 * mixing_ratio);
 
     let result = theta_dl

@@ -106,7 +106,7 @@ pub fn general3_validate(temperature: Float, specific_humidity: Float) -> Result
         return Err(InputError::OutOfRange(String::from("temperature")));
     }
 
-    if !(0.000000001..=2.0).contains(&specific_humidity) {
+    if !(0.000_000_001..=2.0).contains(&specific_humidity) {
         return Err(InputError::OutOfRange(String::from("specific_humidity")));
     }
 
