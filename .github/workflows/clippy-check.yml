@@ -2,6 +2,10 @@ on: pull_request
 
 name: Cargo Clippy
 
+env:
+    CARGO_TERM_COLOR: always
+    RUSTFLAGS: "-Dwarnings"
+
 jobs:
   clippy_check:
     name: Check
@@ -9,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: rustup component add clippy
-      - uses: actions-rs/clippy-check@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Clippy
+        run: |
+          rustup component add clippy
+          cargo clippy -- -D warnings
