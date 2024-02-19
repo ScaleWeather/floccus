@@ -1,3 +1,8 @@
+#![warn(clippy::pedantic)]
+#![warn(missing_docs)]
+#![warn(clippy::cargo)]
+#![allow(clippy::excessive_precision)]
+
 //! Crate providing formulae for air thermodynamic calculations.
 //!
 //! # How to use
