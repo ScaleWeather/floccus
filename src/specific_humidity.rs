@@ -5,10 +5,10 @@
 //!
 //!Specific humidity is approximately equal to mixing ratio.
 
-use crate::{constants::EPSILON, errors::InputError};
 use crate::Float;
+use crate::{constants::EPSILON, errors::InputError};
 
-#[cfg(feature="debug")]
+#[cfg(feature = "debug")]
 use floccus_proc::logerr;
 
 ///Formula for computing specific humidity from vapour pressure and pressure.
@@ -22,8 +22,15 @@ use floccus_proc::logerr;
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `vapour_pressure` range: 0Pa - 50000OPa\,
 ///Valid `pressure` range: 100Pa - 150000Pa
-#[cfg_attr(feature = "debug", logerr)]
 pub fn general1(vapour_pressure: Float, pressure: Float) -> Result<Float, InputError> {
+    general1_validate(vapour_pressure, pressure)?;
+    Ok(general1_unchecked(vapour_pressure, pressure))
+}
+
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
+#[cfg_attr(feature = "debug", logerr)]
+pub fn general1_validate(vapour_pressure: Float, pressure: Float) -> Result<(), InputError> {
     if !(0.0..=50_000.0).contains(&vapour_pressure) {
         return Err(InputError::OutOfRange(String::from("vapour_pressure")));
     }
@@ -32,8 +39,12 @@ pub fn general1(vapour_pressure: Float, pressure: Float) -> Result<Float, InputE
         return Err(InputError::OutOfRange(String::from("pressure")));
     }
 
-    let result = EPSILON * (vapour_pressure / (pressure - (vapour_pressure * (1.0 - EPSILON))));
-    Ok(result)
+    Ok(())
+}
+
+#[allow(missing_docs)]
+pub fn general1_unchecked(vapour_pressure: Float, pressure: Float) -> Float {
+    EPSILON * (vapour_pressure / (pressure - (vapour_pressure * (1.0 - EPSILON))))
 }
 
 #[cfg(test)]
