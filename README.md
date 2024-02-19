@@ -58,6 +58,9 @@ To prevent any unexpected behavior, all functions check whether provided inputs 
 Exact limits are specified in the documentation of each function.
 If the input is out of range the function will return an `InputError::OutOfRange` with erroneous input specified.
 
+Each function also has `_unchecked` and `_validate` versions. The `_validate` version only checks the inputs with bounds defined for its "parent" function.
+The `_unchecked` version performs only the calculation without any input checking. All "parent" functions simply call `_validate` and then `_unchecked`.
+
 ## Debugging
 
 If additional information is needed about which function returns the error and why, `debug` feature can be enabled.
