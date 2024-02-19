@@ -1,40 +1,41 @@
 use itertools::izip;
 use ndarray::{Array, ArrayView, Dimension, FoldWhile};
+use rayon::iter::{IntoParallelRefIterator, ParallelBridge, ParallelIterator};
 
 use crate::{errors::InputError, Float};
 
 #[macro_export]
-macro_rules! compute_vec {
+macro_rules! par_compute_vec {
     ($fn_id:expr,$slice1:expr) => {
-        $crate::array_compute::compute_vec_1($fn_id, $slice1)
+        $crate::par_array_compute::compute_vec_1($fn_id, $slice1)
     };
     ($fn_id:expr,$slice1:expr,$slice2:expr) => {
-        $crate::array_compute::compute_vec_2($fn_id, $slice1, $slice2)
+        $crate::par_array_compute::compute_vec_2($fn_id, $slice1, $slice2)
     };
     ($fn_id:expr,$slice1:expr,$slice2:expr,$slice3:expr) => {
-        $crate::array_compute::compute_vec_3($fn_id, $slice1, $slice2, $slice3)
+        $crate::par_array_compute::compute_vec_3($fn_id, $slice1, $slice2, $slice3)
     };
 }
 
 #[macro_export]
-macro_rules! compute_ndarray {
+macro_rules! par_compute_ndarray {
     ($cmp_fn:expr,$vld_fn:expr,$arr1:expr) => {
-        $crate::array_compute::compute_ndarray_1($cmp_fn, $vld_fn, $arr1)
+        $crate::par_array_compute::compute_ndarray_1($cmp_fn, $vld_fn, $arr1.view())
     };
 
-    ($cmp_fn:expr,$vld_fn:expr,$arr1:expr,$arr2:expr) => {{
-        $crate::array_compute::compute_ndarray_2($cmp_fn, $vld_fn, $arr1, $arr2)
-    }};
+    ($cmp_fn:expr,$vld_fn:expr,$arr1:expr,$arr2:expr) => {
+        $crate::par_array_compute::compute_ndarray_2($cmp_fn, $vld_fn, $arr1.view(), $arr2.view())
+    };
 
-    ($cmp_fn:expr,$vld_fn:expr,$arr1:expr,$arr2:expr,$arr3:expr) => {{
-        $crate::array_compute::compute_ndarray_3(
+    ($cmp_fn:expr,$vld_fn:expr,$arr1:expr,$arr2:expr,$arr3:expr) => {
+        $crate::par_array_compute::compute_ndarray_3(
             $cmp_fn,
             $vld_fn,
-            $arr1,
-            $arr2,
-            $arr3,
+            $arr1.view(),
+            $arr2.view(),
+            $arr3.view(),
         )
-    }};
+    };
 }
 
 #[doc(hidden)]
@@ -44,7 +45,7 @@ pub fn compute_vec_1(
     slice1: &[Float],
 ) -> Result<Vec<Float>, InputError> {
     slice1
-        .iter()
+        .par_iter()
         .map(|a| fn_id(*a))
         .collect::<Result<Vec<Float>, InputError>>()
 }
@@ -57,6 +58,7 @@ pub fn compute_vec_2(
     slice2: &[Float],
 ) -> Result<Vec<Float>, InputError> {
     izip!(slice1, slice2)
+        .par_bridge()
         .map(|(&a, &b)| fn_id(a, b))
         .collect::<Result<Vec<Float>, InputError>>()
 }
@@ -70,6 +72,7 @@ pub fn compute_vec_3(
     slice3: &[Float],
 ) -> Result<Vec<Float>, InputError> {
     izip!(slice1, slice2, slice3)
+        .par_bridge()
         .map(|(&a, &b, &c)| fn_id(a, b, c))
         .collect::<Result<Vec<Float>, InputError>>()
 }
@@ -88,7 +91,7 @@ pub fn compute_ndarray_1<D: Dimension>(
         })
         .into_inner()?;
 
-    Ok(ndarray::Zip::from(&arr1).map_collect(|&a| cmp_fn(a)))
+    Ok(ndarray::Zip::from(&arr1).par_map_collect(|&a| cmp_fn(a)))
 }
 
 #[doc(hidden)]
@@ -109,7 +112,7 @@ pub fn compute_ndarray_2<D: Dimension>(
 
     Ok(ndarray::Zip::from(&arr1)
         .and(&arr2)
-        .map_collect(|&a, &b| cmp_fn(a, b)))
+        .par_map_collect(|&a, &b| cmp_fn(a, b)))
 }
 
 #[doc(hidden)]
@@ -133,7 +136,7 @@ pub fn compute_ndarray_3<D: Dimension>(
     Ok(ndarray::Zip::from(&arr1)
         .and(&arr2)
         .and(&arr3)
-        .map_collect(|&a, &b, &c| cmp_fn(a, b, c)))
+        .par_map_collect(|&a, &b, &c| cmp_fn(a, b, c)))
 }
 
 #[cfg(test)]
@@ -149,10 +152,10 @@ mod tests {
     #[test]
     fn arr_macro_1arg() -> Result<(), crate::errors::InputError> {
         let temp = Array2::from_elem((10, 10), 300.0);
-        let result = compute_ndarray!(
+        let result = par_compute_ndarray!(
             vapour_pressure::buck3_simplified_unchecked,
             vapour_pressure::buck3_simplified_validate,
-            temp.view()
+            temp
         )?;
 
         assert_approx_eq!(Float, result[[5, 5]], 3533.6421536199978, epsilon = 0.01);
@@ -165,11 +168,11 @@ mod tests {
         let temp = Array2::from_elem((10, 10), 300.0);
         let pressure = Array2::from_elem((10, 10), 101325.0);
 
-        let result = compute_ndarray!(
+        let result = par_compute_ndarray!(
             vapour_pressure::buck3_unchecked,
             vapour_pressure::buck3_validate,
-            temp.view(),
-            pressure.view()
+            temp,
+            pressure
         )?;
 
         assert_approx_eq!(Float, result[[5, 5]], 3548.5041048035896, epsilon = 0.01);
@@ -183,12 +186,12 @@ mod tests {
         let pressure = Array2::from_elem((10, 10), 101325.0);
         let relative_humidity = Array2::from_elem((10, 10), 0.5);
 
-        let result = compute_ndarray!(
+        let result = par_compute_ndarray!(
             vapour_pressure_deficit::general3_unchecked,
             vapour_pressure_deficit::general3_validate,
-            temp.view(),
-            relative_humidity.view(),
-            pressure.view()
+            temp,
+            relative_humidity,
+            pressure
         )?;
 
         assert_approx_eq!(Float, result[[5, 5]], 1774.2520524017948, epsilon = 0.01);
@@ -199,7 +202,7 @@ mod tests {
     #[test]
     fn vec_macro_1arg() {
         let temp = vec![300.0; 100];
-        let result = compute_vec!(vapour_pressure::buck3_simplified, &temp).unwrap();
+        let result = par_compute_vec!(vapour_pressure::buck3_simplified, &temp).unwrap();
 
         assert_approx_eq!(Float, result[50], 3533.6421536199978, epsilon = 0.01);
     }
@@ -208,7 +211,7 @@ mod tests {
     fn vec_macro_2arg() {
         let temp = vec![300.0; 100];
         let pressure = vec![101325.0; 100];
-        let result = compute_vec!(vapour_pressure::buck3, &temp, &pressure).unwrap();
+        let result = par_compute_vec!(vapour_pressure::buck3, &temp, &pressure).unwrap();
 
         assert_approx_eq!(Float, result[50], 3548.5041048035896, epsilon = 0.01);
     }
@@ -218,7 +221,7 @@ mod tests {
         let temp = vec![300.0; 100];
         let pressure = vec![101325.0; 100];
         let relative_humidity = vec![0.5; 100];
-        let result = compute_vec!(
+        let result = par_compute_vec!(
             vapour_pressure_deficit::general3,
             &temp,
             &relative_humidity,

@@ -93,8 +93,12 @@ pub mod vapour_pressure_deficit;
 pub mod virtual_temperature;
 pub mod wet_bulb_potential_temperature;
 pub mod wet_bulb_temperature;
+
 #[cfg(feature = "array_compute")]
 pub mod array_compute;
+
+#[cfg(feature = "array_compute_parallel")]
+pub mod par_array_compute;
 
 #[cfg(not(feature = "double_precision"))]
 type Float = f32;
