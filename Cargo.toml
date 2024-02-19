@@ -9,22 +9,24 @@ readme = "README.md"
 keywords = ["oceanography", "thermodynamics", "meteorology", "weather"]
 categories = ["mathematics", "science"]
 license = "Apache-2.0"
-exclude = [
-    ".github/*",
-]
+exclude = [".github/*"]
 
 [dependencies]
 thiserror = "1.0"
 float-cmp = "0.9"
-floccus-proc = {version = "0.2.5", optional = true}
+floccus-proc = { version = "0.2.5", optional = true }
 log = "0.4"
+itertools = { version = "0.12", default-features = false, optional = true, features = ["use_std"]}
+ndarray = { version = "0.15", default-features = false, optional = true }
 
 [dev-dependencies]
 criterion = "0.5.1"
 
 [features]
+default = ["array_compute"]
 debug = ["floccus-proc"]
 double_precision = []
+array_compute = ["ndarray", "itertools"]
 
 [[bench]]
 name = "virtual_temperature"
