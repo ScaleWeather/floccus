@@ -1,11 +1,11 @@
-name: Doc Coverage PR Comment
+name: Cargo Doc
 
 on:
   pull_request
 
 jobs:
   pr-comment:
-    name: Doc Coverage PR Comment
+    name: Check Coverage
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
