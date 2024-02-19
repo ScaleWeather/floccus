@@ -22,6 +22,8 @@ pub fn general1(temperature: Float, mixing_ratio: Float) -> Result<Float, InputE
     Ok(general1_unchecked(temperature, mixing_ratio))
 }
 
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
 #[cfg_attr(feature = "debug", logerr)]
 pub fn general1_validate(temperature: Float, mixing_ratio: Float) -> Result<(), InputError> {
     if !(173.0..=354.0).contains(&temperature) {
@@ -35,6 +37,7 @@ pub fn general1_validate(temperature: Float, mixing_ratio: Float) -> Result<(), 
     Ok(())
 }
 
+#[allow(missing_docs)]
 pub fn general1_unchecked(temperature: Float, mixing_ratio: Float) -> Float {
     temperature * ((mixing_ratio + EPSILON) / (EPSILON * (1.0 + mixing_ratio)))
 }
@@ -56,6 +59,8 @@ pub fn general2(
     Ok(general2_unchecked(temperature, pressure, vapour_pressure))
 }
 
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
 #[cfg_attr(feature = "debug", logerr)]
 pub fn general2_validate(
     temperature: Float,
@@ -76,6 +81,7 @@ pub fn general2_validate(
     Ok(())
 }
 
+#[allow(missing_docs)]
 pub fn general2_unchecked(temperature: Float, pressure: Float, vapour_pressure: Float) -> Float {
     temperature / (1.0 - ((vapour_pressure / pressure) * (1.0 - EPSILON)))
 }
@@ -92,6 +98,8 @@ pub fn general3(temperature: Float, specific_humidity: Float) -> Result<Float, I
     Ok(general3_unchecked(temperature, specific_humidity))
 }
 
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
 #[cfg_attr(feature = "debug", logerr)]
 pub fn general3_validate(temperature: Float, specific_humidity: Float) -> Result<(), InputError> {
     if !(173.0..=354.0).contains(&temperature) {
@@ -105,6 +113,7 @@ pub fn general3_validate(temperature: Float, specific_humidity: Float) -> Result
     Ok(())
 }
 
+#[allow(missing_docs)]
 pub fn general3_unchecked(temperature: Float, specific_humidity: Float) -> Float {
     temperature * (1.0 + (specific_humidity * ((1.0 / EPSILON) - 1.0)))
 }

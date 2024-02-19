@@ -1,3 +1,7 @@
+#![allow(clippy::needless_range_loop)]
+#![allow(clippy::cast_possible_truncation)]
+#![allow(clippy::cast_possible_wrap)]
+
 //!Functions to calculate partial vapour pressure of the unsaturated air in Pa.
 //!
 //!To compute saturation vapour pressure input dry-bulb temperature in place of dewpoint temperature.
@@ -26,6 +30,8 @@ pub fn general1(specific_humidity: Float, pressure: Float) -> Result<Float, Inpu
     Ok(general1_unchecked(specific_humidity, pressure))
 }
 
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
 #[cfg_attr(feature = "debug", logerr)]
 pub fn general1_validate(specific_humidity: Float, pressure: Float) -> Result<(), InputError> {
     if !(0.00001..=2.0).contains(&specific_humidity) {
@@ -39,6 +45,7 @@ pub fn general1_validate(specific_humidity: Float, pressure: Float) -> Result<()
     Ok(())
 }
 
+#[allow(missing_docs)]
 pub fn general1_unchecked(specific_humidity: Float, pressure: Float) -> Float {
     -((pressure * specific_humidity) / ((specific_humidity * (EPSILON - 1.0)) - EPSILON))
 }
@@ -57,6 +64,8 @@ pub fn buck1(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
     Ok(buck1_unchecked(dewpoint, pressure))
 }
 
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
 #[cfg_attr(feature = "debug", logerr)]
 pub fn buck1_validate(dewpoint: Float, pressure: Float) -> Result<(), InputError> {
     if !(232.0..=324.0).contains(&dewpoint) {
@@ -70,6 +79,7 @@ pub fn buck1_validate(dewpoint: Float, pressure: Float) -> Result<(), InputError
     Ok(())
 }
 
+#[allow(missing_docs)]
 pub fn buck1_unchecked(dewpoint: Float, pressure: Float) -> Float {
     let dewpoint = dewpoint - ZERO_CELSIUS; //convert to C
     let pressure = pressure / 100.0; //convert to hPa
@@ -104,6 +114,8 @@ pub fn buck2(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
     Ok(buck2_unchecked(dewpoint, pressure))
 }
 
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
 #[cfg_attr(feature = "debug", logerr)]
 pub fn buck2_validate(dewpoint: Float, pressure: Float) -> Result<(), InputError> {
     if !(193.0..=274.0).contains(&dewpoint) {
@@ -117,6 +129,7 @@ pub fn buck2_validate(dewpoint: Float, pressure: Float) -> Result<(), InputError
     Ok(())
 }
 
+#[allow(missing_docs)]
 pub fn buck2_unchecked(dewpoint: Float, pressure: Float) -> Float {
     let dewpoint = dewpoint - ZERO_CELSIUS; //convert to C
     let pressure = pressure / 100.0; //convert to hPa
@@ -151,6 +164,8 @@ pub fn buck3(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
     Ok(buck3_unchecked(dewpoint, pressure))
 }
 
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
 #[cfg_attr(feature = "debug", logerr)]
 pub fn buck3_validate(dewpoint: Float, pressure: Float) -> Result<(), InputError> {
     if !(253.0..=324.0).contains(&dewpoint) {
@@ -164,6 +179,7 @@ pub fn buck3_validate(dewpoint: Float, pressure: Float) -> Result<(), InputError
     Ok(())
 }
 
+#[allow(missing_docs)]
 pub fn buck3_unchecked(dewpoint: Float, pressure: Float) -> Float {
     let dewpoint = dewpoint - ZERO_CELSIUS; //convert to C
     let pressure = pressure / 100.0; //convert to hPa
@@ -194,6 +210,8 @@ pub fn buck3_simplified(dewpoint: Float) -> Result<Float, InputError> {
     Ok(buck3_simplified_unchecked(dewpoint))
 }
 
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
 #[cfg_attr(feature = "debug", logerr)]
 pub fn buck3_simplified_validate(dewpoint: Float) -> Result<(), InputError> {
     if !(253.0..=324.0).contains(&dewpoint) {
@@ -203,6 +221,7 @@ pub fn buck3_simplified_validate(dewpoint: Float) -> Result<(), InputError> {
     Ok(())
 }
 
+#[allow(missing_docs)]
 pub fn buck3_simplified_unchecked(dewpoint: Float) -> Float {
     let dewpoint = dewpoint - ZERO_CELSIUS; //convert to C
 
@@ -229,6 +248,8 @@ pub fn buck4(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
     Ok(buck4_unchecked(dewpoint, pressure))
 }
 
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
 #[cfg_attr(feature = "debug", logerr)]
 pub fn buck4_validate(dewpoint: Float, pressure: Float) -> Result<(), InputError> {
     if !(223.0..=274.0).contains(&dewpoint) {
@@ -242,6 +263,7 @@ pub fn buck4_validate(dewpoint: Float, pressure: Float) -> Result<(), InputError
     Ok(())
 }
 
+#[allow(missing_docs)]
 pub fn buck4_unchecked(dewpoint: Float, pressure: Float) -> Float {
     let dewpoint = dewpoint - ZERO_CELSIUS; //convert to C
     let pressure = pressure / 100.0; //convert to hPa
@@ -272,6 +294,8 @@ pub fn buck4_simplified(dewpoint: Float) -> Result<Float, InputError> {
     Ok(buck4_simplified_unchecked(dewpoint))
 }
 
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
 #[cfg_attr(feature = "debug", logerr)]
 pub fn buck4_simplified_validate(dewpoint: Float) -> Result<(), InputError> {
     //validate inputs
@@ -282,6 +306,7 @@ pub fn buck4_simplified_validate(dewpoint: Float) -> Result<(), InputError> {
     Ok(())
 }
 
+#[allow(missing_docs)]
 pub fn buck4_simplified_unchecked(dewpoint: Float) -> Float {
     let dewpoint = dewpoint - ZERO_CELSIUS; //convert to C
 
@@ -308,6 +333,8 @@ pub fn tetens1(dewpoint: Float) -> Result<Float, InputError> {
     Ok(tetens1_unchecked(dewpoint))
 }
 
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
 #[cfg_attr(feature = "debug", logerr)]
 pub fn tetens1_validate(dewpoint: Float) -> Result<(), InputError> {
     if !(273.0..=353.0).contains(&dewpoint) {
@@ -317,6 +344,7 @@ pub fn tetens1_validate(dewpoint: Float) -> Result<(), InputError> {
     Ok(())
 }
 
+#[allow(missing_docs)]
 pub fn tetens1_unchecked(dewpoint: Float) -> Float {
     let dewpoint = dewpoint - ZERO_CELSIUS; //convert to C
 
@@ -348,6 +376,8 @@ pub fn saturation_specific1(
     ))
 }
 
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
 #[cfg_attr(feature = "debug", logerr)]
 pub fn saturation_specific1_validate(
     saturation_vapour_pressure: Float,
@@ -366,6 +396,7 @@ pub fn saturation_specific1_validate(
     Ok(())
 }
 
+#[allow(missing_docs)]
 pub fn saturation_specific1_unchecked(
     saturation_vapour_pressure: Float,
     relative_humidity: Float,
@@ -392,6 +423,8 @@ pub fn saturation_specific2(
     ))
 }
 
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
 #[cfg_attr(feature = "debug", logerr)]
 pub fn saturation_specific2_validate(
     vapour_pressure: Float,
@@ -408,6 +441,7 @@ pub fn saturation_specific2_validate(
     Ok(())
 }
 
+#[allow(missing_docs)]
 pub fn saturation_specific2_uchecked(vapour_pressure: Float, relative_humidity: Float) -> Float {
     vapour_pressure / relative_humidity
 }
@@ -427,6 +461,8 @@ pub fn wexler1(dewpoint: Float) -> Result<Float, InputError> {
     Ok(wexler1_unchecked(dewpoint))
 }
 
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
 #[cfg_attr(feature = "debug", logerr)]
 pub fn wexler1_validate(dewpoint: Float) -> Result<(), InputError> {
     if !(273.0..=374.0).contains(&dewpoint) {
@@ -436,6 +472,7 @@ pub fn wexler1_validate(dewpoint: Float) -> Result<(), InputError> {
     Ok(())
 }
 
+#[allow(missing_docs)]
 pub fn wexler1_unchecked(dewpoint: Float) -> Float {
     // constants from the paper
     let g: [Float; 8] = [
@@ -473,6 +510,8 @@ pub fn wexler2(dewpoint: Float) -> Result<Float, InputError> {
     Ok(wexler2_unchecked(dewpoint))
 }
 
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
 #[cfg_attr(feature = "debug", logerr)]
 pub fn wexler2_validate(dewpoint: Float) -> Result<(), InputError> {
     if !(173.0..=274.0).contains(&dewpoint) {
@@ -481,6 +520,7 @@ pub fn wexler2_validate(dewpoint: Float) -> Result<(), InputError> {
     Ok(())
 }
 
+#[allow(missing_docs)]
 pub fn wexler2_unchecked(dewpoint: Float) -> Float {
     // constants from the paper
     let big_k: [Float; 6] = [
