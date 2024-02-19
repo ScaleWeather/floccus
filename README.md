@@ -66,6 +66,4 @@ information about the error. This feature potentially is not zero-cost so it is 
 
 ## Benchmarks
 
-Functions provided in this crate are intended for use in, i. a., numerical models. To provide the user information about performance overhead of each function all functions are benchmarked using [criterion.rs](https://bheisler.github.io/criterion.rs/book/index.html). Github Actions automatically runs all benchmarks.
-
-To check the latest benchmark results the newest workflow on [Github Actions page of floccus](https://github.com/ScaleWeather/floccus/actions).
+Functions provided in this crate are intended for use in, i. a., numerical models. To provide the user information about performance overhead of each function all functions are can be benchmarked using [criterion.rs](https://bheisler.github.io/criterion.rs/book/index.html).

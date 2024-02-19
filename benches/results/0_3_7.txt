@@ -1,0 +1,92 @@
+equivalent_potential_temperature::bryan1
+                        time:   [37.789 ns 37.794 ns 37.799 ns]
+
+mixing_ratio::general1  
+                        time:   [2.2452 ns 2.2497 ns 2.2572 ns]
+
+mixing_ratio::performance1
+                        time:   [6.9944 ns 6.9992 ns 7.0044 ns]
+                        
+mixing_ratio::accuracy1 
+                        time:   [10.147 ns 10.163 ns 10.178 ns]
+
+potential_temperature::davies_jones1
+                        time:   [11.339 ns 11.340 ns 11.341 ns]
+
+relative_humidity::general1
+                        time:   [1.3266 ns 1.3268 ns 1.3273 ns]
+
+relative_humidity::general2
+                        time:   [1.3271 ns 1.3276 ns 1.3281 ns]
+
+relative_humidity::general3
+                        time:   [8.7762 ns 8.7767 ns 8.7772 ns]
+                        
+relative_humidity::general4
+                        time:   [10.631 ns 10.640 ns 10.649 ns]
+
+relative_humidity::general5
+                        time:   [22.791 ns 22.795 ns 22.800 ns]
+
+specific_humidity::general1
+                        time:   [1.4529 ns 1.4541 ns 1.4554 ns]
+                        
+vapour_pressure::general1
+                        time:   [1.3643 ns 1.3831 ns 1.4079 ns]
+
+vapour_pressure::tetens1
+                        time:   [4.0723 ns 4.0742 ns 4.0760 ns]
+
+vapour_pressure::buck1  
+                        time:   [5.8277 ns 5.8288 ns 5.8304 ns]
+
+vapour_pressure::buck2  
+                        time:   [5.8274 ns 5.8276 ns 5.8279 ns]
+
+vapour_pressure::buck3  
+                        time:   [4.7666 ns 4.7670 ns 4.7673 ns]
+
+vapour_pressure::buck4  
+                        time:   [4.7652 ns 4.7657 ns 4.7661 ns]
+
+vapour_pressure::buck3_simplified
+                        time:   [4.0155 ns 4.0195 ns 4.0232 ns]
+
+vapour_pressure::buck4_simplified
+                        time:   [4.0485 ns 4.0518 ns 4.0553 ns]
+
+vapour_pressure::saturation_specific1
+                        time:   [1.3148 ns 1.3183 ns 1.3218 ns]
+
+vapour_pressure::saturation_specific2
+                        time:   [1.3265 ns 1.3265 ns 1.3266 ns]
+
+vapour_pressure::wexler1
+                        time:   [8.5303 ns 8.5305 ns 8.5308 ns]
+
+vapour_pressure::wexler2
+                        time:   [7.8834 ns 7.8839 ns 7.8846 ns]
+
+vapour_pressure_deficit::general1
+                        time:   [1.2693 ns 1.2754 ns 1.2816 ns]
+
+vapour_pressure_deficit::general2
+                        time:   [9.3893 ns 9.3896 ns 9.3900 ns]
+
+vapour_pressure_deficit::general3
+                        time:   [6.4139 ns 6.4157 ns 6.4180 ns]
+
+virtual_temperature::general1
+                        time:   [1.6099 ns 1.6103 ns 1.6109 ns]
+
+virtual_temperature::general2
+                        time:   [1.8563 ns 1.8564 ns 1.8564 ns]
+                        
+virtual_temperature::general3
+                        time:   [1.2598 ns 1.2603 ns 1.2608 ns]
+                        
+wet_bulb_potential_temperature::davies_jones1
+                        time:   [10.616 ns 10.616 ns 10.617 ns]
+                        
+wet_bulb_temperature::stull1
+                        time:   [27.765 ns 27.767 ns 27.770 ns]
