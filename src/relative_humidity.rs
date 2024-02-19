@@ -122,9 +122,8 @@ pub fn general3_validate(temperature: Float, dewpoint: Float) -> Result<(), Inpu
 pub fn general3_unchecked(temperature: Float, dewpoint: Float) -> Float {
     let vapour_pressure = vapour_pressure::tetens1_unchecked(dewpoint);
     let saturation_vapour_pressure = vapour_pressure::tetens1_unchecked(temperature);
-    let result = general2_unchecked(vapour_pressure, saturation_vapour_pressure);
 
-    result
+    general2_unchecked(vapour_pressure, saturation_vapour_pressure)
 }
 
 ///Formula for computing relative humidity from temperature, dewpoint and pressure using [`buck3`](vapour_pressure::buck3)
@@ -168,9 +167,8 @@ pub fn general4_validate(
 pub fn general4_unchecked(temperature: Float, dewpoint: Float, pressure: Float) -> Float {
     let vapour_pressure = vapour_pressure::buck3_unchecked(dewpoint, pressure);
     let saturation_vapour_pressure = vapour_pressure::buck3_unchecked(temperature, pressure);
-    let result = general2_unchecked(vapour_pressure, saturation_vapour_pressure);
 
-    result
+    general2_unchecked(vapour_pressure, saturation_vapour_pressure)
 }
 
 ///Formula for computing relative humidity from temperature, dewpoint and pressure using [`accuracy1`](mixing_ratio::accuracy1)
@@ -214,9 +212,8 @@ pub fn general5_validate(
 pub fn general5_unchecked(temperature: Float, dewpoint: Float, pressure: Float) -> Float {
     let mixing_ratio = mixing_ratio::accuracy1_unchecked(dewpoint, pressure);
     let saturation_mixing_ratio = mixing_ratio::accuracy1_unchecked(temperature, pressure);
-    let result = general1_unchecked(mixing_ratio, saturation_mixing_ratio);
 
-    result
+    general1_unchecked(mixing_ratio, saturation_mixing_ratio)
 }
 
 #[cfg(test)]

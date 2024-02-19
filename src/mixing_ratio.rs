@@ -82,8 +82,8 @@ pub fn performance1_validate(dewpoint: Float, pressure: Float) -> Result<(), Inp
 #[allow(missing_docs)]
 pub fn performance1_unchecked(dewpoint: Float, pressure: Float) -> Float {
     let vapour_pressure = vapour_pressure::tetens1_unchecked(dewpoint);
-    let result = general1_unchecked(pressure, vapour_pressure);
-    result
+
+    general1_unchecked(pressure, vapour_pressure)
 }
 
 ///Formula for computing mixing ratio of unsaturated air from dewpoint temperature and pressure.
@@ -116,8 +116,8 @@ pub fn accuracy1_validate(dewpoint: Float, pressure: Float) -> Result<(), InputE
 #[allow(missing_docs)]
 pub fn accuracy1_unchecked(dewpoint: Float, pressure: Float) -> Float {
     let vapour_pressure = vapour_pressure::buck1_unchecked(dewpoint, pressure);
-    let result = general1_unchecked(pressure, vapour_pressure);
-    result
+
+    general1_unchecked(pressure, vapour_pressure)
 }
 
 #[cfg(test)]
