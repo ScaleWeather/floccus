@@ -1,6 +1,11 @@
 name: Basic Validation
 
-on: [push, pull_request, workflow_dispatch]
+on: 
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron:  '26 3 20 * *'
 
 env:
   CARGO_TERM_COLOR: always
