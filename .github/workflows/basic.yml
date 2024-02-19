@@ -1,0 +1,28 @@
+name: Basic Validation
+
+on: [push, pull_request, workflow_dispatch]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build-and-test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Prepare environment
+      run: |
+        rustup update stable
+        cargo clean
+    - name: Build with cargo
+      run: |
+        cargo build --release
+        cargo build --release --features "double_precision"
+        cargo clean
+    - name: Test with cargo
+      run: |
+        cargo test
+        cargo test --features "double_precision"
+        cargo clean
