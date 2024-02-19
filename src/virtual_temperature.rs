@@ -4,10 +4,10 @@
 //!at which a theoretical dry air parcel would have a total pressure and density equal
 //!to the moist parcel of air ([Wikipedia](https://en.wikipedia.org/wiki/Virtual_temperature)).
 
-use crate::{constants::EPSILON, errors::InputError};
 use crate::Float;
+use crate::{constants::EPSILON, errors::InputError};
 
-#[cfg(feature="debug")]
+#[cfg(feature = "debug")]
 use floccus_proc::logerr;
 
 ///Formula for computing virtual temperature from temperature and mixing ratio.
@@ -17,8 +17,13 @@ use floccus_proc::logerr;
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `temperature` range: 173K - 373K\
 ///Valid `mixing_ratio` range: 0.0000000001 - 0.5
-#[cfg_attr(feature = "debug", logerr)]
 pub fn general1(temperature: Float, mixing_ratio: Float) -> Result<Float, InputError> {
+    general1_validate(temperature, mixing_ratio)?;
+    Ok(general1_unchecked(temperature, mixing_ratio))
+}
+
+#[cfg_attr(feature = "debug", logerr)]
+pub fn general1_validate(temperature: Float, mixing_ratio: Float) -> Result<(), InputError> {
     if !(173.0..=354.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));
     }
@@ -27,9 +32,11 @@ pub fn general1(temperature: Float, mixing_ratio: Float) -> Result<Float, InputE
         return Err(InputError::OutOfRange(String::from("mixing_ratio")));
     }
 
-    let result = temperature * ((mixing_ratio + EPSILON) / (EPSILON * (1.0 + mixing_ratio)));
+    Ok(())
+}
 
-    Ok(result)
+pub fn general1_unchecked(temperature: Float, mixing_ratio: Float) -> Float {
+    temperature * ((mixing_ratio + EPSILON) / (EPSILON * (1.0 + mixing_ratio)))
 }
 
 ///Formula for computing virtual temperature from air temperature, pressure and vapour pressure.
@@ -40,8 +47,21 @@ pub fn general1(temperature: Float, mixing_ratio: Float) -> Result<Float, InputE
 ///Valid `temperature` range: 173K - 373K\
 ///Valid `pressure` range: 100Pa - 150000Pa\
 ///Valid `vapour_pressure` range: 0Pa - 10000Pa
+pub fn general2(
+    temperature: Float,
+    pressure: Float,
+    vapour_pressure: Float,
+) -> Result<Float, InputError> {
+    general2_validate(temperature, pressure, vapour_pressure)?;
+    Ok(general2_unchecked(temperature, pressure, vapour_pressure))
+}
+
 #[cfg_attr(feature = "debug", logerr)]
-pub fn general2(temperature: Float, pressure: Float, vapour_pressure: Float) -> Result<Float, InputError> {
+pub fn general2_validate(
+    temperature: Float,
+    pressure: Float,
+    vapour_pressure: Float,
+) -> Result<(), InputError> {
     if !(173.0..=354.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));
     }
@@ -53,10 +73,11 @@ pub fn general2(temperature: Float, pressure: Float, vapour_pressure: Float) -> 
     if !(0.0..=10_000.0).contains(&vapour_pressure) {
         return Err(InputError::OutOfRange(String::from("vapour_pressure")));
     }
+    Ok(())
+}
 
-    let result = temperature / (1.0 - ((vapour_pressure / pressure) * (1.0 - EPSILON)));
-
-    Ok(result)
+pub fn general2_unchecked(temperature: Float, pressure: Float, vapour_pressure: Float) -> Float {
+    temperature / (1.0 - ((vapour_pressure / pressure) * (1.0 - EPSILON)))
 }
 
 ///Formula for computing virtual temperature from air temperature and specific humidity.
@@ -66,8 +87,13 @@ pub fn general2(temperature: Float, pressure: Float, vapour_pressure: Float) -> 
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `temperature` range: 173K - 373K\
 ///Valid `specific_humidity` range: 100Pa - 150000Pa
-#[cfg_attr(feature = "debug", logerr)]
 pub fn general3(temperature: Float, specific_humidity: Float) -> Result<Float, InputError> {
+    general3_validate(temperature, specific_humidity)?;
+    Ok(general3_unchecked(temperature, specific_humidity))
+}
+
+#[cfg_attr(feature = "debug", logerr)]
+pub fn general3_validate(temperature: Float, specific_humidity: Float) -> Result<(), InputError> {
     if !(173.0..=354.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));
     }
@@ -76,9 +102,11 @@ pub fn general3(temperature: Float, specific_humidity: Float) -> Result<Float, I
         return Err(InputError::OutOfRange(String::from("specific_humidity")));
     }
 
-    let result = temperature * (1.0 + (specific_humidity * ((1.0 / EPSILON) - 1.0)));
+    Ok(())
+}
 
-    Ok(result)
+pub fn general3_unchecked(temperature: Float, specific_humidity: Float) -> Float {
+    temperature * (1.0 + (specific_humidity * ((1.0 / EPSILON) - 1.0)))
 }
 
 #[cfg(test)]
