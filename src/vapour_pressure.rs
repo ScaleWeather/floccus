@@ -1,3 +1,7 @@
+#![allow(clippy::needless_range_loop)]
+#![allow(clippy::cast_possible_truncation)]
+#![allow(clippy::cast_possible_wrap)]
+
 //!Functions to calculate partial vapour pressure of the unsaturated air in Pa.
 //!
 //!To compute saturation vapour pressure input dry-bulb temperature in place of dewpoint temperature.
@@ -8,7 +12,7 @@ use crate::{
     errors::InputError,
 };
 
-#[cfg(feature="debug")]
+#[cfg(feature = "debug")]
 use floccus_proc::logerr;
 
 ///Formula for computing vapour pressure from specific humidity and pressure.
@@ -21,9 +25,15 @@ use floccus_proc::logerr;
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `specific_humidity` range: 0.00001 - 2.0\
 ///Valid `pressure` range: 100Pa - 150000Pa
-#[cfg_attr(feature = "debug", logerr)]
 pub fn general1(specific_humidity: Float, pressure: Float) -> Result<Float, InputError> {
-    //validate inputs
+    general1_validate(specific_humidity, pressure)?;
+    Ok(general1_unchecked(specific_humidity, pressure))
+}
+
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
+#[cfg_attr(feature = "debug", logerr)]
+pub fn general1_validate(specific_humidity: Float, pressure: Float) -> Result<(), InputError> {
     if !(0.00001..=2.0).contains(&specific_humidity) {
         return Err(InputError::OutOfRange(String::from("specific_humidity")));
     }
@@ -32,10 +42,12 @@ pub fn general1(specific_humidity: Float, pressure: Float) -> Result<Float, Inpu
         return Err(InputError::OutOfRange(String::from("pressure")));
     }
 
-    let result =
-        -((pressure * specific_humidity) / ((specific_humidity * (EPSILON - 1.0)) - EPSILON));
+    Ok(())
+}
 
-    Ok(result)
+#[allow(missing_docs)]
+pub fn general1_unchecked(specific_humidity: Float, pressure: Float) -> Float {
+    -((pressure * specific_humidity) / ((specific_humidity * (EPSILON - 1.0)) - EPSILON))
 }
 
 ///Formula for computing vapour pressure from dewpoint temperature and pressure.
@@ -47,9 +59,15 @@ pub fn general1(specific_humidity: Float, pressure: Float) -> Result<Float, Inpu
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `dewpoint` range: 232K - 324K\
 ///Valid `pressure` range: 100Pa - 150000Pa
-#[cfg_attr(feature = "debug", logerr)]
 pub fn buck1(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
-    //validate inputs
+    buck1_validate(dewpoint, pressure)?;
+    Ok(buck1_unchecked(dewpoint, pressure))
+}
+
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
+#[cfg_attr(feature = "debug", logerr)]
+pub fn buck1_validate(dewpoint: Float, pressure: Float) -> Result<(), InputError> {
     if !(232.0..=324.0).contains(&dewpoint) {
         return Err(InputError::OutOfRange(String::from("dewpoint")));
     }
@@ -58,6 +76,11 @@ pub fn buck1(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
         return Err(InputError::OutOfRange(String::from("pressure")));
     }
 
+    Ok(())
+}
+
+#[allow(missing_docs)]
+pub fn buck1_unchecked(dewpoint: Float, pressure: Float) -> Float {
     let dewpoint = dewpoint - ZERO_CELSIUS; //convert to C
     let pressure = pressure / 100.0; //convert to hPa
 
@@ -74,7 +97,7 @@ pub fn buck1(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
         lower_a * (((lower_b - (dewpoint / lower_d)) * dewpoint) / (dewpoint + lower_c)).exp();
     let lower_f = 1.0 + upper_a + (pressure * (upper_b + (upper_c * dewpoint * dewpoint)));
 
-    Ok((lower_e * lower_f) * 100.0) //return in Pa
+    (lower_e * lower_f) * 100.0 //return in Pa
 }
 
 ///Formula for computing vapour pressure from dewpoint temperature and pressure.
@@ -86,9 +109,15 @@ pub fn buck1(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `dewpoint` range: 193K - 274K\
 ///Valid `pressure` range: 100Pa - 150000Pa
-#[cfg_attr(feature = "debug", logerr)]
 pub fn buck2(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
-    //validate inputs
+    buck2_validate(dewpoint, pressure)?;
+    Ok(buck2_unchecked(dewpoint, pressure))
+}
+
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
+#[cfg_attr(feature = "debug", logerr)]
+pub fn buck2_validate(dewpoint: Float, pressure: Float) -> Result<(), InputError> {
     if !(193.0..=274.0).contains(&dewpoint) {
         return Err(InputError::OutOfRange(String::from("dewpoint")));
     }
@@ -97,6 +126,11 @@ pub fn buck2(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
         return Err(InputError::OutOfRange(String::from("pressure")));
     }
 
+    Ok(())
+}
+
+#[allow(missing_docs)]
+pub fn buck2_unchecked(dewpoint: Float, pressure: Float) -> Float {
     let dewpoint = dewpoint - ZERO_CELSIUS; //convert to C
     let pressure = pressure / 100.0; //convert to hPa
 
@@ -113,7 +147,7 @@ pub fn buck2(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
         lower_a * (((lower_b - (dewpoint / lower_d)) * dewpoint) / (dewpoint + lower_c)).exp();
     let lower_f = 1.0 + upper_a + (pressure * (upper_b + (upper_c * dewpoint * dewpoint)));
 
-    Ok((lower_e * lower_f) * 100.0) //return in Pa
+    (lower_e * lower_f) * 100.0 //return in Pa
 }
 
 ///Formula for computing vapour pressure from dewpoint temperature and pressure.
@@ -125,9 +159,15 @@ pub fn buck2(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `dewpoint` range: 253K - 324K\
 ///Valid `pressure` range: 100Pa - 150000Pa
-#[cfg_attr(feature = "debug", logerr)]
 pub fn buck3(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
-    //validate inputs
+    buck3_validate(dewpoint, pressure)?;
+    Ok(buck3_unchecked(dewpoint, pressure))
+}
+
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
+#[cfg_attr(feature = "debug", logerr)]
+pub fn buck3_validate(dewpoint: Float, pressure: Float) -> Result<(), InputError> {
     if !(253.0..=324.0).contains(&dewpoint) {
         return Err(InputError::OutOfRange(String::from("dewpoint")));
     }
@@ -136,6 +176,11 @@ pub fn buck3(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
         return Err(InputError::OutOfRange(String::from("pressure")));
     }
 
+    Ok(())
+}
+
+#[allow(missing_docs)]
+pub fn buck3_unchecked(dewpoint: Float, pressure: Float) -> Float {
     let dewpoint = dewpoint - ZERO_CELSIUS; //convert to C
     let pressure = pressure / 100.0; //convert to hPa
 
@@ -149,7 +194,7 @@ pub fn buck3(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
     let lower_e = lower_a * ((lower_b * dewpoint) / (dewpoint + lower_c)).exp();
     let lower_f = 1.0 + upper_a + (pressure * upper_b);
 
-    Ok((lower_e * lower_f) * 100.0) //return in Pa
+    (lower_e * lower_f) * 100.0 //return in Pa
 }
 
 ///Formula for computing vapour pressure from dewpoint temperature.
@@ -160,13 +205,24 @@ pub fn buck3(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
 ///
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `dewpoint` range: 253K - 324K
-#[cfg_attr(feature = "debug", logerr)]
 pub fn buck3_simplified(dewpoint: Float) -> Result<Float, InputError> {
-    //validate inputs
+    buck3_simplified_validate(dewpoint)?;
+    Ok(buck3_simplified_unchecked(dewpoint))
+}
+
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
+#[cfg_attr(feature = "debug", logerr)]
+pub fn buck3_simplified_validate(dewpoint: Float) -> Result<(), InputError> {
     if !(253.0..=324.0).contains(&dewpoint) {
         return Err(InputError::OutOfRange(String::from("dewpoint")));
     }
 
+    Ok(())
+}
+
+#[allow(missing_docs)]
+pub fn buck3_simplified_unchecked(dewpoint: Float) -> Float {
     let dewpoint = dewpoint - ZERO_CELSIUS; //convert to C
 
     let lower_a = 6.1121;
@@ -175,7 +231,7 @@ pub fn buck3_simplified(dewpoint: Float) -> Result<Float, InputError> {
 
     let lower_e = lower_a * ((lower_b * dewpoint) / (dewpoint + lower_c)).exp();
 
-    Ok(lower_e * 100.0) //return in Pa
+    lower_e * 100.0 //return in Pa
 }
 
 ///Formula for computing vapour pressure from dewpoint temperature and pressure.
@@ -187,9 +243,15 @@ pub fn buck3_simplified(dewpoint: Float) -> Result<Float, InputError> {
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `dewpoint` range: 223K - 274K\
 ///Valid `pressure` range: 100Pa - 150000Pa
-#[cfg_attr(feature = "debug", logerr)]
 pub fn buck4(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
-    //validate inputs
+    buck4_validate(dewpoint, pressure)?;
+    Ok(buck4_unchecked(dewpoint, pressure))
+}
+
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
+#[cfg_attr(feature = "debug", logerr)]
+pub fn buck4_validate(dewpoint: Float, pressure: Float) -> Result<(), InputError> {
     if !(223.0..=274.0).contains(&dewpoint) {
         return Err(InputError::OutOfRange(String::from("dewpoint")));
     }
@@ -198,6 +260,11 @@ pub fn buck4(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
         return Err(InputError::OutOfRange(String::from("pressure")));
     }
 
+    Ok(())
+}
+
+#[allow(missing_docs)]
+pub fn buck4_unchecked(dewpoint: Float, pressure: Float) -> Float {
     let dewpoint = dewpoint - ZERO_CELSIUS; //convert to C
     let pressure = pressure / 100.0; //convert to hPa
 
@@ -211,7 +278,7 @@ pub fn buck4(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
     let lower_e = lower_a * ((lower_b * dewpoint) / (dewpoint + lower_c)).exp();
     let lower_f = 1.0 + upper_a + (pressure * upper_b);
 
-    Ok((lower_e * lower_f) * 100.0) //return in Pa
+    (lower_e * lower_f) * 100.0 //return in Pa
 }
 
 ///Formula for computing vapour pressure from dewpoint temperature.
@@ -222,13 +289,25 @@ pub fn buck4(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
 ///
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `dewpoint` range: 223K - 274K
-#[cfg_attr(feature = "debug", logerr)]
 pub fn buck4_simplified(dewpoint: Float) -> Result<Float, InputError> {
+    buck4_simplified_validate(dewpoint)?;
+    Ok(buck4_simplified_unchecked(dewpoint))
+}
+
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
+#[cfg_attr(feature = "debug", logerr)]
+pub fn buck4_simplified_validate(dewpoint: Float) -> Result<(), InputError> {
     //validate inputs
     if !(223.0..=274.0).contains(&dewpoint) {
         return Err(InputError::OutOfRange(String::from("dewpoint")));
     }
 
+    Ok(())
+}
+
+#[allow(missing_docs)]
+pub fn buck4_simplified_unchecked(dewpoint: Float) -> Float {
     let dewpoint = dewpoint - ZERO_CELSIUS; //convert to C
 
     let lower_a = 6.1115;
@@ -237,7 +316,7 @@ pub fn buck4_simplified(dewpoint: Float) -> Result<Float, InputError> {
 
     let lower_e = lower_a * ((lower_b * dewpoint) / (dewpoint + lower_c)).exp();
 
-    Ok(lower_e * 100.0) //return in Pa
+    lower_e * 100.0 //return in Pa
 }
 
 ///Formula for computing vapour pressure over water from dewpoint temperature.
@@ -249,13 +328,24 @@ pub fn buck4_simplified(dewpoint: Float) -> Result<Float, InputError> {
 ///
 ///Returns [`InputError::OutOfRange`] when input is out of range.\
 ///Valid `dewpoint` range: 273K - 353K
-#[cfg_attr(feature = "debug", logerr)]
 pub fn tetens1(dewpoint: Float) -> Result<Float, InputError> {
-    //validate inputs
+    tetens1_validate(dewpoint)?;
+    Ok(tetens1_unchecked(dewpoint))
+}
+
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
+#[cfg_attr(feature = "debug", logerr)]
+pub fn tetens1_validate(dewpoint: Float) -> Result<(), InputError> {
     if !(273.0..=353.0).contains(&dewpoint) {
         return Err(InputError::OutOfRange(String::from("dewpoint")));
     }
 
+    Ok(())
+}
+
+#[allow(missing_docs)]
+pub fn tetens1_unchecked(dewpoint: Float) -> Float {
     let dewpoint = dewpoint - ZERO_CELSIUS; //convert to C
 
     let lower_a = 0.61078;
@@ -264,7 +354,7 @@ pub fn tetens1(dewpoint: Float) -> Result<Float, InputError> {
 
     let result = lower_a * ((lower_b * dewpoint) / (dewpoint + lower_c)).exp();
 
-    Ok(result * 1000.0) //return in Pa
+    result * 1000.0 //return in Pa
 }
 
 ///Formula for computing **ONLY** vapour pressure from saturation vapour pressure and relative humidity.
@@ -275,11 +365,24 @@ pub fn tetens1(dewpoint: Float) -> Result<Float, InputError> {
 ///Returns [`InputError::OutOfRange`] when input is out of range.\
 ///Valid `saturation_vapour_pressure` range: 0Pa - 10000Pa\
 ///Valid `relative_humidity` range: 0.0 - 1.0
-#[cfg_attr(feature = "debug", logerr)]
 pub fn saturation_specific1(
     saturation_vapour_pressure: Float,
     relative_humidity: Float,
 ) -> Result<Float, InputError> {
+    saturation_specific1_validate(saturation_vapour_pressure, relative_humidity)?;
+    Ok(saturation_specific1_unchecked(
+        saturation_vapour_pressure,
+        relative_humidity,
+    ))
+}
+
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
+#[cfg_attr(feature = "debug", logerr)]
+pub fn saturation_specific1_validate(
+    saturation_vapour_pressure: Float,
+    relative_humidity: Float,
+) -> Result<(), InputError> {
     if !(0.0..=2.0).contains(&relative_humidity) {
         return Err(InputError::OutOfRange(String::from("relative_humidity")));
     }
@@ -290,7 +393,15 @@ pub fn saturation_specific1(
         )));
     }
 
-    Ok(saturation_vapour_pressure * relative_humidity)
+    Ok(())
+}
+
+#[allow(missing_docs)]
+pub fn saturation_specific1_unchecked(
+    saturation_vapour_pressure: Float,
+    relative_humidity: Float,
+) -> Float {
+    saturation_vapour_pressure * relative_humidity
 }
 
 ///Formula for computing **ONLY** saturation vapour pressure from vapour pressure and relative humidity.
@@ -301,11 +412,24 @@ pub fn saturation_specific1(
 ///Returns [`InputError::OutOfRange`] when input is out of range.\
 ///Valid `vapour_pressure` range: 0Pa - 10000Pa\
 ///Valid `relative_humidity` range: 0.00001 - 1.0
-#[cfg_attr(feature = "debug", logerr)]
 pub fn saturation_specific2(
     vapour_pressure: Float,
     relative_humidity: Float,
 ) -> Result<Float, InputError> {
+    saturation_specific2_validate(vapour_pressure, relative_humidity)?;
+    Ok(saturation_specific2_uchecked(
+        vapour_pressure,
+        relative_humidity,
+    ))
+}
+
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
+#[cfg_attr(feature = "debug", logerr)]
+pub fn saturation_specific2_validate(
+    vapour_pressure: Float,
+    relative_humidity: Float,
+) -> Result<(), InputError> {
     if !(0.00001..=2.0).contains(&relative_humidity) {
         return Err(InputError::OutOfRange(String::from("relative_humidity")));
     }
@@ -314,7 +438,12 @@ pub fn saturation_specific2(
         return Err(InputError::OutOfRange(String::from("vapour_pressure")));
     }
 
-    Ok(vapour_pressure / relative_humidity)
+    Ok(())
+}
+
+#[allow(missing_docs)]
+pub fn saturation_specific2_uchecked(vapour_pressure: Float, relative_humidity: Float) -> Float {
+    vapour_pressure / relative_humidity
 }
 
 ///Formula for computing vapour pressure over water from dewpoint temperature.
@@ -327,22 +456,34 @@ pub fn saturation_specific2(
 ///
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `dewpoint` range: 273K - 374K
-#[cfg_attr(feature = "debug", logerr)]
 pub fn wexler1(dewpoint: Float) -> Result<Float, InputError> {
+    wexler1_validate(dewpoint)?;
+    Ok(wexler1_unchecked(dewpoint))
+}
+
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
+#[cfg_attr(feature = "debug", logerr)]
+pub fn wexler1_validate(dewpoint: Float) -> Result<(), InputError> {
     if !(273.0..=374.0).contains(&dewpoint) {
         return Err(InputError::OutOfRange(String::from("dewpoint")));
     }
 
+    Ok(())
+}
+
+#[allow(missing_docs)]
+pub fn wexler1_unchecked(dewpoint: Float) -> Float {
     // constants from the paper
     let g: [Float; 8] = [
         -2991.2729,
         -6017.0128,
-        18.87643854,
-        -0.028354721,
-        0.0000178383,
-        -0.00000000084150417,
-        0.00000000000044412543,
-        2.858487,
+        18.876_438_54,
+        -0.028_354_721,
+        0.000_017_838_3,
+        -0.000_000_000_841_504_17,
+        0.000_000_000_000_444_125_43,
+        2.858_487,
     ];
 
     let mut ln_p = g[7] * dewpoint.ln();
@@ -351,7 +492,7 @@ pub fn wexler1(dewpoint: Float) -> Result<Float, InputError> {
         ln_p += g[i] * dewpoint.powi(i as i32 - 2);
     }
 
-    Ok(ln_p.exp())
+    ln_p.exp()
 }
 
 ///Formula for computing vapour over ice pressure from dewpoint temperature.
@@ -364,20 +505,31 @@ pub fn wexler1(dewpoint: Float) -> Result<Float, InputError> {
 ///
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `dewpoint` range: 173K - 274K
-#[cfg_attr(feature = "debug", logerr)]
 pub fn wexler2(dewpoint: Float) -> Result<Float, InputError> {
+    wexler2_validate(dewpoint)?;
+    Ok(wexler2_unchecked(dewpoint))
+}
+
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
+#[cfg_attr(feature = "debug", logerr)]
+pub fn wexler2_validate(dewpoint: Float) -> Result<(), InputError> {
     if !(173.0..=274.0).contains(&dewpoint) {
         return Err(InputError::OutOfRange(String::from("dewpoint")));
     }
+    Ok(())
+}
 
+#[allow(missing_docs)]
+pub fn wexler2_unchecked(dewpoint: Float) -> Float {
     // constants from the paper
     let big_k: [Float; 6] = [
         -5865.3696,
-        22.241033,
-        0.013749042,
-        -0.00003403177,
-        0.000000026967687,
-        0.6918651,
+        22.241_033,
+        0.013_749_042,
+        -0.000_034_031_77,
+        0.000_000_026_967_687,
+        0.691_865_1,
     ];
 
     let mut ln_p = big_k[5] * dewpoint.ln();
@@ -386,7 +538,7 @@ pub fn wexler2(dewpoint: Float) -> Result<Float, InputError> {
         ln_p += big_k[j] * dewpoint.powi(j as i32 - 1);
     }
 
-    Ok(ln_p.exp())
+    ln_p.exp()
 }
 
 #[cfg(test)]

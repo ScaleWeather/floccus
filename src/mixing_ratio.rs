@@ -3,11 +3,11 @@
 //!To calculate saturation mixing ratio input dry-bulb temperature in place of dewpoint
 //!or saturation vapour pressure in place of vapour pressure.
 
+use crate::Float;
 use crate::{constants::EPSILON, errors::InputError, vapour_pressure};
 use float_cmp::approx_eq;
-use crate::Float;
 
-#[cfg(feature="debug")]
+#[cfg(feature = "debug")]
 use floccus_proc::logerr;
 
 ///Formula for computing mixing ratio of unsaturated air from air pressure and vapour pressure
@@ -20,9 +20,15 @@ use floccus_proc::logerr;
 ///
 ///Returns [`InputError::IncorrectArgumentSet`] when inputs are equal, in which
 ///case division by 0 occurs.
-#[cfg_attr(feature = "debug", logerr)]
 pub fn general1(pressure: Float, vapour_pressure: Float) -> Result<Float, InputError> {
-    //validate inputs
+    general1_validate(pressure, vapour_pressure)?;
+    Ok(general1_unchecked(pressure, vapour_pressure))
+}
+
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
+#[cfg_attr(feature = "debug", logerr)]
+pub fn general1_validate(pressure: Float, vapour_pressure: Float) -> Result<(), InputError> {
     if !(100.0..=150_000.0).contains(&pressure) {
         return Err(InputError::OutOfRange(String::from("pressure")));
     }
@@ -36,21 +42,31 @@ pub fn general1(pressure: Float, vapour_pressure: Float) -> Result<Float, InputE
             "pressure and vapour_pressure cannot be equal",
         )));
     }
+    Ok(())
+}
 
-    let result = EPSILON * (vapour_pressure / (pressure - vapour_pressure));
-    Ok(result)
+#[allow(missing_docs)]
+pub fn general1_unchecked(pressure: Float, vapour_pressure: Float) -> Float {
+    EPSILON * (vapour_pressure / (pressure - vapour_pressure))
 }
 
 ///Formula for computing mixing ratio of unsaturated air from dewpoint temperature and pressure.
-///Optimised by performance.
+///Optimised for performance.
 ///
 ///# Errors
 ///
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `dewpoint` range: 273K - 353K\
 ///Valid `pressure` range: 100Pa - 150000Pa
-#[cfg_attr(feature = "debug", logerr)]
 pub fn performance1(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
+    performance1_validate(dewpoint, pressure)?;
+    Ok(performance1_unchecked(dewpoint, pressure))
+}
+
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
+#[cfg_attr(feature = "debug", logerr)]
+pub fn performance1_validate(dewpoint: Float, pressure: Float) -> Result<(), InputError> {
     //validate inputs
     if !(273.0..=353.0).contains(&dewpoint) {
         return Err(InputError::OutOfRange(String::from("dewpoint")));
@@ -60,22 +76,33 @@ pub fn performance1(dewpoint: Float, pressure: Float) -> Result<Float, InputErro
         return Err(InputError::OutOfRange(String::from("pressure")));
     }
 
-    let vapour_pressure = vapour_pressure::tetens1(dewpoint)?;
-    let result = general1(pressure, vapour_pressure)?;
-    Ok(result)
+    Ok(())
+}
+
+#[allow(missing_docs)]
+pub fn performance1_unchecked(dewpoint: Float, pressure: Float) -> Float {
+    let vapour_pressure = vapour_pressure::tetens1_unchecked(dewpoint);
+
+    general1_unchecked(pressure, vapour_pressure)
 }
 
 ///Formula for computing mixing ratio of unsaturated air from dewpoint temperature and pressure.
-///Optimised by accuracy.
+///Optimised for accuracy.
 ///
 ///# Errors
 ///
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `dewpoint` range: 232K - 324K\
 ///Valid `pressure` range: 100Pa - 150000Pa
-#[cfg_attr(feature = "debug", logerr)]
 pub fn accuracy1(dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
-    //validate inputs
+    accuracy1_validate(dewpoint, pressure)?;
+    Ok(accuracy1_unchecked(dewpoint, pressure))
+}
+
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
+#[cfg_attr(feature = "debug", logerr)]
+pub fn accuracy1_validate(dewpoint: Float, pressure: Float) -> Result<(), InputError> {
     if !(232.0..=324.0).contains(&dewpoint) {
         return Err(InputError::OutOfRange(String::from("dewpoint")));
     }
@@ -83,10 +110,14 @@ pub fn accuracy1(dewpoint: Float, pressure: Float) -> Result<Float, InputError> 
     if !(100.0..=150_000.0).contains(&pressure) {
         return Err(InputError::OutOfRange(String::from("pressure")));
     }
+    Ok(())
+}
 
-    let vapour_pressure = vapour_pressure::buck1(dewpoint, pressure)?;
-    let result = general1(pressure, vapour_pressure)?;
-    Ok(result)
+#[allow(missing_docs)]
+pub fn accuracy1_unchecked(dewpoint: Float, pressure: Float) -> Float {
+    let vapour_pressure = vapour_pressure::buck1_unchecked(dewpoint, pressure);
+
+    general1_unchecked(pressure, vapour_pressure)
 }
 
 #[cfg(test)]

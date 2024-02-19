@@ -1,9 +1,9 @@
 //!Functions to calculate relative humidity in %/100
 
-use crate::{errors::InputError, mixing_ratio, vapour_pressure};
 use crate::Float;
+use crate::{errors::InputError, mixing_ratio, vapour_pressure};
 
-#[cfg(feature="debug")]
+#[cfg(feature = "debug")]
 use floccus_proc::logerr;
 
 ///Formula for computing relative humidity from mixing ratio and saturation mixing ratio.
@@ -17,8 +17,18 @@ use floccus_proc::logerr;
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `mixing_ratio` range: 0.00001 - 0.5\
 ///Valid `saturation_mixing_ratio` range: 0.00001 - 0.5
-#[cfg_attr(feature = "debug", logerr)]
 pub fn general1(mixing_ratio: Float, saturation_mixing_ratio: Float) -> Result<Float, InputError> {
+    general1_validate(mixing_ratio, saturation_mixing_ratio)?;
+    Ok(general1_unchecked(mixing_ratio, saturation_mixing_ratio))
+}
+
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
+#[cfg_attr(feature = "debug", logerr)]
+pub fn general1_validate(
+    mixing_ratio: Float,
+    saturation_mixing_ratio: Float,
+) -> Result<(), InputError> {
     if !(0.00001..=10.0).contains(&mixing_ratio) {
         return Err(InputError::OutOfRange(String::from("mixing_ratio")));
     }
@@ -29,7 +39,12 @@ pub fn general1(mixing_ratio: Float, saturation_mixing_ratio: Float) -> Result<F
         )));
     }
 
-    Ok(mixing_ratio / saturation_mixing_ratio)
+    Ok(())
+}
+
+#[allow(missing_docs)]
+pub fn general1_unchecked(mixing_ratio: Float, saturation_mixing_ratio: Float) -> Float {
+    mixing_ratio / saturation_mixing_ratio
 }
 
 ///Formula for computing relative humidity from vapour pressure and saturation vapour pressure.
@@ -40,8 +55,24 @@ pub fn general1(mixing_ratio: Float, saturation_mixing_ratio: Float) -> Result<F
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `vapour_pressure` range: 0Pa - 10000Pa
 ///Valid `saturation_vapour_pressure` range: 0Pa - 10000Pa
+pub fn general2(
+    vapour_pressure: Float,
+    saturation_vapour_pressure: Float,
+) -> Result<Float, InputError> {
+    general2_validate(vapour_pressure, saturation_vapour_pressure)?;
+    Ok(general2_unchecked(
+        vapour_pressure,
+        saturation_vapour_pressure,
+    ))
+}
+
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
 #[cfg_attr(feature = "debug", logerr)]
-pub fn general2(vapour_pressure: Float, saturation_vapour_pressure: Float) -> Result<Float, InputError> {
+pub fn general2_validate(
+    vapour_pressure: Float,
+    saturation_vapour_pressure: Float,
+) -> Result<(), InputError> {
     if !(0.0..=50_000.0).contains(&vapour_pressure) {
         return Err(InputError::OutOfRange(String::from("vapour_pressure")));
     }
@@ -52,9 +83,13 @@ pub fn general2(vapour_pressure: Float, saturation_vapour_pressure: Float) -> Re
         )));
     }
 
-    Ok(vapour_pressure / saturation_vapour_pressure)
+    Ok(())
 }
 
+#[allow(missing_docs)]
+pub fn general2_unchecked(vapour_pressure: Float, saturation_vapour_pressure: Float) -> Float {
+    vapour_pressure / saturation_vapour_pressure
+}
 ///Formula for computing relative humidity from temperature and dewpoint using [`tetens1`](vapour_pressure::tetens1)
 ///function for vapour pressure calculation
 ///
@@ -63,21 +98,32 @@ pub fn general2(vapour_pressure: Float, saturation_vapour_pressure: Float) -> Re
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `temperature` range: 273K - 353K
 ///Valid `dewpoint` range: 273K - 353K
-#[cfg_attr(feature = "debug", logerr)]
 pub fn general3(temperature: Float, dewpoint: Float) -> Result<Float, InputError> {
+    general3_validate(temperature, dewpoint)?;
+    Ok(general3_unchecked(temperature, dewpoint))
+}
+
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
+#[cfg_attr(feature = "debug", logerr)]
+pub fn general3_validate(temperature: Float, dewpoint: Float) -> Result<(), InputError> {
     if !(273.0..=353.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));
     }
 
-    if !(273.0..=353.0).contains(&temperature) {
-        return Err(InputError::OutOfRange(String::from("temperature")));
+    if !(273.0..=353.0).contains(&dewpoint) {
+        return Err(InputError::OutOfRange(String::from("dewpoint")));
     }
 
-    let vapour_pressure = vapour_pressure::tetens1(dewpoint)?;
-    let saturation_vapour_pressure = vapour_pressure::tetens1(temperature)?;
-    let result = general2(vapour_pressure, saturation_vapour_pressure)?;
+    Ok(())
+}
 
-    Ok(result)
+#[allow(missing_docs)]
+pub fn general3_unchecked(temperature: Float, dewpoint: Float) -> Float {
+    let vapour_pressure = vapour_pressure::tetens1_unchecked(dewpoint);
+    let saturation_vapour_pressure = vapour_pressure::tetens1_unchecked(temperature);
+
+    general2_unchecked(vapour_pressure, saturation_vapour_pressure)
 }
 
 ///Formula for computing relative humidity from temperature, dewpoint and pressure using [`buck3`](vapour_pressure::buck3)
@@ -89,25 +135,40 @@ pub fn general3(temperature: Float, dewpoint: Float) -> Result<Float, InputError
 ///Valid `temperature` range: 253K - 324K\
 ///Valid `dewpoint` range: 253K - 324K\
 ///Valid `pressure` range: 100Pa - 150000Pa
-#[cfg_attr(feature = "debug", logerr)]
 pub fn general4(temperature: Float, dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
+    general4_validate(temperature, dewpoint, pressure)?;
+    Ok(general4_unchecked(temperature, dewpoint, pressure))
+}
+
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
+#[cfg_attr(feature = "debug", logerr)]
+pub fn general4_validate(
+    temperature: Float,
+    dewpoint: Float,
+    pressure: Float,
+) -> Result<(), InputError> {
     if !(253.0..=324.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));
     }
 
-    if !(253.0..=324.0).contains(&temperature) {
-        return Err(InputError::OutOfRange(String::from("temperature")));
+    if !(253.0..=324.0).contains(&dewpoint) {
+        return Err(InputError::OutOfRange(String::from("dewpoint")));
     }
 
     if !(100.0..=150_000.0).contains(&pressure) {
         return Err(InputError::OutOfRange(String::from("pressure")));
     }
 
-    let vapour_pressure = vapour_pressure::buck3(dewpoint, pressure)?;
-    let saturation_vapour_pressure = vapour_pressure::buck3(temperature, pressure)?;
-    let result = general2(vapour_pressure, saturation_vapour_pressure)?;
+    Ok(())
+}
 
-    Ok(result)
+#[allow(missing_docs)]
+pub fn general4_unchecked(temperature: Float, dewpoint: Float, pressure: Float) -> Float {
+    let vapour_pressure = vapour_pressure::buck3_unchecked(dewpoint, pressure);
+    let saturation_vapour_pressure = vapour_pressure::buck3_unchecked(temperature, pressure);
+
+    general2_unchecked(vapour_pressure, saturation_vapour_pressure)
 }
 
 ///Formula for computing relative humidity from temperature, dewpoint and pressure using [`accuracy1`](mixing_ratio::accuracy1)
@@ -119,8 +180,19 @@ pub fn general4(temperature: Float, dewpoint: Float, pressure: Float) -> Result<
 ///Valid `temperature` range: 232K - 324K\
 ///Valid `dewpoint` range: 232K - 324K\
 ///Valid `pressure` range: 100Pa - 150000Pa
-#[cfg_attr(feature = "debug", logerr)]
 pub fn general5(temperature: Float, dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
+    general5_validate(temperature, dewpoint, pressure)?;
+    Ok(general5_unchecked(temperature, dewpoint, pressure))
+}
+
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
+#[cfg_attr(feature = "debug", logerr)]
+pub fn general5_validate(
+    temperature: Float,
+    dewpoint: Float,
+    pressure: Float,
+) -> Result<(), InputError> {
     if !(232.0..=314.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));
     }
@@ -133,12 +205,15 @@ pub fn general5(temperature: Float, dewpoint: Float, pressure: Float) -> Result<
         return Err(InputError::OutOfRange(String::from("pressure")));
     }
 
-    let mixing_ratio = mixing_ratio::accuracy1(dewpoint, pressure)?;
-    let saturation_mixing_ratio = mixing_ratio::accuracy1(temperature, pressure)?;
-    //println!("{} {}", mixing_ratio, saturation_mixing_ratio);
-    let result = general1(mixing_ratio, saturation_mixing_ratio)?;
+    Ok(())
+}
 
-    Ok(result)
+#[allow(missing_docs)]
+pub fn general5_unchecked(temperature: Float, dewpoint: Float, pressure: Float) -> Float {
+    let mixing_ratio = mixing_ratio::accuracy1_unchecked(dewpoint, pressure);
+    let saturation_mixing_ratio = mixing_ratio::accuracy1_unchecked(temperature, pressure);
+
+    general1_unchecked(mixing_ratio, saturation_mixing_ratio)
 }
 
 #[cfg(test)]

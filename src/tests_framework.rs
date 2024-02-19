@@ -59,7 +59,7 @@ pub fn test_with_2args(
 
             if result.is_err() {
                 assert!(
-                    discriminant(&InputError::IncorrectArgumentSet(String::from("")))
+                    discriminant(&InputError::IncorrectArgumentSet(String::new()))
                         == discriminant(&result.unwrap_err())
                 );
             } else {
@@ -110,7 +110,7 @@ pub fn test_with_1arg(
 
         if result.is_err() {
             assert!(
-                discriminant(&InputError::IncorrectArgumentSet(String::from("")))
+                discriminant(&InputError::IncorrectArgumentSet(String::new()))
                     == discriminant(&result.unwrap_err())
             );
         } else {
@@ -165,11 +165,10 @@ pub fn test_with_3args(
 
                 if result.is_err() {
                     assert!(
-                        discriminant(&InputError::IncorrectArgumentSet(String::from("")))
+                        discriminant(&InputError::IncorrectArgumentSet(String::new()))
                             == discriminant(&result.unwrap_err())
                     );
                 } else {
-                    println!("{} {} {} {:?}", arg1_tmp, arg2_tmp, arg3_tmp, result);
                     assert!(result.unwrap().is_finite());
                 }
             }
