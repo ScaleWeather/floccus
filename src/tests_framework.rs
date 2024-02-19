@@ -169,7 +169,6 @@ pub fn test_with_3args(
                             == discriminant(&result.unwrap_err())
                     );
                 } else {
-                    println!("{} {} {} {:?}", arg1_tmp, arg2_tmp, arg3_tmp, result);
                     assert!(result.unwrap().is_finite());
                 }
             }

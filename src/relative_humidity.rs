@@ -135,7 +135,6 @@ pub fn general5(temperature: Float, dewpoint: Float, pressure: Float) -> Result<
 
     let mixing_ratio = mixing_ratio::accuracy1(dewpoint, pressure)?;
     let saturation_mixing_ratio = mixing_ratio::accuracy1(temperature, pressure)?;
-    //println!("{} {}", mixing_ratio, saturation_mixing_ratio);
     let result = general1(mixing_ratio, saturation_mixing_ratio)?;
 
     Ok(result)
