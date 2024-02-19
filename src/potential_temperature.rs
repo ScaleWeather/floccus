@@ -1,13 +1,13 @@
 //!Functions to calculate potential temperature of dry air in K.
 
-use float_cmp::approx_eq;
 use crate::Float;
 use crate::{
     constants::{C_P, R_D},
     errors::InputError,
 };
+use float_cmp::approx_eq;
 
-#[cfg(feature="debug")]
+#[cfg(feature = "debug")]
 use floccus_proc::logerr;
 
 ///Formula for computing potential temperature of dry air from temperature, pressure and vapour pressure.
@@ -26,12 +26,27 @@ use floccus_proc::logerr;
 ///
 ///Returns [`InputError::IncorrectArgumentSet`] when `pressure` is lower than `vapour_pressure`,
 ///in which case floating-point exponentation of negative number occurs.
-#[cfg_attr(feature = "debug", logerr)]
 pub fn davies_jones1(
     temperature: Float,
     pressure: Float,
     vapour_pressure: Float,
 ) -> Result<Float, InputError> {
+    davies_jones1_validate(temperature, pressure, vapour_pressure)?;
+    Ok(davies_jones1_unchecked(
+        temperature,
+        pressure,
+        vapour_pressure,
+    ))
+}
+
+#[allow(missing_docs)]
+#[allow(clippy::missing_errors_doc)]
+#[cfg_attr(feature = "debug", logerr)]
+pub fn davies_jones1_validate(
+    temperature: Float,
+    pressure: Float,
+    vapour_pressure: Float,
+) -> Result<(), InputError> {
     if !(253.0..=324.0).contains(&temperature) {
         return Err(InputError::OutOfRange(String::from("temperature")));
     }
@@ -56,18 +71,24 @@ pub fn davies_jones1(
         )));
     }
 
+    Ok(())
+}
+
+#[allow(missing_docs)]
+pub fn davies_jones1_unchecked(
+    temperature: Float,
+    pressure: Float,
+    vapour_pressure: Float,
+) -> Float {
     let kappa = R_D / C_P;
-
-    let result = temperature * (100_000.0 / (pressure - vapour_pressure)).powf(kappa);
-
-    Ok(result)
+    temperature * (100_000.0 / (pressure - vapour_pressure)).powf(kappa)
 }
 
 #[cfg(test)]
 mod tests {
     use crate::{
-        tests_framework::{self, Argument},
         potential_temperature,
+        tests_framework::{self, Argument},
     };
 
     #[test]
