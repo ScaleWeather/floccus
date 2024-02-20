@@ -5,11 +5,17 @@
 //!
 //!Specific humidity is approximately equal to mixing ratio.
 
+use crate::compute_macros::{
+    generate_compute, generate_ndarray_compute, generate_par_ndarray_compute,
+    generate_par_vec_compute, generate_vec_compute,
+};
 use crate::Float;
 use crate::{constants::EPSILON, errors::InputError};
-
 #[cfg(feature = "debug")]
 use floccus_proc::logerr;
+use itertools::izip;
+use ndarray::{Array, Dimension, FoldWhile};
+use rayon::iter::{ParallelBridge, ParallelIterator};
 
 ///Formula for computing specific humidity from vapour pressure and pressure.
 ///Reverse function of [`vapour_pressure::general1`](crate::vapour_pressure::general1).
@@ -22,30 +28,37 @@ use floccus_proc::logerr;
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `vapour_pressure` range: 0Pa - 50000OPa\,
 ///Valid `pressure` range: 100Pa - 150000Pa
-pub fn general1(vapour_pressure: Float, pressure: Float) -> Result<Float, InputError> {
-    general1_validate(vapour_pressure, pressure)?;
-    Ok(general1_unchecked(vapour_pressure, pressure))
-}
+pub struct General1;
 
-#[allow(missing_docs)]
-#[allow(clippy::missing_errors_doc)]
-#[cfg_attr(feature = "debug", logerr)]
-pub fn general1_validate(vapour_pressure: Float, pressure: Float) -> Result<(), InputError> {
-    if !(0.0..=50_000.0).contains(&vapour_pressure) {
-        return Err(InputError::OutOfRange(String::from("vapour_pressure")));
+impl General1 {
+    #[allow(missing_docs)]
+    #[inline(always)]
+    #[allow(clippy::missing_errors_doc)]
+    #[cfg_attr(feature = "debug", logerr)]
+    pub fn validate_inputs(vapour_pressure: Float, pressure: Float) -> Result<(), InputError> {
+        if !(0.0..=50_000.0).contains(&vapour_pressure) {
+            return Err(InputError::OutOfRange(String::from("vapour_pressure")));
+        }
+
+        if !(100.0..=150_000.0).contains(&pressure) {
+            return Err(InputError::OutOfRange(String::from("pressure")));
+        }
+
+        Ok(())
     }
 
-    if !(100.0..=150_000.0).contains(&pressure) {
-        return Err(InputError::OutOfRange(String::from("pressure")));
+    #[allow(missing_docs)]
+    #[inline(always)]
+    pub fn compute_unchecked(vapour_pressure: Float, pressure: Float) -> Float {
+        EPSILON * (vapour_pressure / (pressure - (vapour_pressure * (1.0 - EPSILON))))
     }
-
-    Ok(())
 }
 
-#[allow(missing_docs)]
-pub fn general1_unchecked(vapour_pressure: Float, pressure: Float) -> Float {
-    EPSILON * (vapour_pressure / (pressure - (vapour_pressure * (1.0 - EPSILON))))
-}
+generate_compute!(General1, vapour_pressure, pressure);
+generate_vec_compute!(General1, vapour_pressure, pressure);
+generate_par_vec_compute!(General1, vapour_pressure, pressure);
+generate_ndarray_compute!(General1, vapour_pressure, pressure);
+generate_par_ndarray_compute!(General1, vapour_pressure, pressure);
 
 #[cfg(test)]
 mod tests {
