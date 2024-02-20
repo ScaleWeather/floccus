@@ -1,14 +1,20 @@
 //!Functions to calculate potential temperature of dry air in K.
 
+use crate::compute_macros::{
+    generate_compute, generate_ndarray_compute, generate_par_ndarray_compute,
+    generate_par_vec_compute, generate_vec_compute,
+};
 use crate::Float;
 use crate::{
     constants::{C_P, R_D},
     errors::InputError,
 };
 use float_cmp::approx_eq;
-
 #[cfg(feature = "debug")]
 use floccus_proc::logerr;
+use itertools::izip;
+use ndarray::{Array, Dimension, FoldWhile};
+use rayon::iter::{ParallelBridge, ParallelIterator};
 
 ///Formula for computing potential temperature of dry air from temperature, pressure and vapour pressure.
 ///
@@ -26,63 +32,58 @@ use floccus_proc::logerr;
 ///
 ///Returns [`InputError::IncorrectArgumentSet`] when `pressure` is lower than `vapour_pressure`,
 ///in which case floating-point exponentation of negative number occurs.
-pub fn davies_jones1(
-    temperature: Float,
-    pressure: Float,
-    vapour_pressure: Float,
-) -> Result<Float, InputError> {
-    davies_jones1_validate(temperature, pressure, vapour_pressure)?;
-    Ok(davies_jones1_unchecked(
-        temperature,
-        pressure,
-        vapour_pressure,
-    ))
+pub struct DaviesJones1;
+
+impl DaviesJones1 {
+    #[allow(missing_docs)]
+    #[inline(always)]
+    #[allow(clippy::missing_errors_doc)]
+    #[cfg_attr(feature = "debug", logerr)]
+    pub fn validate_inputs(
+        temperature: Float,
+        pressure: Float,
+        vapour_pressure: Float,
+    ) -> Result<(), InputError> {
+        if !(253.0..=324.0).contains(&temperature) {
+            return Err(InputError::OutOfRange(String::from("temperature")));
+        }
+
+        if !(100.0..=150_000.0).contains(&pressure) {
+            return Err(InputError::OutOfRange(String::from("pressure")));
+        }
+
+        if !(0.0..=10_000.0).contains(&vapour_pressure) {
+            return Err(InputError::OutOfRange(String::from("vapour_pressure")));
+        }
+
+        if approx_eq!(Float, pressure, vapour_pressure, ulps = 2) {
+            return Err(InputError::IncorrectArgumentSet(String::from(
+                "pressure and vapour_pressure cannot be equal",
+            )));
+        }
+
+        if vapour_pressure > pressure {
+            return Err(InputError::IncorrectArgumentSet(String::from(
+                "vapour_pressure cannot be higher than pressure",
+            )));
+        }
+
+        Ok(())
+    }
+
+    #[inline(always)]
+    #[allow(missing_docs)]
+    pub fn compute_unchecked(temperature: Float, pressure: Float, vapour_pressure: Float) -> Float {
+        let kappa = R_D / C_P;
+        temperature * (100_000.0 / (pressure - vapour_pressure)).powf(kappa)
+    }
 }
 
-#[allow(missing_docs)]
-#[allow(clippy::missing_errors_doc)]
-#[cfg_attr(feature = "debug", logerr)]
-pub fn davies_jones1_validate(
-    temperature: Float,
-    pressure: Float,
-    vapour_pressure: Float,
-) -> Result<(), InputError> {
-    if !(253.0..=324.0).contains(&temperature) {
-        return Err(InputError::OutOfRange(String::from("temperature")));
-    }
-
-    if !(100.0..=150_000.0).contains(&pressure) {
-        return Err(InputError::OutOfRange(String::from("pressure")));
-    }
-
-    if !(0.0..=10_000.0).contains(&vapour_pressure) {
-        return Err(InputError::OutOfRange(String::from("vapour_pressure")));
-    }
-
-    if approx_eq!(Float, pressure, vapour_pressure, ulps = 2) {
-        return Err(InputError::IncorrectArgumentSet(String::from(
-            "pressure and vapour_pressure cannot be equal",
-        )));
-    }
-
-    if vapour_pressure > pressure {
-        return Err(InputError::IncorrectArgumentSet(String::from(
-            "vapour_pressure cannot be higher than pressure",
-        )));
-    }
-
-    Ok(())
-}
-
-#[allow(missing_docs)]
-pub fn davies_jones1_unchecked(
-    temperature: Float,
-    pressure: Float,
-    vapour_pressure: Float,
-) -> Float {
-    let kappa = R_D / C_P;
-    temperature * (100_000.0 / (pressure - vapour_pressure)).powf(kappa)
-}
+generate_compute!(DaviesJones1, temperature, pressure, vapour_pressure);
+generate_vec_compute!(DaviesJones1, temperature, pressure, vapour_pressure);
+generate_par_vec_compute!(DaviesJones1, temperature, pressure, vapour_pressure);
+generate_ndarray_compute!(DaviesJones1, temperature, pressure, vapour_pressure);
+generate_par_ndarray_compute!(DaviesJones1, temperature, pressure, vapour_pressure);
 
 #[cfg(test)]
 mod tests {
