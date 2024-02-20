@@ -4,11 +4,17 @@
 //!at which a theoretical dry air parcel would have a total pressure and density equal
 //!to the moist parcel of air ([Wikipedia](https://en.wikipedia.org/wiki/Virtual_temperature)).
 
+use crate::compute_macros::{
+    generate_compute, generate_ndarray_compute, generate_par_ndarray_compute,
+    generate_par_vec_compute, generate_vec_compute,
+};
 use crate::Float;
 use crate::{constants::EPSILON, errors::InputError};
-
 #[cfg(feature = "debug")]
 use floccus_proc::logerr;
+use itertools::izip;
+use ndarray::{Array, Dimension, FoldWhile};
+use rayon::iter::{ParallelBridge, ParallelIterator};
 
 ///Formula for computing virtual temperature from temperature and mixing ratio.
 ///
@@ -17,30 +23,37 @@ use floccus_proc::logerr;
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `temperature` range: 173K - 373K\
 ///Valid `mixing_ratio` range: 0.0000000001 - 0.5
-pub fn general1(temperature: Float, mixing_ratio: Float) -> Result<Float, InputError> {
-    general1_validate(temperature, mixing_ratio)?;
-    Ok(general1_unchecked(temperature, mixing_ratio))
-}
+pub struct General1;
 
-#[allow(missing_docs)]
-#[allow(clippy::missing_errors_doc)]
-#[cfg_attr(feature = "debug", logerr)]
-pub fn general1_validate(temperature: Float, mixing_ratio: Float) -> Result<(), InputError> {
-    if !(173.0..=354.0).contains(&temperature) {
-        return Err(InputError::OutOfRange(String::from("temperature")));
+impl General1 {
+    #[allow(missing_docs)]
+    #[inline(always)]
+    #[allow(clippy::missing_errors_doc)]
+    #[cfg_attr(feature = "debug", logerr)]
+    pub fn validate_inputs(temperature: Float, mixing_ratio: Float) -> Result<(), InputError> {
+        if !(173.0..=354.0).contains(&temperature) {
+            return Err(InputError::OutOfRange(String::from("temperature")));
+        }
+
+        if !(0.000_000_000_1..=0.5).contains(&mixing_ratio) {
+            return Err(InputError::OutOfRange(String::from("mixing_ratio")));
+        }
+
+        Ok(())
     }
 
-    if !(0.000_000_000_1..=0.5).contains(&mixing_ratio) {
-        return Err(InputError::OutOfRange(String::from("mixing_ratio")));
+    #[inline(always)]
+    #[allow(missing_docs)]
+    pub fn compute_unchecked(temperature: Float, mixing_ratio: Float) -> Float {
+        temperature * ((mixing_ratio + EPSILON) / (EPSILON * (1.0 + mixing_ratio)))
     }
-
-    Ok(())
 }
 
-#[allow(missing_docs)]
-pub fn general1_unchecked(temperature: Float, mixing_ratio: Float) -> Float {
-    temperature * ((mixing_ratio + EPSILON) / (EPSILON * (1.0 + mixing_ratio)))
-}
+generate_compute!(General1, temperature, mixing_ratio);
+generate_vec_compute!(General1, temperature, mixing_ratio);
+generate_par_vec_compute!(General1, temperature, mixing_ratio);
+generate_ndarray_compute!(General1, temperature, mixing_ratio);
+generate_par_ndarray_compute!(General1, temperature, mixing_ratio);
 
 ///Formula for computing virtual temperature from air temperature, pressure and vapour pressure.
 ///
@@ -50,41 +63,44 @@ pub fn general1_unchecked(temperature: Float, mixing_ratio: Float) -> Float {
 ///Valid `temperature` range: 173K - 373K\
 ///Valid `pressure` range: 100Pa - 150000Pa\
 ///Valid `vapour_pressure` range: 0Pa - 10000Pa
-pub fn general2(
-    temperature: Float,
-    pressure: Float,
-    vapour_pressure: Float,
-) -> Result<Float, InputError> {
-    general2_validate(temperature, pressure, vapour_pressure)?;
-    Ok(general2_unchecked(temperature, pressure, vapour_pressure))
-}
+pub struct General2;
 
-#[allow(missing_docs)]
-#[allow(clippy::missing_errors_doc)]
-#[cfg_attr(feature = "debug", logerr)]
-pub fn general2_validate(
-    temperature: Float,
-    pressure: Float,
-    vapour_pressure: Float,
-) -> Result<(), InputError> {
-    if !(173.0..=354.0).contains(&temperature) {
-        return Err(InputError::OutOfRange(String::from("temperature")));
+impl General2 {
+    #[allow(missing_docs)]
+    #[inline(always)]
+    #[allow(clippy::missing_errors_doc)]
+    #[cfg_attr(feature = "debug", logerr)]
+    pub fn validate_inputs(
+        temperature: Float,
+        pressure: Float,
+        vapour_pressure: Float,
+    ) -> Result<(), InputError> {
+        if !(173.0..=354.0).contains(&temperature) {
+            return Err(InputError::OutOfRange(String::from("temperature")));
+        }
+
+        if !(100.0..=150_000.0).contains(&pressure) {
+            return Err(InputError::OutOfRange(String::from("pressure")));
+        }
+
+        if !(0.0..=10_000.0).contains(&vapour_pressure) {
+            return Err(InputError::OutOfRange(String::from("vapour_pressure")));
+        }
+        Ok(())
     }
 
-    if !(100.0..=150_000.0).contains(&pressure) {
-        return Err(InputError::OutOfRange(String::from("pressure")));
+    #[inline(always)]
+    #[allow(missing_docs)]
+    pub fn compute_unchecked(temperature: Float, pressure: Float, vapour_pressure: Float) -> Float {
+        temperature / (1.0 - ((vapour_pressure / pressure) * (1.0 - EPSILON)))
     }
-
-    if !(0.0..=10_000.0).contains(&vapour_pressure) {
-        return Err(InputError::OutOfRange(String::from("vapour_pressure")));
-    }
-    Ok(())
 }
 
-#[allow(missing_docs)]
-pub fn general2_unchecked(temperature: Float, pressure: Float, vapour_pressure: Float) -> Float {
-    temperature / (1.0 - ((vapour_pressure / pressure) * (1.0 - EPSILON)))
-}
+generate_compute!(General2, temperature, pressure, vapour_pressure);
+generate_vec_compute!(General2, temperature, pressure, vapour_pressure);
+generate_par_vec_compute!(General2, temperature, pressure, vapour_pressure);
+generate_ndarray_compute!(General2, temperature, pressure, vapour_pressure);
+generate_par_ndarray_compute!(General2, temperature, pressure, vapour_pressure);
 
 ///Formula for computing virtual temperature from air temperature and specific humidity.
 ///
@@ -93,30 +109,37 @@ pub fn general2_unchecked(temperature: Float, pressure: Float, vapour_pressure: 
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `temperature` range: 173K - 373K\
 ///Valid `specific_humidity` range: 100Pa - 150000Pa
-pub fn general3(temperature: Float, specific_humidity: Float) -> Result<Float, InputError> {
-    general3_validate(temperature, specific_humidity)?;
-    Ok(general3_unchecked(temperature, specific_humidity))
-}
+pub struct General3;
 
-#[allow(missing_docs)]
-#[allow(clippy::missing_errors_doc)]
-#[cfg_attr(feature = "debug", logerr)]
-pub fn general3_validate(temperature: Float, specific_humidity: Float) -> Result<(), InputError> {
-    if !(173.0..=354.0).contains(&temperature) {
-        return Err(InputError::OutOfRange(String::from("temperature")));
+impl General3 {
+    #[allow(missing_docs)]
+    #[inline(always)]
+    #[allow(clippy::missing_errors_doc)]
+    #[cfg_attr(feature = "debug", logerr)]
+    pub fn validate_inputs(temperature: Float, specific_humidity: Float) -> Result<(), InputError> {
+        if !(173.0..=354.0).contains(&temperature) {
+            return Err(InputError::OutOfRange(String::from("temperature")));
+        }
+
+        if !(0.000_000_001..=2.0).contains(&specific_humidity) {
+            return Err(InputError::OutOfRange(String::from("specific_humidity")));
+        }
+
+        Ok(())
     }
 
-    if !(0.000_000_001..=2.0).contains(&specific_humidity) {
-        return Err(InputError::OutOfRange(String::from("specific_humidity")));
+    #[inline(always)]
+    #[allow(missing_docs)]
+    pub fn compute_unchecked(temperature: Float, specific_humidity: Float) -> Float {
+        temperature * (1.0 + (specific_humidity * ((1.0 / EPSILON) - 1.0)))
     }
-
-    Ok(())
 }
 
-#[allow(missing_docs)]
-pub fn general3_unchecked(temperature: Float, specific_humidity: Float) -> Float {
-    temperature * (1.0 + (specific_humidity * ((1.0 / EPSILON) - 1.0)))
-}
+generate_compute!(General3, temperature, specific_humidity);
+generate_vec_compute!(General3, temperature, specific_humidity);
+generate_par_vec_compute!(General3, temperature, specific_humidity);
+generate_ndarray_compute!(General3, temperature, specific_humidity);
+generate_par_ndarray_compute!(General3, temperature, specific_humidity);
 
 #[cfg(test)]
 mod tests {
