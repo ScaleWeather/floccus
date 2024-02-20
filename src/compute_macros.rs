@@ -3,39 +3,109 @@ use ndarray::{Array, ArrayView, Dimension, FoldWhile};
 
 use crate::{errors::InputError, Float};
 
-#[macro_export]
-macro_rules! compute_vec {
-    ($fn_id:expr,$slice1:expr) => {
-        $crate::array_compute::compute_vec_1($fn_id, $slice1)
+macro_rules! generate_compute {
+    ($qnt:tt, $arg1:tt) => {
+        impl $qnt {
+            #[allow(missing_docs)]
+            pub fn compute($arg1: Float) -> Result<Float, InputError> {
+                Self::validate_inputs($arg1)?;
+                Ok(Self::compute_unchecked($arg1))
+            }
+        }
     };
-    ($fn_id:expr,$slice1:expr,$slice2:expr) => {
-        $crate::array_compute::compute_vec_2($fn_id, $slice1, $slice2)
+
+    ($qnt:tt, $arg1:tt, $arg2:tt) => {
+        impl $qnt {
+            pub fn compute($arg1: Float, $arg2: Float) -> Result<Float, InputError> {
+                Self::validate_inputs($arg1, $b)?;
+                Ok(Self::compute_unchecked($arg1, $b))
+            }
+        }
     };
-    ($fn_id:expr,$slice1:expr,$slice2:expr,$slice3:expr) => {
-        $crate::array_compute::compute_vec_3($fn_id, $slice1, $slice2, $slice3)
+
+    ($qnt:tt, $arg1:tt, $arg2:tt, $arg3:tt) => {
+        impl $qnt {
+            pub fn compute($arg1: Float, $arg2: Float, $arg3: Float) -> Result<Float, InputError> {
+                Self::validate_inputs($arg1, $arg2, $arg3)?;
+                Ok(Self::compute_unchecked($arg1, $arg2, $arg3))
+            }
+        }
     };
 }
 
-#[macro_export]
-macro_rules! compute_ndarray {
-    ($cmp_fn:expr,$vld_fn:expr,$arr1:expr) => {
-        $crate::array_compute::compute_ndarray_1($cmp_fn, $vld_fn, $arr1)
+macro_rules! generate_vec_compute {
+    ($qnt:tt, $slice1:tt) => {
+        impl $qnt {
+            #[allow(missing_docs)]
+            pub fn compute_vec($slice1: &[Float]) -> Result<Vec<Float>, InputError> {
+                $slice1
+                    .iter()
+                    .map(|a| Self::compute(*a))
+                    .collect::<Result<Vec<Float>, InputError>>()
+            }
+        }
     };
-
-    ($cmp_fn:expr,$vld_fn:expr,$arr1:expr,$arr2:expr) => {{
-        $crate::array_compute::compute_ndarray_2($cmp_fn, $vld_fn, $arr1, $arr2)
-    }};
-
-    ($cmp_fn:expr,$vld_fn:expr,$arr1:expr,$arr2:expr,$arr3:expr) => {{
-        $crate::array_compute::compute_ndarray_3(
-            $cmp_fn,
-            $vld_fn,
-            $arr1,
-            $arr2,
-            $arr3,
-        )
-    }};
 }
+
+macro_rules! generate_ndarray_compute {
+    ($qnt:tt, $arr1:tt) => {
+        impl $qnt {
+            #[allow(missing_docs)]
+            pub fn compute_ndarray<D: Dimension>(
+                $arr1: &Array<Float, D>,
+            ) -> Result<Array<Float, D>, InputError> {
+                ndarray::Zip::from($arr1)
+                    .fold_while(Ok(()), |_, &a| match Self::validate_inputs(a) {
+                        Ok(_) => FoldWhile::Continue(Ok(())),
+                        Err(e) => FoldWhile::Done(Err(e)),
+                    })
+                    .into_inner()?;
+
+                Ok(ndarray::Zip::from($arr1).map_collect(|&a| Self::compute_unchecked(a)))
+            }
+        }
+    };
+}
+
+macro_rules! generate_par_vec_compute {
+    ($qnt:tt, $slice1:tt) => {
+        impl $qnt {
+            #[allow(missing_docs)]
+            pub fn compute_vec_parallel($slice1: &[Float]) -> Result<Vec<Float>, InputError> {
+                $slice1
+                    .par_iter()
+                    .map(|a| Self::compute(*a))
+                    .collect::<Result<Vec<Float>, InputError>>()
+            }
+        }
+    };
+}
+
+macro_rules! generate_par_ndarray_compute {
+    ($qnt:tt, $arr1:tt) => {
+        impl $qnt {
+            #[allow(missing_docs)]
+            pub fn compute_ndarray_parallel<D: Dimension>(
+                $arr1: &Array<Float, D>,
+            ) -> Result<Array<Float, D>, InputError> {
+                ndarray::Zip::from($arr1)
+                    .fold_while(Ok(()), |_, &a| match Self::validate_inputs(a) {
+                        Ok(_) => FoldWhile::Continue(Ok(())),
+                        Err(e) => FoldWhile::Done(Err(e)),
+                    })
+                    .into_inner()?;
+
+                Ok(ndarray::Zip::from($arr1).par_map_collect(|&a| Self::compute_unchecked(a)))
+            }
+        }
+    };
+}
+
+pub(crate) use generate_compute;
+pub(crate) use generate_ndarray_compute;
+pub(crate) use generate_par_ndarray_compute;
+pub(crate) use generate_par_vec_compute;
+pub(crate) use generate_vec_compute;
 
 #[doc(hidden)]
 #[inline(always)]

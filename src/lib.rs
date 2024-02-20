@@ -94,8 +94,7 @@ pub mod virtual_temperature;
 pub mod wet_bulb_potential_temperature;
 pub mod wet_bulb_temperature;
 
-#[cfg(feature = "array_compute")]
-pub mod array_compute;
+pub(crate) mod compute_macros;
 
 #[cfg(feature = "array_compute_parallel")]
 pub mod par_array_compute;
