@@ -1,14 +1,17 @@
 //!Functions to calculate equivalent potential temperature of air in K.
-use crate::constants::{C_L, R_V};
-use crate::Float;
-use crate::{
-    constants::{C_P, EPSILON, L_V, R_D},
-    errors::InputError,
-    mixing_ratio, potential_temperature, relative_humidity, vapour_pressure,
-};
 
+use crate::compute_macros::{
+    generate_compute, generate_ndarray_compute, generate_par_ndarray_compute,
+    generate_par_vec_compute, generate_vec_compute,
+};
+use crate::constants::{C_L, C_P, EPSILON, L_V, R_D, R_V};
+use crate::errors::InputError;
+use crate::{mixing_ratio, potential_temperature, relative_humidity, vapour_pressure, Float};
 #[cfg(feature = "debug")]
 use floccus_proc::logerr;
+use itertools::izip;
+use ndarray::{Array, Dimension, FoldWhile};
+use rayon::iter::{ParallelBridge, ParallelIterator};
 
 ///Most accuarte formula for computing equivalent potential temperature of unsaturated air from
 ///temperature, pressure and vapour pressure.
@@ -25,53 +28,59 @@ use floccus_proc::logerr;
 ///Valid `temperature` range: 253K - 324K\
 ///Valid `pressure` range: 100Pa - 150000Pa\
 ///Valid `vapour_pressure` range: 0Pa - 10000Pa
-pub fn paluch1(
-    temperature: Float,
-    pressure: Float,
-    vapour_pressure: Float,
-) -> Result<Float, InputError> {
-    paluch1_validate(temperature, pressure, vapour_pressure)?;
-    Ok(paluch1_unchecked(temperature, pressure, vapour_pressure))
-}
+pub struct Paluch1;
 
-#[allow(missing_docs)]
-#[allow(clippy::missing_errors_doc)]
-#[cfg_attr(feature = "debug", logerr)]
-pub fn paluch1_validate(
-    temperature: Float,
-    pressure: Float,
-    vapour_pressure: Float,
-) -> Result<(), InputError> {
-    if !(253.0..=324.0).contains(&temperature) {
-        return Err(InputError::OutOfRange(String::from("temperature")));
+impl Paluch1 {
+    #[allow(missing_docs)]
+    #[inline(always)]
+    #[allow(clippy::missing_errors_doc)]
+    #[cfg_attr(feature = "debug", logerr)]
+    pub fn validate_inputs(
+        temperature: Float,
+        pressure: Float,
+        vapour_pressure: Float,
+    ) -> Result<(), InputError> {
+        if !(253.0..=324.0).contains(&temperature) {
+            return Err(InputError::OutOfRange(String::from("temperature")));
+        }
+
+        if !(20000.0..=150_000.0).contains(&pressure) {
+            return Err(InputError::OutOfRange(String::from("pressure")));
+        }
+
+        if !(0.0..=10_000.0).contains(&vapour_pressure) {
+            return Err(InputError::OutOfRange(String::from("vapour_pressure")));
+        }
+
+        Ok(())
     }
 
-    if !(20000.0..=150_000.0).contains(&pressure) {
-        return Err(InputError::OutOfRange(String::from("pressure")));
-    }
+    #[inline(always)]
+    #[allow(missing_docs)]
+    pub fn compute_unchecked(temperature: Float, pressure: Float, vapour_pressure: Float) -> Float {
+        let p0 = 100_000.0;
 
-    if !(0.0..=10_000.0).contains(&vapour_pressure) {
-        return Err(InputError::OutOfRange(String::from("vapour_pressure")));
-    }
+        let mixing_ratio = mixing_ratio::General1::compute_unchecked(pressure, vapour_pressure);
+        let saturation_vapour_pressure =
+            vapour_pressure::Buck1::compute_unchecked(temperature, pressure);
 
-    Ok(())
+        let relative_humidity = relative_humidity::General2::compute_unchecked(
+            vapour_pressure,
+            saturation_vapour_pressure,
+        );
+
+        temperature
+            * (p0 / pressure).powf(R_D / (C_P + mixing_ratio * C_L))
+            * relative_humidity.powf((-mixing_ratio * R_V) / (C_P + mixing_ratio * C_L))
+            * ((L_V * mixing_ratio) / (temperature * (C_P + mixing_ratio * C_L))).exp()
+    }
 }
 
-#[allow(missing_docs)]
-pub fn paluch1_unchecked(temperature: Float, pressure: Float, vapour_pressure: Float) -> Float {
-    let p0 = 100_000.0;
-
-    let mixing_ratio = mixing_ratio::general1_unchecked(pressure, vapour_pressure);
-    let saturation_vapour_pressure = vapour_pressure::buck1_unchecked(temperature, pressure);
-
-    let relative_humidity =
-        relative_humidity::general2_unchecked(vapour_pressure, saturation_vapour_pressure);
-
-    temperature
-        * (p0 / pressure).powf(R_D / (C_P + mixing_ratio * C_L))
-        * relative_humidity.powf((-mixing_ratio * R_V) / (C_P + mixing_ratio * C_L))
-        * ((L_V * mixing_ratio) / (temperature * (C_P + mixing_ratio * C_L))).exp()
-}
+generate_compute!(Paluch1, temperature, pressure, vapour_pressure);
+generate_vec_compute!(Paluch1, temperature, pressure, vapour_pressure);
+generate_par_vec_compute!(Paluch1, temperature, pressure, vapour_pressure);
+generate_ndarray_compute!(Paluch1, temperature, pressure, vapour_pressure);
+generate_par_ndarray_compute!(Paluch1, temperature, pressure, vapour_pressure);
 
 ///Formula for computing equivalent potential temperature of unsaturated air from
 ///temperature, pressure and vapour pressure.
@@ -84,55 +93,64 @@ pub fn paluch1_unchecked(temperature: Float, pressure: Float, vapour_pressure: F
 ///Valid `temperature` range: 253K - 324K\
 ///Valid `pressure` range: 100Pa - 150000Pa\
 ///Valid `vapour_pressure` range: 0Pa - 10000Pa
-pub fn bryan1(
-    temperature: Float,
-    pressure: Float,
-    vapour_pressure: Float,
-) -> Result<Float, InputError> {
-    bryan1_validate(temperature, pressure, vapour_pressure)?;
-    Ok(bryan1_unchecked(temperature, pressure, vapour_pressure))
-}
+pub struct Bryan1;
 
-#[allow(missing_docs)]
-#[allow(clippy::missing_errors_doc)]
-#[cfg_attr(feature = "debug", logerr)]
-pub fn bryan1_validate(
-    temperature: Float,
-    pressure: Float,
-    vapour_pressure: Float,
-) -> Result<(), InputError> {
-    if !(253.0..=324.0).contains(&temperature) {
-        return Err(InputError::OutOfRange(String::from("temperature")));
+impl Bryan1 {
+    #[allow(missing_docs)]
+    #[inline(always)]
+    #[allow(clippy::missing_errors_doc)]
+    #[cfg_attr(feature = "debug", logerr)]
+    pub fn validate_inputs(
+        temperature: Float,
+        pressure: Float,
+        vapour_pressure: Float,
+    ) -> Result<(), InputError> {
+        if !(253.0..=324.0).contains(&temperature) {
+            return Err(InputError::OutOfRange(String::from("temperature")));
+        }
+
+        if !(20000.0..=150_000.0).contains(&pressure) {
+            return Err(InputError::OutOfRange(String::from("pressure")));
+        }
+
+        if !(0.0..=10_000.0).contains(&vapour_pressure) {
+            return Err(InputError::OutOfRange(String::from("vapour_pressure")));
+        }
+
+        Ok(())
     }
 
-    if !(20000.0..=150_000.0).contains(&pressure) {
-        return Err(InputError::OutOfRange(String::from("pressure")));
-    }
+    #[inline(always)]
+    #[allow(missing_docs)]
+    pub fn compute_unchecked(temperature: Float, pressure: Float, vapour_pressure: Float) -> Float {
+        let kappa = R_D / C_P;
 
-    if !(0.0..=10_000.0).contains(&vapour_pressure) {
-        return Err(InputError::OutOfRange(String::from("vapour_pressure")));
-    }
+        let potential_temperature = potential_temperature::DaviesJones1::compute_unchecked(
+            temperature,
+            pressure,
+            vapour_pressure,
+        );
 
-    Ok(())
+        let saturation_vapour_pressure =
+            vapour_pressure::Buck3::compute_unchecked(temperature, pressure);
+        let relative_humidity = relative_humidity::General2::compute_unchecked(
+            vapour_pressure,
+            saturation_vapour_pressure,
+        );
+
+        let mixing_ratio = mixing_ratio::General1::compute_unchecked(pressure, vapour_pressure);
+
+        potential_temperature
+            * relative_humidity.powf((-kappa) * (mixing_ratio / EPSILON))
+            * ((L_V * mixing_ratio) / (C_P * temperature)).exp()
+    }
 }
 
-#[allow(missing_docs)]
-pub fn bryan1_unchecked(temperature: Float, pressure: Float, vapour_pressure: Float) -> Float {
-    let kappa = R_D / C_P;
-
-    let potential_temperature =
-        potential_temperature::davies_jones1_unchecked(temperature, pressure, vapour_pressure);
-
-    let saturation_vapour_pressure = vapour_pressure::buck3_unchecked(temperature, pressure);
-    let relative_humidity =
-        relative_humidity::general2_unchecked(vapour_pressure, saturation_vapour_pressure);
-
-    let mixing_ratio = mixing_ratio::general1_unchecked(pressure, vapour_pressure);
-
-    potential_temperature
-        * relative_humidity.powf((-kappa) * (mixing_ratio / EPSILON))
-        * ((L_V * mixing_ratio) / (C_P * temperature)).exp()
-}
+generate_compute!(Bryan1, temperature, pressure, vapour_pressure);
+generate_vec_compute!(Bryan1, temperature, pressure, vapour_pressure);
+generate_par_vec_compute!(Bryan1, temperature, pressure, vapour_pressure);
+generate_ndarray_compute!(Bryan1, temperature, pressure, vapour_pressure);
+generate_par_ndarray_compute!(Bryan1, temperature, pressure, vapour_pressure);
 
 ///Approximate formula for computing equivalent potential temperature of unsaturated air from
 ///temperature, pressure and dewpoint.
@@ -146,50 +164,57 @@ pub fn bryan1_unchecked(temperature: Float, pressure: Float, vapour_pressure: Fl
 ///Valid `pressure` range: 100Pa - 150000Pa\
 ///Valid `temperature` range: 253K - 324K\
 ///Valid `dewpoint` range: 253K - 324K
-pub fn bolton1(pressure: Float, temperature: Float, dewpoint: Float) -> Result<Float, InputError> {
-    bolton1_validate(pressure, temperature, dewpoint)?;
-    Ok(bolton1_unchecked(pressure, temperature, dewpoint))
-}
+pub struct Bolton1;
 
-#[allow(missing_docs)]
-#[allow(clippy::missing_errors_doc)]
-#[cfg_attr(feature = "debug", logerr)]
-pub fn bolton1_validate(
-    pressure: Float,
-    temperature: Float,
-    dewpoint: Float,
-) -> Result<(), InputError> {
-    if !(20000.0..=150_000.0).contains(&pressure) {
-        return Err(InputError::OutOfRange(String::from("pressure")));
+impl Bolton1 {
+    #[allow(missing_docs)]
+    #[inline(always)]
+    #[allow(clippy::missing_errors_doc)]
+    #[cfg_attr(feature = "debug", logerr)]
+    pub fn validate_inputs(
+        pressure: Float,
+        temperature: Float,
+        dewpoint: Float,
+    ) -> Result<(), InputError> {
+        if !(20000.0..=150_000.0).contains(&pressure) {
+            return Err(InputError::OutOfRange(String::from("pressure")));
+        }
+
+        if !(253.0..=324.0).contains(&temperature) {
+            return Err(InputError::OutOfRange(String::from("temperature")));
+        }
+
+        if !(253.0..=324.0).contains(&dewpoint) {
+            return Err(InputError::OutOfRange(String::from("dewpoint")));
+        }
+
+        Ok(())
     }
 
-    if !(253.0..=324.0).contains(&temperature) {
-        return Err(InputError::OutOfRange(String::from("temperature")));
-    }
+    #[inline(always)]
+    #[allow(missing_docs)]
+    pub fn compute_unchecked(pressure: Float, temperature: Float, dewpoint: Float) -> Float {
+        let kappa = R_D / C_P;
 
-    if !(253.0..=324.0).contains(&dewpoint) {
-        return Err(InputError::OutOfRange(String::from("dewpoint")));
-    }
+        let vapour_pressure = vapour_pressure::Buck3::compute_unchecked(dewpoint, pressure);
+        let mixing_ratio = mixing_ratio::General1::compute_unchecked(pressure, vapour_pressure);
 
-    Ok(())
+        let lcl_temp =
+            (1.0 / ((1.0 / (dewpoint - 56.0)) + ((temperature / dewpoint).ln() / 800.0))) + 56.0;
+
+        let theta_dl = temperature
+            * (100_000.0 / (pressure - vapour_pressure)).powf(kappa)
+            * (temperature / lcl_temp).powf(0.28 * mixing_ratio);
+
+        theta_dl
+            * (((3036.0 / lcl_temp) - 1.78) * mixing_ratio * (1.0 + 0.448 * mixing_ratio)).exp()
+    }
 }
 
-#[allow(missing_docs)]
-pub fn bolton1_unchecked(pressure: Float, temperature: Float, dewpoint: Float) -> Float {
-    let kappa = R_D / C_P;
-
-    let vapour_pressure = vapour_pressure::buck3_unchecked(dewpoint, pressure);
-    let mixing_ratio = mixing_ratio::general1_unchecked(pressure, vapour_pressure);
-
-    let lcl_temp =
-        (1.0 / ((1.0 / (dewpoint - 56.0)) + ((temperature / dewpoint).ln() / 800.0))) + 56.0;
-
-    let theta_dl = temperature
-        * (100_000.0 / (pressure - vapour_pressure)).powf(kappa)
-        * (temperature / lcl_temp).powf(0.28 * mixing_ratio);
-
-    theta_dl * (((3036.0 / lcl_temp) - 1.78) * mixing_ratio * (1.0 + 0.448 * mixing_ratio)).exp()
-}
+generate_compute!(Bolton1, pressure, temperature, dewpoint);
+generate_vec_compute!(Bolton1, pressure, temperature, dewpoint);
+generate_par_vec_compute!(Bolton1, pressure, temperature, dewpoint);
+generate_ndarray_compute!(Bolton1, pressure, temperature, dewpoint);
 
 #[cfg(test)]
 mod tests {
