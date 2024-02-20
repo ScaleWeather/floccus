@@ -11,15 +11,17 @@ macro_rules! generate_compute {
 
     ($qnt:tt, $arg1:tt, $arg2:tt) => {
         impl $qnt {
+            #[allow(missing_docs)]
             pub fn compute($arg1: Float, $arg2: Float) -> Result<Float, InputError> {
-                Self::validate_inputs($arg1, $b)?;
-                Ok(Self::compute_unchecked($arg1, $b))
+                Self::validate_inputs($arg1, $arg2)?;
+                Ok(Self::compute_unchecked($arg1, $arg2))
             }
         }
     };
 
     ($qnt:tt, $arg1:tt, $arg2:tt, $arg3:tt) => {
         impl $qnt {
+            #[allow(missing_docs)]
             pub fn compute($arg1: Float, $arg2: Float, $arg3: Float) -> Result<Float, InputError> {
                 Self::validate_inputs($arg1, $arg2, $arg3)?;
                 Ok(Self::compute_unchecked($arg1, $arg2, $arg3))

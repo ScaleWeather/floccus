@@ -1,8 +1,9 @@
 //!Functions to calculate wet bulb potential temperature of unsaturated air in K.
 
-use crate::compute_macros::{generate_compute, generate_ndarray_compute, generate_par_ndarray_compute, generate_par_vec_compute, generate_vec_compute};
-use ndarray::{Array, Dimension, FoldWhile};
-use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
+use crate::compute_macros::{
+    generate_compute, generate_ndarray_compute, generate_par_ndarray_compute,
+    generate_par_vec_compute, generate_vec_compute,
+};
 use crate::Float;
 use crate::{
     constants::{C_P, R_D, ZERO_CELSIUS},
@@ -10,13 +11,15 @@ use crate::{
 };
 #[cfg(feature = "debug")]
 use floccus_proc::logerr;
+use ndarray::{Array, Dimension, FoldWhile};
+use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
 /// Formula for computing wet bulb potential temperature from equivalent potential temperature.
-/// 
+///
 /// Derived by R. Davies-Jones (2008) [(doi:10.1175/2007MWR2224.1)](https://doi.org/10.1175/2007MWR2224.1)
-/// 
+///
 /// # Errors
-/// 
+///
 /// Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 /// Valid `temperature` range: 257K - 377K\
 pub struct DaviesJones1;

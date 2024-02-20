@@ -96,9 +96,6 @@ pub mod wet_bulb_temperature;
 
 pub(crate) mod compute_macros;
 
-#[cfg(feature = "array_compute_parallel")]
-pub mod par_array_compute;
-
 #[cfg(not(feature = "double_precision"))]
 type Float = f32;
 
