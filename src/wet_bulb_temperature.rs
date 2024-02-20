@@ -1,10 +1,16 @@
 //!Functions to calculate wet bulb temperature of unsaturated air in K.
 
+use crate::compute_macros::{
+    generate_compute, generate_ndarray_compute, generate_par_ndarray_compute,
+    generate_par_vec_compute, generate_vec_compute,
+};
 use crate::Float;
 use crate::{constants::ZERO_CELSIUS, errors::InputError};
-
 #[cfg(feature = "debug")]
 use floccus_proc::logerr;
+use itertools::izip;
+use ndarray::{Array, Dimension, FoldWhile};
+use rayon::iter::{ParallelBridge, ParallelIterator};
 
 ///Formula for computing wet bulb temperature pressure from dry bulb temperature and relative humidity.
 ///
@@ -17,39 +23,46 @@ use floccus_proc::logerr;
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `temperature` range: 253K - 324K\
 ///Valid `relative_humidity` range: 0.05 - 0.99
-pub fn stull1(temperature: Float, relative_humidity: Float) -> Result<Float, InputError> {
-    stull1_validate(temperature, relative_humidity)?;
-    Ok(stull1_unchecked(temperature, relative_humidity))
-}
+pub struct Stull1;
 
-#[allow(missing_docs)]
-#[allow(clippy::missing_errors_doc)]
-#[cfg_attr(feature = "debug", logerr)]
-pub fn stull1_validate(temperature: Float, relative_humidity: Float) -> Result<(), InputError> {
-    if !(253.0..=324.0).contains(&temperature) {
-        return Err(InputError::OutOfRange(String::from("temperature")));
+impl Stull1 {
+    #[allow(missing_docs)]
+    #[allow(clippy::missing_errors_doc)]
+    #[inline(always)]
+    #[cfg_attr(feature = "debug", logerr)]
+    pub fn validate_inputs(temperature: Float, relative_humidity: Float) -> Result<(), InputError> {
+        if !(253.0..=324.0).contains(&temperature) {
+            return Err(InputError::OutOfRange(String::from("temperature")));
+        }
+
+        if !(0.05..=0.99).contains(&relative_humidity) {
+            return Err(InputError::OutOfRange(String::from("relative_humidity")));
+        }
+        Ok(())
     }
 
-    if !(0.05..=0.99).contains(&relative_humidity) {
-        return Err(InputError::OutOfRange(String::from("relative_humidity")));
+    #[allow(missing_docs)]
+    #[inline(always)]
+    pub fn compute_unchecked(temperature: Float, relative_humidity: Float) -> Float {
+        //convert units
+        let temperature = temperature - ZERO_CELSIUS;
+        let relative_humidity = relative_humidity * 100.0;
+
+        let result = (temperature * (0.151_977 * (relative_humidity + 8.313_659).sqrt()).atan())
+            + (temperature + relative_humidity).atan()
+            - (relative_humidity - 1.676_331).atan()
+            + (0.003_918_38 * relative_humidity.powf(1.5) * (0.023_101 * relative_humidity).atan())
+            - 4.686_035;
+
+        result + ZERO_CELSIUS
     }
-    Ok(())
 }
 
-#[allow(missing_docs)]
-pub fn stull1_unchecked(temperature: Float, relative_humidity: Float) -> Float {
-    //convert units
-    let temperature = temperature - ZERO_CELSIUS;
-    let relative_humidity = relative_humidity * 100.0;
-
-    let result = (temperature * (0.151_977 * (relative_humidity + 8.313_659).sqrt()).atan())
-        + (temperature + relative_humidity).atan()
-        - (relative_humidity - 1.676_331).atan()
-        + (0.003_918_38 * relative_humidity.powf(1.5) * (0.023_101 * relative_humidity).atan())
-        - 4.686_035;
-
-    result + ZERO_CELSIUS
-}
+generate_compute!(Stull1, temperature, relative_humidity);
+generate_vec_compute!(Stull1, temperature, relative_humidity);
+generate_par_vec_compute!(Stull1, temperature, relative_humidity);
+generate_ndarray_compute!(Stull1, temperature, relative_humidity);
+generate_par_ndarray_compute!(Stull1, temperature, relative_humidity);
 
 #[cfg(test)]
 mod tests {
