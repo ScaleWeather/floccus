@@ -4,11 +4,17 @@
 //!the amount of moisture in the air and how much moisture the air can hold
 //!when it is saturated ([Wikipedia](https://en.wikipedia.org/wiki/Vapour-pressure_deficit)).
 
-use crate::Float;
-use crate::{errors::InputError, vapour_pressure};
-
+use crate::compute_macros::{
+    generate_compute, generate_ndarray_compute, generate_par_ndarray_compute,
+    generate_par_vec_compute, generate_vec_compute,
+};
+use crate::errors::InputError;
+use crate::{vapour_pressure, Float};
 #[cfg(feature = "debug")]
 use floccus_proc::logerr;
+use itertools::izip;
+use ndarray::{Array, Dimension, FoldWhile};
+use rayon::iter::{ParallelBridge, ParallelIterator};
 
 ///Formula for computing vapour pressure deficit from vapour pressure and saturation vapour pressure
 ///
@@ -17,41 +23,42 @@ use floccus_proc::logerr;
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `vapour_pressure` range: 0Pa - 10000Pa
 ///Valid `saturation_vapour_pressure` range: 0Pa - 10000Pa
-pub fn general1(
-    vapour_pressure: Float,
-    saturation_vapour_pressure: Float,
-) -> Result<Float, InputError> {
-    general1_validate(vapour_pressure, saturation_vapour_pressure)?;
-    Ok(general1_unchecked(
-        vapour_pressure,
-        saturation_vapour_pressure,
-    ))
-}
+pub struct General1;
 
-#[allow(missing_docs)]
-#[allow(clippy::missing_errors_doc)]
-#[cfg_attr(feature = "debug", logerr)]
-pub fn general1_validate(
-    vapour_pressure: Float,
-    saturation_vapour_pressure: Float,
-) -> Result<(), InputError> {
-    if !(0.0..=50_000.0).contains(&vapour_pressure) {
-        return Err(InputError::OutOfRange(String::from("vapour_pressure")));
+impl General1 {
+    #[allow(missing_docs)]
+    #[allow(clippy::missing_errors_doc)]
+    #[inline(always)]
+    #[cfg_attr(feature = "debug", logerr)]
+    pub fn validate_inputs(
+        vapour_pressure: Float,
+        saturation_vapour_pressure: Float,
+    ) -> Result<(), InputError> {
+        if !(0.0..=50_000.0).contains(&vapour_pressure) {
+            return Err(InputError::OutOfRange(String::from("vapour_pressure")));
+        }
+
+        if !(0.0..=50_000.0).contains(&saturation_vapour_pressure) {
+            return Err(InputError::OutOfRange(String::from(
+                "saturation_vapour_pressure",
+            )));
+        }
+
+        Ok(())
     }
 
-    if !(0.0..=50_000.0).contains(&saturation_vapour_pressure) {
-        return Err(InputError::OutOfRange(String::from(
-            "saturation_vapour_pressure",
-        )));
+    #[inline(always)]
+    #[allow(missing_docs)]
+    pub fn compute_unchecked(vapour_pressure: Float, saturation_vapour_pressure: Float) -> Float {
+        saturation_vapour_pressure - vapour_pressure
     }
-
-    Ok(())
 }
 
-#[allow(missing_docs)]
-pub fn general1_unchecked(vapour_pressure: Float, saturation_vapour_pressure: Float) -> Float {
-    saturation_vapour_pressure - vapour_pressure
-}
+generate_compute!(General1, vapour_pressure, saturation_vapour_pressure);
+generate_vec_compute!(General1, vapour_pressure, saturation_vapour_pressure);
+generate_ndarray_compute!(General1, vapour_pressure, saturation_vapour_pressure);
+generate_par_vec_compute!(General1, vapour_pressure, saturation_vapour_pressure);
+generate_par_ndarray_compute!(General1, vapour_pressure, saturation_vapour_pressure);
 
 ///Formula for computing vapour pressure deficit from temperature, dewpoint and pressure
 ///using [`buck3`](vapour_pressure::buck3) function for vapour pressure calculation
@@ -61,40 +68,48 @@ pub fn general1_unchecked(vapour_pressure: Float, saturation_vapour_pressure: Fl
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `vapour_pressure` range: 0Pa - 10000Pa
 ///Valid `saturation_vapour_pressure` range: 0Pa - 10000Pa
-pub fn general2(temperature: Float, dewpoint: Float, pressure: Float) -> Result<Float, InputError> {
-    general2_validate(temperature, dewpoint, pressure)?;
-    Ok(general2_unchecked(temperature, dewpoint, pressure))
-}
+pub struct General2;
 
-#[allow(missing_docs)]
-#[allow(clippy::missing_errors_doc)]
-#[cfg_attr(feature = "debug", logerr)]
-pub fn general2_validate(
-    temperature: Float,
-    dewpoint: Float,
-    pressure: Float,
-) -> Result<(), InputError> {
-    if !(253.0..=324.0).contains(&temperature) {
-        return Err(InputError::OutOfRange(String::from("temperature")));
+impl General2 {
+    #[allow(missing_docs)]
+    #[allow(clippy::missing_errors_doc)]
+    #[inline(always)]
+    #[cfg_attr(feature = "debug", logerr)]
+    pub fn validate_inputs(
+        temperature: Float,
+        dewpoint: Float,
+        pressure: Float,
+    ) -> Result<(), InputError> {
+        if !(253.0..=324.0).contains(&temperature) {
+            return Err(InputError::OutOfRange(String::from("temperature")));
+        }
+
+        if !(253.0..=324.0).contains(&dewpoint) {
+            return Err(InputError::OutOfRange(String::from("dewpoint")));
+        }
+
+        if !(100.0..=150_000.0).contains(&pressure) {
+            return Err(InputError::OutOfRange(String::from("pressure")));
+        }
+        Ok(())
     }
 
-    if !(253.0..=324.0).contains(&dewpoint) {
-        return Err(InputError::OutOfRange(String::from("dewpoint")));
-    }
+    #[inline(always)]
+    #[allow(missing_docs)]
+    pub fn compute_unchecked(temperature: Float, dewpoint: Float, pressure: Float) -> Float {
+        let vapour_pressure = vapour_pressure::Buck3::compute_unchecked(dewpoint, pressure);
+        let saturation_vapour_pressure =
+            vapour_pressure::Buck3::compute_unchecked(temperature, pressure);
 
-    if !(100.0..=150_000.0).contains(&pressure) {
-        return Err(InputError::OutOfRange(String::from("pressure")));
+        General1::compute_unchecked(vapour_pressure, saturation_vapour_pressure)
     }
-    Ok(())
 }
 
-#[allow(missing_docs)]
-pub fn general2_unchecked(temperature: Float, dewpoint: Float, pressure: Float) -> Float {
-    let vapour_pressure = vapour_pressure::buck3_unchecked(dewpoint, pressure);
-    let saturation_vapour_pressure = vapour_pressure::buck3_unchecked(temperature, pressure);
-
-    general1_unchecked(vapour_pressure, saturation_vapour_pressure)
-}
+generate_compute!(General2, temperature, dewpoint, pressure);
+generate_vec_compute!(General2, temperature, dewpoint, pressure);
+generate_ndarray_compute!(General2, temperature, dewpoint, pressure);
+generate_par_vec_compute!(General2, temperature, dewpoint, pressure);
+generate_par_ndarray_compute!(General2, temperature, dewpoint, pressure);
 
 ///Formula for computing vapour pressure deficit from temperature, relative humidity and pressure
 ///using [`buck3`](vapour_pressure::buck3) function for vapour pressure calculation
@@ -104,48 +119,56 @@ pub fn general2_unchecked(temperature: Float, dewpoint: Float, pressure: Float) 
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `vapour_pressure` range: 0Pa - 10000Pa
 ///Valid `saturation_vapour_pressure` range: 0Pa - 10000Pa
-pub fn general3(
-    temperature: Float,
-    relative_humidity: Float,
-    pressure: Float,
-) -> Result<Float, InputError> {
-    general3_validate(temperature, relative_humidity, pressure)?;
-    Ok(general3_unchecked(temperature, relative_humidity, pressure))
-}
+pub struct General3;
 
-#[allow(missing_docs)]
-#[allow(clippy::missing_errors_doc)]
-#[cfg_attr(feature = "debug", logerr)]
-pub fn general3_validate(
-    temperature: Float,
-    relative_humidity: Float,
-    pressure: Float,
-) -> Result<(), InputError> {
-    if !(253.0..=319.0).contains(&temperature) {
-        return Err(InputError::OutOfRange(String::from("temperature")));
+impl General3 {
+    #[allow(missing_docs)]
+    #[allow(clippy::missing_errors_doc)]
+    #[inline(always)]
+    #[cfg_attr(feature = "debug", logerr)]
+    pub fn validate_inputs(
+        temperature: Float,
+        relative_humidity: Float,
+        pressure: Float,
+    ) -> Result<(), InputError> {
+        if !(253.0..=319.0).contains(&temperature) {
+            return Err(InputError::OutOfRange(String::from("temperature")));
+        }
+
+        if !(0.05..=1.0).contains(&relative_humidity) {
+            return Err(InputError::OutOfRange(String::from("relative_humidity")));
+        }
+
+        if !(10000.0..=150_000.0).contains(&pressure) {
+            return Err(InputError::OutOfRange(String::from("pressure")));
+        }
+
+        Ok(())
     }
 
-    if !(0.05..=1.0).contains(&relative_humidity) {
-        return Err(InputError::OutOfRange(String::from("relative_humidity")));
-    }
+    #[inline(always)]
+    #[allow(missing_docs)]
+    pub fn compute_unchecked(
+        temperature: Float,
+        relative_humidity: Float,
+        pressure: Float,
+    ) -> Float {
+        let saturation_vapour_pressure =
+            vapour_pressure::Buck3::compute_unchecked(temperature, pressure);
+        let vapour_pressure = vapour_pressure::SaturationSpecific1::compute_unchecked(
+            saturation_vapour_pressure,
+            relative_humidity,
+        );
 
-    if !(10000.0..=150_000.0).contains(&pressure) {
-        return Err(InputError::OutOfRange(String::from("pressure")));
+        General1::compute_unchecked(vapour_pressure, saturation_vapour_pressure)
     }
-
-    Ok(())
 }
 
-#[allow(missing_docs)]
-pub fn general3_unchecked(temperature: Float, relative_humidity: Float, pressure: Float) -> Float {
-    let saturation_vapour_pressure = vapour_pressure::buck3_unchecked(temperature, pressure);
-    let vapour_pressure = vapour_pressure::saturation_specific1_unchecked(
-        saturation_vapour_pressure,
-        relative_humidity,
-    );
-
-    general1_unchecked(vapour_pressure, saturation_vapour_pressure)
-}
+generate_compute!(General3, temperature, relative_humidity, pressure);
+generate_vec_compute!(General3, temperature, relative_humidity, pressure);
+generate_ndarray_compute!(General3, temperature, relative_humidity, pressure);
+generate_par_vec_compute!(General3, temperature, relative_humidity, pressure);
+generate_par_ndarray_compute!(General3, temperature, relative_humidity, pressure);
 
 #[cfg(test)]
 mod tests {

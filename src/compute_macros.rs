@@ -63,6 +63,7 @@ macro_rules! generate_vec_compute {
             pub fn compute_vec(
                 $slice1: &[Float],
                 $slice2: &[Float],
+                $slice3: &[Float],
             ) -> Result<Vec<Float>, InputError> {
                 izip!($slice1, $slice2, $slice3)
                     .map(|(&a, &b, &c)| Self::compute(a, b, c))
@@ -175,6 +176,7 @@ macro_rules! generate_par_vec_compute {
             pub fn compute_vec_parallel(
                 $slice1: &[Float],
                 $slice2: &[Float],
+                $slice3: &[Float],
             ) -> Result<Vec<Float>, InputError> {
                 izip!($slice1, $slice2, $slice3)
                     .par_bridge()
