@@ -87,14 +87,18 @@ pub mod mixing_ratio;
 pub mod potential_temperature;
 pub mod relative_humidity;
 pub mod specific_humidity;
-mod tests_framework;
 pub mod vapour_pressure;
 pub mod vapour_pressure_deficit;
 pub mod virtual_temperature;
 pub mod wet_bulb_potential_temperature;
 pub mod wet_bulb_temperature;
 
-pub(crate) mod compute_macros;
+mod compute_macros;
+mod tests_framework;
+
+pub mod variable;
+pub mod units;
+pub mod quantities;
 
 #[cfg(not(feature = "double_precision"))]
 type Float = f32;
