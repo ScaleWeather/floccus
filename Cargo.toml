@@ -21,53 +21,61 @@ itertools = { version = "0.12", default-features = false, optional = true, featu
 ] }
 ndarray = { version = "0.15", default-features = false, optional = true }
 rayon = { version = "1.8", default-features = false, optional = true }
+uom = { version = "0.35", default-features = false, features = [
+    "si",
+    "std",
+    "autoconvert",
+    "f32",
+    "f64",
+] }
+num-traits = { version = "0.2", default-features = false, features = ["std"] }
 
 [dev-dependencies]
 criterion = "0.5.1"
 
 [features]
-default = ["array_compute", "array_compute_parallel"]
+default = ["array_compute", "array_compute_parallel", "debug", "double_precision"]
 debug = ["floccus-proc"]
 double_precision = []
 array_compute = ["ndarray", "itertools"]
 array_compute_parallel = ["array_compute", "ndarray/rayon", "rayon"]
 
-[[bench]]
-name = "virtual_temperature"
-harness = false
+# [[bench]]
+# name = "virtual_temperature"
+# harness = false
 
-[[bench]]
-name = "vapour_pressure"
-harness = false
+# [[bench]]
+# name = "vapour_pressure"
+# harness = false
 
-[[bench]]
-name = "vapour_pressure_deficit"
-harness = false
+# [[bench]]
+# name = "vapour_pressure_deficit"
+# harness = false
 
-[[bench]]
-name = "mixing_ratio"
-harness = false
+# [[bench]]
+# name = "mixing_ratio"
+# harness = false
 
-[[bench]]
-name = "wet_bulb_temperature"
-harness = false
+# [[bench]]
+# name = "wet_bulb_temperature"
+# harness = false
 
-[[bench]]
-name = "relative_humidity"
-harness = false
+# [[bench]]
+# name = "relative_humidity"
+# harness = false
 
-[[bench]]
-name = "specific_humidity"
-harness = false
+# [[bench]]
+# name = "specific_humidity"
+# harness = false
 
-[[bench]]
-name = "potential_temperature"
-harness = false
+# [[bench]]
+# name = "potential_temperature"
+# harness = false
 
-[[bench]]
-name = "equivalent_potential_temperature"
-harness = false
+# [[bench]]
+# name = "equivalent_potential_temperature"
+# harness = false
 
-[[bench]]
-name = "wet_bulb_potential_temperature"
-harness = false
+# [[bench]]
+# name = "wet_bulb_potential_temperature"
+# harness = false

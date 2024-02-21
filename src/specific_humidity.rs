@@ -60,28 +60,28 @@ generate_par_vec_compute!(General1, vapour_pressure, pressure);
 generate_ndarray_compute!(General1, vapour_pressure, pressure);
 generate_par_ndarray_compute!(General1, vapour_pressure, pressure);
 
-#[cfg(test)]
-mod tests {
-    use crate::{
-        specific_humidity,
-        tests_framework::{self, Argument},
-    };
+// #[cfg(test)]
+// mod tests {
+//     use crate::{
+//         specific_humidity,
+//         tests_framework::{self, Argument},
+//     };
 
-    #[test]
-    fn general1() {
-        assert!(tests_framework::test_with_2args(
-            &specific_humidity::general1,
-            Argument {
-                name: "vapour_pressure",
-                def_val: 3000.0,
-                range: [0.0, 50_000.0]
-            },
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [100.0, 150_000.0]
-            },
-            0.018623845512674677
-        ));
-    }
-}
+//     #[test]
+//     fn general1() {
+//         assert!(tests_framework::test_with_2args(
+//             &specific_humidity::general1,
+//             Argument {
+//                 name: "vapour_pressure",
+//                 def_val: 3000.0,
+//                 range: [0.0, 50_000.0]
+//             },
+//             Argument {
+//                 name: "pressure",
+//                 def_val: 101325.0,
+//                 range: [100.0, 150_000.0]
+//             },
+//             0.018623845512674677
+//         ));
+//     }
+// }

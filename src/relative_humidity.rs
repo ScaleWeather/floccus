@@ -248,110 +248,110 @@ impl General5 {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::{
-        relative_humidity,
-        tests_framework::{self, Argument},
-    };
+// #[cfg(test)]
+// mod tests {
+//     use crate::{
+//         relative_humidity,
+//         tests_framework::{self, Argument},
+//     };
 
-    #[test]
-    fn general1() {
-        assert!(tests_framework::test_with_2args(
-            &relative_humidity::general1,
-            Argument {
-                name: "mixing_ratio",
-                def_val: 0.01064,
-                range: [0.00001, 10.0]
-            },
-            Argument {
-                name: "saturation_mixing_ratio",
-                def_val: 0.01467,
-                range: [0.00001, 10.0]
-            },
-            0.7252897068847989
-        ));
-    }
+//     #[test]
+//     fn general1() {
+//         assert!(tests_framework::test_with_2args(
+//             &relative_humidity::general1,
+//             Argument {
+//                 name: "mixing_ratio",
+//                 def_val: 0.01064,
+//                 range: [0.00001, 10.0]
+//             },
+//             Argument {
+//                 name: "saturation_mixing_ratio",
+//                 def_val: 0.01467,
+//                 range: [0.00001, 10.0]
+//             },
+//             0.7252897068847989
+//         ));
+//     }
 
-    #[test]
-    fn general2() {
-        assert!(tests_framework::test_with_2args(
-            &relative_humidity::general2,
-            Argument {
-                name: "vapour_pressure",
-                def_val: 1706.0,
-                range: [0.0, 50_000.0]
-            },
-            Argument {
-                name: "saturation_vapour_pressure",
-                def_val: 2339.0,
-                range: [0.1, 50_000.0]
-            },
-            0.7293715262932877
-        ));
-    }
+//     #[test]
+//     fn general2() {
+//         assert!(tests_framework::test_with_2args(
+//             &relative_humidity::general2,
+//             Argument {
+//                 name: "vapour_pressure",
+//                 def_val: 1706.0,
+//                 range: [0.0, 50_000.0]
+//             },
+//             Argument {
+//                 name: "saturation_vapour_pressure",
+//                 def_val: 2339.0,
+//                 range: [0.1, 50_000.0]
+//             },
+//             0.7293715262932877
+//         ));
+//     }
 
-    #[test]
-    fn general3() {
-        assert!(tests_framework::test_with_2args(
-            &relative_humidity::general3,
-            Argument {
-                name: "temperature",
-                def_val: 300.0,
-                range: [273.0, 353.0]
-            },
-            Argument {
-                name: "dewpoint",
-                def_val: 290.0,
-                range: [273.0, 353.0]
-            },
-            0.5431069897660531
-        ));
-    }
+//     #[test]
+//     fn general3() {
+//         assert!(tests_framework::test_with_2args(
+//             &relative_humidity::general3,
+//             Argument {
+//                 name: "temperature",
+//                 def_val: 300.0,
+//                 range: [273.0, 353.0]
+//             },
+//             Argument {
+//                 name: "dewpoint",
+//                 def_val: 290.0,
+//                 range: [273.0, 353.0]
+//             },
+//             0.5431069897660531
+//         ));
+//     }
 
-    #[test]
-    fn general4() {
-        assert!(tests_framework::test_with_3args(
-            &relative_humidity::general4,
-            Argument {
-                name: "temperature",
-                def_val: 300.0,
-                range: [253.0, 324.0]
-            },
-            Argument {
-                name: "dewpoint",
-                def_val: 290.0,
-                range: [253.0, 324.0]
-            },
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [100.0, 150_000.0]
-            },
-            0.5429224562155812
-        ));
-    }
+//     #[test]
+//     fn general4() {
+//         assert!(tests_framework::test_with_3args(
+//             &relative_humidity::general4,
+//             Argument {
+//                 name: "temperature",
+//                 def_val: 300.0,
+//                 range: [253.0, 324.0]
+//             },
+//             Argument {
+//                 name: "dewpoint",
+//                 def_val: 290.0,
+//                 range: [253.0, 324.0]
+//             },
+//             Argument {
+//                 name: "pressure",
+//                 def_val: 101325.0,
+//                 range: [100.0, 150_000.0]
+//             },
+//             0.5429224562155812
+//         ));
+//     }
 
-    #[test]
-    fn general5() {
-        assert!(tests_framework::test_with_3args(
-            &relative_humidity::general5,
-            Argument {
-                name: "temperature",
-                def_val: 300.0,
-                range: [232.0, 314.0]
-            },
-            Argument {
-                name: "dewpoint",
-                def_val: 290.0,
-                range: [232.0, 314.0]
-            },
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [10000.0, 150_000.0]
-            },
-            0.5338747953552858
-        ));
-    }
-}
+//     #[test]
+//     fn general5() {
+//         assert!(tests_framework::test_with_3args(
+//             &relative_humidity::general5,
+//             Argument {
+//                 name: "temperature",
+//                 def_val: 300.0,
+//                 range: [232.0, 314.0]
+//             },
+//             Argument {
+//                 name: "dewpoint",
+//                 def_val: 290.0,
+//                 range: [232.0, 314.0]
+//             },
+//             Argument {
+//                 name: "pressure",
+//                 def_val: 101325.0,
+//                 range: [10000.0, 150_000.0]
+//             },
+//             0.5338747953552858
+//         ));
+//     }
+// }

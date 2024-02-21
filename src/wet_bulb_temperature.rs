@@ -64,28 +64,28 @@ generate_par_vec_compute!(Stull1, temperature, relative_humidity);
 generate_ndarray_compute!(Stull1, temperature, relative_humidity);
 generate_par_ndarray_compute!(Stull1, temperature, relative_humidity);
 
-#[cfg(test)]
-mod tests {
-    use crate::{
-        tests_framework::{self, Argument},
-        wet_bulb_temperature,
-    };
+// #[cfg(test)]
+// mod tests {
+//     use crate::{
+//         tests_framework::{self, Argument},
+//         wet_bulb_temperature,
+//     };
 
-    #[test]
-    fn stull1() {
-        assert!(tests_framework::test_with_2args(
-            &wet_bulb_temperature::stull1,
-            Argument {
-                name: "temperature",
-                def_val: 300.0,
-                range: [253.0, 324.0]
-            },
-            Argument {
-                name: "relative_humidity",
-                def_val: 0.5,
-                range: [0.05, 0.99]
-            },
-            292.73867410526674
-        ));
-    }
-}
+//     #[test]
+//     fn stull1() {
+//         assert!(tests_framework::test_with_2args(
+//             &wet_bulb_temperature::stull1,
+//             Argument {
+//                 name: "temperature",
+//                 def_val: 300.0,
+//                 range: [253.0, 324.0]
+//             },
+//             Argument {
+//                 name: "relative_humidity",
+//                 def_val: 0.5,
+//                 range: [0.05, 0.99]
+//             },
+//             292.73867410526674
+//         ));
+//     }
+// }

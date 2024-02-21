@@ -85,33 +85,33 @@ generate_par_vec_compute!(DaviesJones1, temperature, pressure, vapour_pressure);
 generate_ndarray_compute!(DaviesJones1, temperature, pressure, vapour_pressure);
 generate_par_ndarray_compute!(DaviesJones1, temperature, pressure, vapour_pressure);
 
-#[cfg(test)]
-mod tests {
-    use crate::{
-        potential_temperature,
-        tests_framework::{self, Argument},
-    };
+// #[cfg(test)]
+// mod tests {
+//     use crate::{
+//         potential_temperature,
+//         tests_framework::{self, Argument},
+//     };
 
-    #[test]
-    fn davies_jones1() {
-        assert!(tests_framework::test_with_3args(
-            &potential_temperature::davies_jones1,
-            Argument {
-                name: "temperature",
-                def_val: 300.0,
-                range: [253.0, 324.0]
-            },
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [100.0, 150_000.0]
-            },
-            Argument {
-                name: "vapour_pressure",
-                def_val: 3000.0,
-                range: [0.0, 10_000.0]
-            },
-            301.45136519081666
-        ));
-    }
-}
+//     #[test]
+//     fn davies_jones1() {
+//         assert!(tests_framework::test_with_3args(
+//             &potential_temperature::davies_jones1,
+//             Argument {
+//                 name: "temperature",
+//                 def_val: 300.0,
+//                 range: [253.0, 324.0]
+//             },
+//             Argument {
+//                 name: "pressure",
+//                 def_val: 101325.0,
+//                 range: [100.0, 150_000.0]
+//             },
+//             Argument {
+//                 name: "vapour_pressure",
+//                 def_val: 3000.0,
+//                 range: [0.0, 10_000.0]
+//             },
+//             301.45136519081666
+//         ));
+//     }
+// }

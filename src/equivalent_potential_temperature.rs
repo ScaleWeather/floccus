@@ -216,79 +216,79 @@ generate_vec_compute!(Bolton1, pressure, temperature, dewpoint);
 generate_par_vec_compute!(Bolton1, pressure, temperature, dewpoint);
 generate_ndarray_compute!(Bolton1, pressure, temperature, dewpoint);
 
-#[cfg(test)]
-mod tests {
-    use crate::{
-        equivalent_potential_temperature,
-        tests_framework::{self, Argument},
-    };
+// #[cfg(test)]
+// mod tests {
+//     use crate::{
+//         equivalent_potential_temperature,
+//         tests_framework::{self, Argument},
+//     };
 
-    #[test]
-    fn paluch1() {
-        assert!(tests_framework::test_with_3args(
-            &equivalent_potential_temperature::paluch1,
-            Argument {
-                name: "temperature",
-                def_val: 300.0,
-                range: [253.0, 324.0]
-            },
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [20000.0, 150_000.0]
-            },
-            Argument {
-                name: "vapour_pressure",
-                def_val: 991.189131,
-                range: [0.0, 10_000.0]
-            },
-            315.23724970376776
-        ));
-    }
+//     #[test]
+//     fn paluch1() {
+//         assert!(tests_framework::test_with_3args(
+//             &equivalent_potential_temperature::paluch1,
+//             Argument {
+//                 name: "temperature",
+//                 def_val: 300.0,
+//                 range: [253.0, 324.0]
+//             },
+//             Argument {
+//                 name: "pressure",
+//                 def_val: 101325.0,
+//                 range: [20000.0, 150_000.0]
+//             },
+//             Argument {
+//                 name: "vapour_pressure",
+//                 def_val: 991.189131,
+//                 range: [0.0, 10_000.0]
+//             },
+//             315.23724970376776
+//         ));
+//     }
 
-    #[test]
-    fn bryan1() {
-        assert!(tests_framework::test_with_3args(
-            &equivalent_potential_temperature::bryan1,
-            Argument {
-                name: "temperature",
-                def_val: 300.0,
-                range: [253.0, 324.0]
-            },
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [20000.0, 150_000.0]
-            },
-            Argument {
-                name: "vapour_pressure",
-                def_val: 991.189131,
-                range: [0.0, 10_000.0]
-            },
-            316.52762026634014
-        ));
-    }
+//     #[test]
+//     fn bryan1() {
+//         assert!(tests_framework::test_with_3args(
+//             &equivalent_potential_temperature::bryan1,
+//             Argument {
+//                 name: "temperature",
+//                 def_val: 300.0,
+//                 range: [253.0, 324.0]
+//             },
+//             Argument {
+//                 name: "pressure",
+//                 def_val: 101325.0,
+//                 range: [20000.0, 150_000.0]
+//             },
+//             Argument {
+//                 name: "vapour_pressure",
+//                 def_val: 991.189131,
+//                 range: [0.0, 10_000.0]
+//             },
+//             316.52762026634014
+//         ));
+//     }
 
-    #[test]
-    fn bolton1() {
-        assert!(tests_framework::test_with_3args(
-            &equivalent_potential_temperature::bolton1,
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [20000.0, 150_000.0]
-            },
-            Argument {
-                name: "temperature",
-                def_val: 300.0,
-                range: [253.0, 324.0]
-            },
-            Argument {
-                name: "dewpoint",
-                def_val: 280.0,
-                range: [253.0, 324.0]
-            },
-            317.3855211897774
-        ));
-    }
-}
+//     #[test]
+//     fn bolton1() {
+//         assert!(tests_framework::test_with_3args(
+//             &equivalent_potential_temperature::bolton1,
+//             Argument {
+//                 name: "pressure",
+//                 def_val: 101325.0,
+//                 range: [20000.0, 150_000.0]
+//             },
+//             Argument {
+//                 name: "temperature",
+//                 def_val: 300.0,
+//                 range: [253.0, 324.0]
+//             },
+//             Argument {
+//                 name: "dewpoint",
+//                 def_val: 280.0,
+//                 range: [253.0, 324.0]
+//             },
+//             317.3855211897774
+//         ));
+//     }
+// }

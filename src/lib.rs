@@ -96,12 +96,19 @@ pub mod wet_bulb_temperature;
 mod compute_macros;
 mod tests_framework;
 
-pub mod variable;
-pub mod units;
 pub mod quantities;
+pub mod formula;
 
 #[cfg(not(feature = "double_precision"))]
 type Float = f32;
 
 #[cfg(feature = "double_precision")]
 type Float = f64;
+
+
+#[cfg(not(feature = "double_precision"))]
+pub(crate) use uom::si::f32 as Storage;
+
+#[cfg(feature = "double_precision")]
+pub(crate) use uom::si::f64 as Storage;
+

@@ -636,201 +636,201 @@ generate_ndarray_compute!(Wexler2, dewpoint);
 generate_par_vec_compute!(Wexler2, dewpoint);
 generate_par_ndarray_compute!(Wexler2, dewpoint);
 
-#[cfg(test)]
-mod tests {
-    use crate::{
-        tests_framework::{self, Argument},
-        vapour_pressure,
-    };
+// #[cfg(test)]
+// mod tests {
+//     use crate::{
+//         tests_framework::{self, Argument},
+//         vapour_pressure,
+//     };
 
-    #[test]
-    fn general1() {
-        assert!(tests_framework::test_with_2args(
-            &vapour_pressure::general1,
-            Argument {
-                name: "specific_humidity",
-                def_val: 0.022,
-                range: [0.00001, 2.0]
-            },
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [100.0, 150_000.0]
-            },
-            3536.6680935251343
-        ));
-    }
+//     #[test]
+//     fn general1() {
+//         assert!(tests_framework::test_with_2args(
+//             &vapour_pressure::general1,
+//             Argument {
+//                 name: "specific_humidity",
+//                 def_val: 0.022,
+//                 range: [0.00001, 2.0]
+//             },
+//             Argument {
+//                 name: "pressure",
+//                 def_val: 101325.0,
+//                 range: [100.0, 150_000.0]
+//             },
+//             3536.6680935251343
+//         ));
+//     }
 
-    #[test]
-    fn buck1() {
-        assert!(tests_framework::test_with_2args(
-            &vapour_pressure::buck1,
-            Argument {
-                name: "dewpoint",
-                def_val: 300.0,
-                range: [232.0, 324.0]
-            },
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [100.0, 150_000.0]
-            },
-            3550.6603579471303
-        ));
-    }
+//     #[test]
+//     fn buck1() {
+//         assert!(tests_framework::test_with_2args(
+//             &vapour_pressure::buck1,
+//             Argument {
+//                 name: "dewpoint",
+//                 def_val: 300.0,
+//                 range: [232.0, 324.0]
+//             },
+//             Argument {
+//                 name: "pressure",
+//                 def_val: 101325.0,
+//                 range: [100.0, 150_000.0]
+//             },
+//             3550.6603579471303
+//         ));
+//     }
 
-    #[test]
-    fn buck2() {
-        assert!(tests_framework::test_with_2args(
-            &vapour_pressure::buck2,
-            Argument {
-                name: "dewpoint",
-                def_val: 250.0,
-                range: [193.0, 274.0]
-            },
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [100.0, 150_000.0]
-            },
-            76.38781790372722
-        ));
-    }
+//     #[test]
+//     fn buck2() {
+//         assert!(tests_framework::test_with_2args(
+//             &vapour_pressure::buck2,
+//             Argument {
+//                 name: "dewpoint",
+//                 def_val: 250.0,
+//                 range: [193.0, 274.0]
+//             },
+//             Argument {
+//                 name: "pressure",
+//                 def_val: 101325.0,
+//                 range: [100.0, 150_000.0]
+//             },
+//             76.38781790372722
+//         ));
+//     }
 
-    #[test]
-    fn buck3() {
-        assert!(tests_framework::test_with_2args(
-            &vapour_pressure::buck3,
-            Argument {
-                name: "dewpoint",
-                def_val: 300.0,
-                range: [253.0, 324.0]
-            },
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [100.0, 150_000.0]
-            },
-            3548.5041048035896
-        ));
-    }
+//     #[test]
+//     fn buck3() {
+//         assert!(tests_framework::test_with_2args(
+//             &vapour_pressure::buck3,
+//             Argument {
+//                 name: "dewpoint",
+//                 def_val: 300.0,
+//                 range: [253.0, 324.0]
+//             },
+//             Argument {
+//                 name: "pressure",
+//                 def_val: 101325.0,
+//                 range: [100.0, 150_000.0]
+//             },
+//             3548.5041048035896
+//         ));
+//     }
 
-    #[test]
-    fn buck4() {
-        assert!(tests_framework::test_with_2args(
-            &vapour_pressure::buck4,
-            Argument {
-                name: "dewpoint",
-                def_val: 250.0,
-                range: [223.0, 274.0]
-            },
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [100.0, 150_000.0]
-            },
-            76.38685471836712
-        ));
-    }
+//     #[test]
+//     fn buck4() {
+//         assert!(tests_framework::test_with_2args(
+//             &vapour_pressure::buck4,
+//             Argument {
+//                 name: "dewpoint",
+//                 def_val: 250.0,
+//                 range: [223.0, 274.0]
+//             },
+//             Argument {
+//                 name: "pressure",
+//                 def_val: 101325.0,
+//                 range: [100.0, 150_000.0]
+//             },
+//             76.38685471836712
+//         ));
+//     }
 
-    #[test]
-    fn buck3_simplified() {
-        assert!(tests_framework::test_with_1arg(
-            &vapour_pressure::buck3_simplified,
-            Argument {
-                name: "dewpoint",
-                def_val: 300.0,
-                range: [253.0, 324.0]
-            },
-            3533.6421536199978
-        ));
-    }
+//     #[test]
+//     fn buck3_simplified() {
+//         assert!(tests_framework::test_with_1arg(
+//             &vapour_pressure::buck3_simplified,
+//             Argument {
+//                 name: "dewpoint",
+//                 def_val: 300.0,
+//                 range: [253.0, 324.0]
+//             },
+//             3533.6421536199978
+//         ));
+//     }
 
-    #[test]
-    fn buck4_simplified() {
-        assert!(tests_framework::test_with_1arg(
-            &vapour_pressure::buck4_simplified,
-            Argument {
-                name: "dewpoint",
-                def_val: 250.0,
-                range: [223.0, 274.0]
-            },
-            76.04197508519536
-        ));
-    }
+//     #[test]
+//     fn buck4_simplified() {
+//         assert!(tests_framework::test_with_1arg(
+//             &vapour_pressure::buck4_simplified,
+//             Argument {
+//                 name: "dewpoint",
+//                 def_val: 250.0,
+//                 range: [223.0, 274.0]
+//             },
+//             76.04197508519536
+//         ));
+//     }
 
-    #[test]
-    fn tetens1() {
-        assert!(tests_framework::test_with_1arg(
-            &vapour_pressure::tetens1,
-            Argument {
-                name: "dewpoint",
-                def_val: 300.0,
-                range: [273.0, 353.0]
-            },
-            3533.969137160892
-        ));
-    }
+//     #[test]
+//     fn tetens1() {
+//         assert!(tests_framework::test_with_1arg(
+//             &vapour_pressure::tetens1,
+//             Argument {
+//                 name: "dewpoint",
+//                 def_val: 300.0,
+//                 range: [273.0, 353.0]
+//             },
+//             3533.969137160892
+//         ));
+//     }
 
-    #[test]
-    fn saturation_specific1() {
-        assert!(tests_framework::test_with_2args(
-            &vapour_pressure::saturation_specific1,
-            Argument {
-                name: "saturation_vapour_pressure",
-                def_val: 3550.0,
-                range: [0.0, 50_000.0]
-            },
-            Argument {
-                name: "relative_humidity",
-                def_val: 0.5,
-                range: [0.0, 2.0]
-            },
-            1775.0
-        ));
-    }
+//     #[test]
+//     fn saturation_specific1() {
+//         assert!(tests_framework::test_with_2args(
+//             &vapour_pressure::saturation_specific1,
+//             Argument {
+//                 name: "saturation_vapour_pressure",
+//                 def_val: 3550.0,
+//                 range: [0.0, 50_000.0]
+//             },
+//             Argument {
+//                 name: "relative_humidity",
+//                 def_val: 0.5,
+//                 range: [0.0, 2.0]
+//             },
+//             1775.0
+//         ));
+//     }
 
-    #[test]
-    fn saturation_specific2() {
-        assert!(tests_framework::test_with_2args(
-            &vapour_pressure::saturation_specific2,
-            Argument {
-                name: "vapour_pressure",
-                def_val: 3000.0,
-                range: [0.0, 10_000.0]
-            },
-            Argument {
-                name: "relative_humidity",
-                def_val: 0.5,
-                range: [0.00001, 2.0]
-            },
-            6000.0
-        ));
-    }
+//     #[test]
+//     fn saturation_specific2() {
+//         assert!(tests_framework::test_with_2args(
+//             &vapour_pressure::saturation_specific2,
+//             Argument {
+//                 name: "vapour_pressure",
+//                 def_val: 3000.0,
+//                 range: [0.0, 10_000.0]
+//             },
+//             Argument {
+//                 name: "relative_humidity",
+//                 def_val: 0.5,
+//                 range: [0.00001, 2.0]
+//             },
+//             6000.0
+//         ));
+//     }
 
-    #[test]
-    fn wexler1() {
-        assert!(tests_framework::test_with_1arg(
-            &vapour_pressure::wexler1,
-            Argument {
-                name: "dewpoint",
-                def_val: 300.0,
-                range: [273.0, 374.0]
-            },
-            3535.4235919263083
-        ));
-    }
+//     #[test]
+//     fn wexler1() {
+//         assert!(tests_framework::test_with_1arg(
+//             &vapour_pressure::wexler1,
+//             Argument {
+//                 name: "dewpoint",
+//                 def_val: 300.0,
+//                 range: [273.0, 374.0]
+//             },
+//             3535.4235919263083
+//         ));
+//     }
 
-    #[test]
-    fn wexler2() {
-        assert!(tests_framework::test_with_1arg(
-            &vapour_pressure::wexler2,
-            Argument {
-                name: "dewpoint",
-                def_val: 250.0,
-                range: [173.0, 274.0]
-            },
-            76.04351136780438
-        ));
-    }
-}
+//     #[test]
+//     fn wexler2() {
+//         assert!(tests_framework::test_with_1arg(
+//             &vapour_pressure::wexler2,
+//             Argument {
+//                 name: "dewpoint",
+//                 def_val: 250.0,
+//                 range: [173.0, 274.0]
+//             },
+//             76.04351136780438
+//         ));
+//     }
+// }

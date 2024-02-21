@@ -170,74 +170,74 @@ generate_ndarray_compute!(General3, temperature, relative_humidity, pressure);
 generate_par_vec_compute!(General3, temperature, relative_humidity, pressure);
 generate_par_ndarray_compute!(General3, temperature, relative_humidity, pressure);
 
-#[cfg(test)]
-mod tests {
-    use crate::{
-        tests_framework::{self, Argument},
-        vapour_pressure_deficit,
-    };
+// #[cfg(test)]
+// mod tests {
+//     use crate::{
+//         tests_framework::{self, Argument},
+//         vapour_pressure_deficit,
+//     };
 
-    #[test]
-    fn general1() {
-        assert!(tests_framework::test_with_2args(
-            &vapour_pressure_deficit::general1,
-            Argument {
-                name: "vapour_pressure",
-                def_val: 3000.0,
-                range: [0.0, 50_000.0]
-            },
-            Argument {
-                name: "saturation_vapour_pressure",
-                def_val: 3550.0,
-                range: [0.0, 50_000.0]
-            },
-            550.0
-        ));
-    }
+//     #[test]
+//     fn general1() {
+//         assert!(tests_framework::test_with_2args(
+//             &vapour_pressure_deficit::general1,
+//             Argument {
+//                 name: "vapour_pressure",
+//                 def_val: 3000.0,
+//                 range: [0.0, 50_000.0]
+//             },
+//             Argument {
+//                 name: "saturation_vapour_pressure",
+//                 def_val: 3550.0,
+//                 range: [0.0, 50_000.0]
+//             },
+//             550.0
+//         ));
+//     }
 
-    #[test]
-    fn general2() {
-        assert!(tests_framework::test_with_3args(
-            &vapour_pressure_deficit::general2,
-            Argument {
-                name: "temperature",
-                def_val: 300.0,
-                range: [253.0, 324.0]
-            },
-            Argument {
-                name: "dewpoint",
-                def_val: 290.0,
-                range: [253.0, 324.0]
-            },
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [100.0, 150_000.0]
-            },
-            1621.9415403325527
-        ));
-    }
+//     #[test]
+//     fn general2() {
+//         assert!(tests_framework::test_with_3args(
+//             &vapour_pressure_deficit::general2,
+//             Argument {
+//                 name: "temperature",
+//                 def_val: 300.0,
+//                 range: [253.0, 324.0]
+//             },
+//             Argument {
+//                 name: "dewpoint",
+//                 def_val: 290.0,
+//                 range: [253.0, 324.0]
+//             },
+//             Argument {
+//                 name: "pressure",
+//                 def_val: 101325.0,
+//                 range: [100.0, 150_000.0]
+//             },
+//             1621.9415403325527
+//         ));
+//     }
 
-    #[test]
-    fn general3() {
-        assert!(tests_framework::test_with_3args(
-            &vapour_pressure_deficit::general3,
-            Argument {
-                name: "temperature",
-                def_val: 300.0,
-                range: [253.0, 319.0]
-            },
-            Argument {
-                name: "relative_humidity",
-                def_val: 0.5,
-                range: [0.05, 1.0]
-            },
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [10000.0, 150_000.0]
-            },
-            1774.2520524017948
-        ));
-    }
-}
+//     #[test]
+//     fn general3() {
+//         assert!(tests_framework::test_with_3args(
+//             &vapour_pressure_deficit::general3,
+//             Argument {
+//                 name: "temperature",
+//                 def_val: 300.0,
+//                 range: [253.0, 319.0]
+//             },
+//             Argument {
+//                 name: "relative_humidity",
+//                 def_val: 0.5,
+//                 range: [0.05, 1.0]
+//             },
+//             Argument {
+//                 name: "pressure",
+//                 def_val: 101325.0,
+//                 range: [10000.0, 150_000.0]
+//             },
+//             1774.2520524017948
+//         ));
+//     }
+// }

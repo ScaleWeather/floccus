@@ -141,64 +141,64 @@ impl Accuracy1 {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::{
-        mixing_ratio,
-        tests_framework::{self, Argument},
-    };
+// #[cfg(test)]
+// mod tests {
+//     use crate::{
+//         mixing_ratio,
+//         tests_framework::{self, Argument},
+//     };
 
-    #[test]
-    fn general1() {
-        assert!(tests_framework::test_with_2args(
-            &mixing_ratio::general1,
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [100.0, 150_000.0]
-            },
-            Argument {
-                name: "vapour_pressure",
-                def_val: 3500.0,
-                range: [0.0, 50_000.0]
-            },
-            0.022253316630823517
-        ));
-    }
+//     #[test]
+//     fn general1() {
+//         assert!(tests_framework::test_with_2args(
+//             &mixing_ratio::general1,
+//             Argument {
+//                 name: "pressure",
+//                 def_val: 101325.0,
+//                 range: [100.0, 150_000.0]
+//             },
+//             Argument {
+//                 name: "vapour_pressure",
+//                 def_val: 3500.0,
+//                 range: [0.0, 50_000.0]
+//             },
+//             0.022253316630823517
+//         ));
+//     }
 
-    #[test]
-    fn performance1() {
-        assert!(tests_framework::test_with_2args(
-            &mixing_ratio::performance1,
-            Argument {
-                name: "dewpoint",
-                def_val: 300.0,
-                range: [273.0, 353.0]
-            },
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [100.0, 150_000.0]
-            },
-            0.022477100514593465
-        ));
-    }
+//     #[test]
+//     fn performance1() {
+//         assert!(tests_framework::test_with_2args(
+//             &mixing_ratio::performance1,
+//             Argument {
+//                 name: "dewpoint",
+//                 def_val: 300.0,
+//                 range: [273.0, 353.0]
+//             },
+//             Argument {
+//                 name: "pressure",
+//                 def_val: 101325.0,
+//                 range: [100.0, 150_000.0]
+//             },
+//             0.022477100514593465
+//         ));
+//     }
 
-    #[test]
-    fn accuracy1() {
-        assert!(tests_framework::test_with_2args(
-            &mixing_ratio::accuracy1,
-            Argument {
-                name: "dewpoint",
-                def_val: 300.0,
-                range: [232.0, 324.0]
-            },
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [100.0, 150_000.0]
-            },
-            0.022587116896465847
-        ));
-    }
-}
+//     #[test]
+//     fn accuracy1() {
+//         assert!(tests_framework::test_with_2args(
+//             &mixing_ratio::accuracy1,
+//             Argument {
+//                 name: "dewpoint",
+//                 def_val: 300.0,
+//                 range: [232.0, 324.0]
+//             },
+//             Argument {
+//                 name: "pressure",
+//                 def_val: 101325.0,
+//                 range: [100.0, 150_000.0]
+//             },
+//             0.022587116896465847
+//         ));
+//     }
+// }

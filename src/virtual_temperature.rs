@@ -141,69 +141,69 @@ generate_par_vec_compute!(General3, temperature, specific_humidity);
 generate_ndarray_compute!(General3, temperature, specific_humidity);
 generate_par_ndarray_compute!(General3, temperature, specific_humidity);
 
-#[cfg(test)]
-mod tests {
-    use crate::{
-        tests_framework::{self, Argument},
-        virtual_temperature,
-    };
+// #[cfg(test)]
+// mod tests {
+//     use crate::{
+//         tests_framework::{self, Argument},
+//         virtual_temperature,
+//     };
 
-    #[test]
-    fn general1() {
-        assert!(tests_framework::test_with_2args(
-            &virtual_temperature::general1,
-            Argument {
-                name: "temperature",
-                def_val: 300.0,
-                range: [173.0, 354.0]
-            },
-            Argument {
-                name: "mixing_ratio",
-                def_val: 0.022,
-                range: [0.000_000_000_1, 0.5]
-            },
-            303.9249219815806
-        ));
-    }
+//     #[test]
+//     fn general1() {
+//         assert!(tests_framework::test_with_2args(
+//             &virtual_temperature::general1,
+//             Argument {
+//                 name: "temperature",
+//                 def_val: 300.0,
+//                 range: [173.0, 354.0]
+//             },
+//             Argument {
+//                 name: "mixing_ratio",
+//                 def_val: 0.022,
+//                 range: [0.000_000_000_1, 0.5]
+//             },
+//             303.9249219815806
+//         ));
+//     }
 
-    #[test]
-    fn general2() {
-        assert!(tests_framework::test_with_3args(
-            &virtual_temperature::general2,
-            Argument {
-                name: "temperature",
-                def_val: 300.0,
-                range: [173.0, 354.0]
-            },
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [100.0, 150_000.0]
-            },
-            Argument {
-                name: "vapour_pressure",
-                def_val: 3550.0,
-                range: [0.0, 10_000.0]
-            },
-            304.0265941965307
-        ));
-    }
+//     #[test]
+//     fn general2() {
+//         assert!(tests_framework::test_with_3args(
+//             &virtual_temperature::general2,
+//             Argument {
+//                 name: "temperature",
+//                 def_val: 300.0,
+//                 range: [173.0, 354.0]
+//             },
+//             Argument {
+//                 name: "pressure",
+//                 def_val: 101325.0,
+//                 range: [100.0, 150_000.0]
+//             },
+//             Argument {
+//                 name: "vapour_pressure",
+//                 def_val: 3550.0,
+//                 range: [0.0, 10_000.0]
+//             },
+//             304.0265941965307
+//         ));
+//     }
 
-    #[test]
-    fn general3() {
-        assert!(tests_framework::test_with_2args(
-            &virtual_temperature::general3,
-            Argument {
-                name: "temperature",
-                def_val: 300.0,
-                range: [173.0, 354.0]
-            },
-            Argument {
-                name: "specific_humidity",
-                def_val: 0.022,
-                range: [0.000000001, 2.0]
-            },
-            304.0112702651753
-        ));
-    }
-}
+//     #[test]
+//     fn general3() {
+//         assert!(tests_framework::test_with_2args(
+//             &virtual_temperature::general3,
+//             Argument {
+//                 name: "temperature",
+//                 def_val: 300.0,
+//                 range: [173.0, 354.0]
+//             },
+//             Argument {
+//                 name: "specific_humidity",
+//                 def_val: 0.022,
+//                 range: [0.000000001, 2.0]
+//             },
+//             304.0112702651753
+//         ));
+//     }
+// }

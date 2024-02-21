@@ -1,20 +1,40 @@
 #![allow(missing_docs)]
 
-use std::marker::PhantomData;
+use crate::Storage;
+use std::fmt::Debug;
 
-pub trait Quantity<F: Family> {}
+pub trait ThermodynamicQuantity: Debug + Clone + Copy + PartialEq + PartialOrd + Default {}
 
-pub trait Family {}
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+pub struct DryBulbTemperature(pub Storage::ThermodynamicTemperature);
 
-pub trait Length: Family {}
-pub trait Mass: Family {}
-pub trait Time: Family {}
-pub trait Temperature: Family {}
-pub trait Pressure: Family {}
-pub trait Ratio: Family {}
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+pub struct WetBulbTemperature(pub Storage::TemperatureInterval);
 
-pub struct VaporPressure<F: Pressure> {
-    _family: PhantomData<F>,
-}
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+pub struct DewPointTemperature(pub Storage::ThermodynamicTemperature);
 
-impl<F: Pressure> Quantity<F> for VaporPressure<F> {}
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+pub struct VirtualTemperature(pub Storage::TemperatureInterval);
+
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+pub struct PotentialTemperature(pub Storage::TemperatureInterval);
+
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+pub struct EquivalentPotentialTemperature(pub Storage::TemperatureInterval);
+
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+pub struct WetBulbPotentialTemperature(pub Storage::TemperatureInterval);
+
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+pub struct VapourPressure(pub Storage::Pressure);
+
+impl ThermodynamicQuantity for DryBulbTemperature {}
+impl ThermodynamicQuantity for WetBulbTemperature {}
+impl ThermodynamicQuantity for DewPointTemperature {}
+impl ThermodynamicQuantity for VirtualTemperature {}
+impl ThermodynamicQuantity for PotentialTemperature {}
+impl ThermodynamicQuantity for EquivalentPotentialTemperature {}
+impl ThermodynamicQuantity for WetBulbPotentialTemperature {}
+
+impl ThermodynamicQuantity for VapourPressure {}
