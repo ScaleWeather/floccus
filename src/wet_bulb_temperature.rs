@@ -1,49 +1,53 @@
-//!Functions to calculate wet bulb temperature of unsaturated air in K.
+//! Functions to calculate wet bulb temperature of unsaturated air
 
+use uom::si::ratio::percent;
+use uom::si::thermodynamic_temperature::degree_celsius;
 
-use crate::Float;
-use crate::{constants::ZERO_CELSIUS, errors::InputError};
+use crate::errors::InputError;
+use crate::formula::Formula2;
+use crate::quantities::{
+    DryBulbTemperature, RelativeHumidity, ThermodynamicQuantity, WetBulbTemperature,
+};
+use crate::Storage;
 
-
-use itertools::izip;
-use ndarray::{Array, Dimension, FoldWhile};
-use rayon::iter::{ParallelBridge, ParallelIterator};
-
-///Formula for computing wet bulb temperature pressure from dry bulb temperature and relative humidity.
+/// Formula for computing wet bulb temperature pressure from dry bulb temperature and relative humidity.
 ///
-///Derived by R. Stull (2011) [(doi:10.1175/JAMC-D-11-0143.1)](https://doi.org/10.1175/JAMC-D-11-0143.1)
-///Created with use of gene-expression programming.\
-///Result error is within −1K to +0.65K, with mean absolute error of 0.28K
+/// Derived by R. Stull (2011) [(doi:10.1175/JAMC-D-11-0143.1)](https://doi.org/10.1175/JAMC-D-11-0143.1)
+/// Created with use of gene-expression programming.
 ///
-///# Errors
+/// Result error is within -1K to +0.65K, with mean absolute error of 0.28K
 ///
-///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
-///Valid `temperature` range: 253K - 324K\
-///Valid `relative_humidity` range: 0.05 - 0.99
+/// Valid `temperature` range: 253K - 324K
+
+/// Valid `relative_humidity` range: 0.05 - 0.99
 pub struct Stull1;
 
-impl Stull1 {
-    #[allow(missing_docs)]
-    #[allow(clippy::missing_errors_doc)]
+impl Formula2<WetBulbTemperature, DryBulbTemperature, RelativeHumidity> for Stull1 {
     #[inline(always)]
-    
-    pub fn validate_inputs(temperature: Float, relative_humidity: Float) -> Result<(), InputError> {
-        if !(253.0..=324.0).contains(&temperature) {
+    fn validate_inputs(
+        temperature: DryBulbTemperature,
+        relative_humidity: RelativeHumidity,
+    ) -> Result<(), InputError> {
+        let temperature_si = temperature.get_si_value();
+        let relative_humidity_si = relative_humidity.get_si_value();
+
+        if !(253.0..=324.0).contains(&temperature_si) {
             return Err(InputError::OutOfRange(String::from("temperature")));
         }
 
-        if !(0.05..=0.99).contains(&relative_humidity) {
+        if !(0.05..=0.99).contains(&relative_humidity_si) {
             return Err(InputError::OutOfRange(String::from("relative_humidity")));
         }
         Ok(())
     }
 
-    #[allow(missing_docs)]
     #[inline(always)]
-    pub fn compute_unchecked(temperature: Float, relative_humidity: Float) -> Float {
-        //convert units
-        let temperature = temperature - ZERO_CELSIUS;
-        let relative_humidity = relative_humidity * 100.0;
+    fn compute_unchecked(
+        temperature: DryBulbTemperature,
+        relative_humidity: RelativeHumidity,
+    ) -> WetBulbTemperature {
+        let temperature = temperature.0.get::<degree_celsius>();
+        let relative_humidity = relative_humidity.0.get::<percent>();
 
         let result = (temperature * (0.151_977 * (relative_humidity + 8.313_659).sqrt()).atan())
             + (temperature + relative_humidity).atan()
@@ -51,33 +55,32 @@ impl Stull1 {
             + (0.003_918_38 * relative_humidity.powf(1.5) * (0.023_101 * relative_humidity).atan())
             - 4.686_035;
 
-        result + ZERO_CELSIUS
+        let result = Storage::ThermodynamicTemperature::new::<degree_celsius>(result);
+
+        WetBulbTemperature(result)
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use crate::tests::{test_with_2args, Argument};
 
-// #[cfg(test)]
-// mod tests {
-//     use crate::{
-//         tests_framework::{self, Argument},
-//         wet_bulb_temperature,
-//     };
+    use super::*;
 
-//     #[test]
-//     fn stull1() {
-//         assert!(tests_framework::test_with_2args(
-//             &wet_bulb_temperature::stull1,
-//             Argument {
-//                 name: "temperature",
-//                 def_val: 300.0,
-//                 range: [253.0, 324.0]
-//             },
-//             Argument {
-//                 name: "relative_humidity",
-//                 def_val: 0.5,
-//                 range: [0.05, 0.99]
-//             },
-//             292.73867410526674
-//         ));
-//     }
-// }
+    #[test]
+    fn stull1() {
+        test_with_2args::<WetBulbTemperature, DryBulbTemperature, RelativeHumidity, Stull1>(
+            Argument {
+                name: "temperature",
+                def_val: 300.0,
+                range: [253.0, 324.0],
+            },
+            Argument {
+                name: "relative_humidity",
+                def_val: 0.5,
+                range: [0.05, 0.99],
+            },
+            292.73867410526674,
+        );
+    }
+}
