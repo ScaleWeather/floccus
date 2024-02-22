@@ -64,9 +64,9 @@ impl Formula2<VapourPressure, SpecificHumidity, AtmosphericPressure> for Definit
 
 /// Formula for computing vapour pressure from saturation vapour pressure and relative humidity.
 ///
-/// Valid `saturation_vapour_pressure` range: 0Pa - 10000Pa
+/// Valid `saturation_vapour_pressure` range: 0Pa - 50000Pa
 ///
-/// Valid `relative_humidity` range: 0.0 - 1.0
+/// Valid `relative_humidity` range: 0.0 - 2.0
 pub struct Definition2;
 
 impl Formula2<VapourPressure, SaturationVapourPressure, RelativeHumidity> for Definition2 {
@@ -540,9 +540,11 @@ mod tests {
 
     use super::*;
 
+    type FormulaQuantity = VapourPressure;
+
     #[test]
     fn definition1() {
-        test_with_2args::<VapourPressure, SpecificHumidity, AtmosphericPressure, Definition1>(
+        test_with_2args::<FormulaQuantity, SpecificHumidity, AtmosphericPressure, Definition1>(
             Argument {
                 name: "specific_humidity",
                 def_val: 0.022,
@@ -559,7 +561,7 @@ mod tests {
 
     #[test]
     fn definition2() {
-        test_with_2args::<VapourPressure, SaturationVapourPressure, RelativeHumidity, Definition2>(
+        test_with_2args::<FormulaQuantity, SaturationVapourPressure, RelativeHumidity, Definition2>(
             Argument {
                 name: "saturation_vapour_pressure",
                 def_val: 3550.0,
@@ -576,7 +578,7 @@ mod tests {
 
     #[test]
     fn buck1() {
-        test_with_2args::<VapourPressure, DewPointTemperature, AtmosphericPressure, Buck1>(
+        test_with_2args::<FormulaQuantity, DewPointTemperature, AtmosphericPressure, Buck1>(
             Argument {
                 name: "dewpoint",
                 def_val: 300.0,
@@ -593,7 +595,7 @@ mod tests {
 
     #[test]
     fn buck2() {
-        test_with_2args::<VapourPressure, DewPointTemperature, AtmosphericPressure, Buck2>(
+        test_with_2args::<FormulaQuantity, DewPointTemperature, AtmosphericPressure, Buck2>(
             Argument {
                 name: "dewpoint",
                 def_val: 250.0,
@@ -610,7 +612,7 @@ mod tests {
 
     #[test]
     fn buck3() {
-        test_with_2args::<VapourPressure, DewPointTemperature, AtmosphericPressure, Buck3>(
+        test_with_2args::<FormulaQuantity, DewPointTemperature, AtmosphericPressure, Buck3>(
             Argument {
                 name: "dewpoint",
                 def_val: 300.0,
@@ -627,7 +629,7 @@ mod tests {
 
     #[test]
     fn buck4() {
-        test_with_2args::<VapourPressure, DewPointTemperature, AtmosphericPressure, Buck4>(
+        test_with_2args::<FormulaQuantity, DewPointTemperature, AtmosphericPressure, Buck4>(
             Argument {
                 name: "dewpoint",
                 def_val: 250.0,
@@ -644,7 +646,7 @@ mod tests {
 
     #[test]
     fn buck3_simplified() {
-        test_with_1arg::<VapourPressure, DewPointTemperature, Buck3Simplified>(
+        test_with_1arg::<FormulaQuantity, DewPointTemperature, Buck3Simplified>(
             Argument {
                 name: "dewpoint",
                 def_val: 300.0,
@@ -656,7 +658,7 @@ mod tests {
 
     #[test]
     fn buck4_simplified() {
-        test_with_1arg::<VapourPressure, DewPointTemperature, Buck4Simplified>(
+        test_with_1arg::<FormulaQuantity, DewPointTemperature, Buck4Simplified>(
             Argument {
                 name: "dewpoint",
                 def_val: 250.0,
@@ -668,7 +670,7 @@ mod tests {
 
     #[test]
     fn tetens1() {
-        test_with_1arg::<VapourPressure, DewPointTemperature, Tetens1>(
+        test_with_1arg::<FormulaQuantity, DewPointTemperature, Tetens1>(
             Argument {
                 name: "dewpoint",
                 def_val: 300.0,
@@ -680,7 +682,7 @@ mod tests {
 
     #[test]
     fn wexler1() {
-        test_with_1arg::<VapourPressure, DewPointTemperature, Wexler1>(
+        test_with_1arg::<FormulaQuantity, DewPointTemperature, Wexler1>(
             Argument {
                 name: "dewpoint",
                 def_val: 300.0,
@@ -692,7 +694,7 @@ mod tests {
 
     #[test]
     fn wexler2() {
-        test_with_1arg::<VapourPressure, DewPointTemperature, Wexler2>(
+        test_with_1arg::<FormulaQuantity, DewPointTemperature, Wexler2>(
             Argument {
                 name: "dewpoint",
                 def_val: 250.0,
