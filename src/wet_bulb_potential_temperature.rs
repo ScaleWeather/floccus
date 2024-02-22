@@ -1,15 +1,17 @@
 //!Functions to calculate wet bulb potential temperature of unsaturated air in K.
 
- 
-use crate::Float;
+use uom::si::ratio::ratio;
+use uom::si::thermodynamic_temperature::{degree_celsius, kelvin};
+
+use crate::formula::Formula1;
+use crate::quantities::{
+    EquivalentPotentialTemperature, ThermodynamicQuantity, WetBulbPotentialTemperature,
+};
+use crate::Storage;
 use crate::{
-    constants::{C_P, R_D, ZERO_CELSIUS},
+    constants::{C_P, R_D},
     errors::InputError,
 };
-
-
-use ndarray::{Array, Dimension, FoldWhile};
-use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
 /// Formula for computing wet bulb potential temperature from equivalent potential temperature.
 ///
@@ -21,22 +23,14 @@ use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 /// Valid `temperature` range: 257K - 377K\
 pub struct DaviesJones1;
 
-impl DaviesJones1 {
-    #[allow(missing_docs)]
+impl Formula1<WetBulbPotentialTemperature, EquivalentPotentialTemperature> for DaviesJones1 {
     #[inline(always)]
-    pub fn compute_unchecked(equivalent_potential_temperature: Float) -> Float {
-        let lambda = C_P / R_D;
-        let result =
-            45.114 - 51.489 * (ZERO_CELSIUS / equivalent_potential_temperature).powf(lambda);
-        result + ZERO_CELSIUS
-    }
+    fn validate_inputs(
+        equivalent_potential_temperature: EquivalentPotentialTemperature,
+    ) -> Result<(), InputError> {
+        let equivalent_potential_temperature_si = equivalent_potential_temperature.get_si_value();
 
-    #[allow(missing_docs)]
-    #[allow(clippy::missing_errors_doc)]
-    #[inline(always)]
-    
-    pub fn validate_inputs(equivalent_potential_temperature: Float) -> Result<(), InputError> {
-        if !(257.0..=377.0).contains(&equivalent_potential_temperature) {
+        if !(257.0..=377.0).contains(&equivalent_potential_temperature_si) {
             return Err(InputError::OutOfRange(String::from(
                 "equivalent_potential_temperature",
             )));
@@ -44,26 +38,39 @@ impl DaviesJones1 {
 
         Ok(())
     }
+
+    #[inline(always)]
+    fn compute_unchecked(
+        equivalent_potential_temperature: EquivalentPotentialTemperature,
+    ) -> WetBulbPotentialTemperature {
+        let lambda = (C_P / R_D).get::<ratio>();
+        let equivalent_potential_temperature = equivalent_potential_temperature.0.get::<kelvin>();
+        let result = 45.114 - 51.489 * (273.15 / equivalent_potential_temperature).powf(lambda);
+
+        let result = Storage::ThermodynamicTemperature::new::<degree_celsius>(result);
+
+        WetBulbPotentialTemperature(result)
+    }
 }
 
+#[cfg(test)]
+mod tests {
+    use crate::{
+        quantities::{EquivalentPotentialTemperature, WetBulbPotentialTemperature},
+        tests::{test_with_1arg, Argument},
+    };
 
-// #[cfg(test)]
-// mod tests {
-//     use crate::{
-//         tests_framework::{self, Argument},
-//         wet_bulb_potential_temperature,
-//     };
+    use super::DaviesJones1;
 
-//     #[test]
-//     fn davies_jones1() {
-//         assert!(tests_framework::test_with_1arg(
-//             &wet_bulb_potential_temperature::DaviesJones1::compute,
-//             Argument {
-//                 name: "equivalent_potential_temperature",
-//                 def_val: 300.0,
-//                 range: [257.0, 377.0]
-//             },
-//             281.17941447108467
-//         ));
-//     }
-// }
+    #[test]
+    fn davies_jones1() {
+        test_with_1arg::<WetBulbPotentialTemperature, EquivalentPotentialTemperature, DaviesJones1>(
+            Argument {
+                name: "equivalent_potential_temperature",
+                def_val: 300.0,
+                range: [257.0, 377.0],
+            },
+            281.17941447108467,
+        );
+    }
+}
