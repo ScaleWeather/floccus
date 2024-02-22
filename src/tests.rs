@@ -303,14 +303,14 @@ pub fn test_with_3args<
     let expected = InputError::OutOfRange(String::from(arg3.name));
     let result = F::compute(
         I1::new_si(arg1.def_val),
-        I2::new_si(arg3.def_val),
+        I2::new_si(arg2.def_val),
         I3::new_si(arg3.range[0] - 0.1),
     )
     .unwrap_err();
     assert_eq!(result, expected);
     let result = F::compute(
         I1::new_si(arg1.def_val),
-        I2::new_si(arg3.def_val),
+        I2::new_si(arg2.def_val),
         I3::new_si(arg3.range[1] + 0.1),
     )
     .unwrap_err();

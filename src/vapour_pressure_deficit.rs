@@ -1,41 +1,40 @@
-//!Functions to calculate vapour pressure deficit in Pa.
+//! Functions to calculate vapour pressure deficit in Pa.
 //!
-//!Vapour-pressure deficit, is the difference (deficit) between
-//!the amount of moisture in the air and how much moisture the air can hold
-//!when it is saturated ([Wikipedia](https://en.wikipedia.org/wiki/Vapour-pressure_deficit)).
-
+//! Vapour-pressure deficit, is the difference (deficit) between
+//! the amount of moisture in the air and how much moisture the air can hold
+//! when it is saturated ([Wikipedia](https://en.wikipedia.org/wiki/Vapour-pressure_deficit)).
 
 use crate::errors::InputError;
-use crate::{vapour_pressure, Float};
+use crate::formula::{Formula2, Formula3};
+use crate::quantities::{
+    AtmosphericPressure, DewPointTemperature, DryBulbTemperature, RelativeHumidity,
+    SaturationVapourPressure, ThermodynamicQuantity, VapourPressure, VapourPressureDeficit,
+};
+use crate::{saturation_vapour_pressure, vapour_pressure};
 
+type FormulaQuantity = VapourPressureDeficit;
 
-use itertools::izip;
-use ndarray::{Array, Dimension, FoldWhile};
-use rayon::iter::{ParallelBridge, ParallelIterator};
-
-///Formula for computing vapour pressure deficit from vapour pressure and saturation vapour pressure
+/// Formula for computing vapour pressure deficit from vapour pressure and saturation vapour pressure
 ///
-///# Errors
+/// Valid `vapour_pressure` range: 0Pa - 50000Pa
 ///
-///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
-///Valid `vapour_pressure` range: 0Pa - 10000Pa
-///Valid `saturation_vapour_pressure` range: 0Pa - 10000Pa
-pub struct General1;
+/// Valid `saturation_vapour_pressure` range: 0Pa - 50000Pa
+pub struct Definition1;
 
-impl General1 {
-    #[allow(missing_docs)]
-    #[allow(clippy::missing_errors_doc)]
+impl Formula2<FormulaQuantity, VapourPressure, SaturationVapourPressure> for Definition1 {
     #[inline(always)]
-    
-    pub fn validate_inputs(
-        vapour_pressure: Float,
-        saturation_vapour_pressure: Float,
+    fn validate_inputs(
+        vapour_pressure: VapourPressure,
+        saturation_vapour_pressure: SaturationVapourPressure,
     ) -> Result<(), InputError> {
-        if !(0.0..=50_000.0).contains(&vapour_pressure) {
+        let vapour_pressure_si = vapour_pressure.get_si_value();
+        let saturation_vapour_pressure_si = saturation_vapour_pressure.get_si_value();
+
+        if !(0.0..=50_000.0).contains(&vapour_pressure_si) {
             return Err(InputError::OutOfRange(String::from("vapour_pressure")));
         }
 
-        if !(0.0..=50_000.0).contains(&saturation_vapour_pressure) {
+        if !(0.0..=50_000.0).contains(&saturation_vapour_pressure_si) {
             return Err(InputError::OutOfRange(String::from(
                 "saturation_vapour_pressure",
             )));
@@ -45,88 +44,97 @@ impl General1 {
     }
 
     #[inline(always)]
-    #[allow(missing_docs)]
-    pub fn compute_unchecked(vapour_pressure: Float, saturation_vapour_pressure: Float) -> Float {
-        saturation_vapour_pressure - vapour_pressure
+    fn compute_unchecked(
+        vapour_pressure: VapourPressure,
+        saturation_vapour_pressure: SaturationVapourPressure,
+    ) -> VapourPressureDeficit {
+        VapourPressureDeficit(saturation_vapour_pressure.0 - vapour_pressure.0)
     }
 }
 
-
-///Formula for computing vapour pressure deficit from temperature, dewpoint and pressure
-///using [`buck3`](vapour_pressure::buck3) function for vapour pressure calculation
+/// Formula for computing vapour pressure deficit from temperature, dewpoint and pressure
+/// using [`buck3`](vapour_pressure::buck3) function for vapour pressure calculation
 ///
-///# Errors
+/// Valid `temperature` range: 253K - 324K
 ///
-///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
-///Valid `vapour_pressure` range: 0Pa - 10000Pa
-///Valid `saturation_vapour_pressure` range: 0Pa - 10000Pa
-pub struct General2;
+/// Valid `dewpoint` range: 253K - 324K
+///
+/// Valid `pressure` range: 100Pa - 150000Pa
+pub struct General1;
 
-impl General2 {
-    #[allow(missing_docs)]
-    #[allow(clippy::missing_errors_doc)]
+impl Formula3<FormulaQuantity, DryBulbTemperature, DewPointTemperature, AtmosphericPressure>
+    for General1
+{
     #[inline(always)]
-    
-    pub fn validate_inputs(
-        temperature: Float,
-        dewpoint: Float,
-        pressure: Float,
+    fn validate_inputs(
+        temperature: DryBulbTemperature,
+        dewpoint: DewPointTemperature,
+        pressure: AtmosphericPressure,
     ) -> Result<(), InputError> {
-        if !(253.0..=324.0).contains(&temperature) {
+        let temperature_si = temperature.get_si_value();
+        let dewpoint_si = dewpoint.get_si_value();
+        let pressure_si = pressure.get_si_value();
+
+        if !(253.0..=324.0).contains(&temperature_si) {
             return Err(InputError::OutOfRange(String::from("temperature")));
         }
 
-        if !(253.0..=324.0).contains(&dewpoint) {
+        if !(253.0..=324.0).contains(&dewpoint_si) {
             return Err(InputError::OutOfRange(String::from("dewpoint")));
         }
 
-        if !(100.0..=150_000.0).contains(&pressure) {
+        if !(100.0..=150_000.0).contains(&pressure_si) {
             return Err(InputError::OutOfRange(String::from("pressure")));
         }
         Ok(())
     }
 
     #[inline(always)]
-    #[allow(missing_docs)]
-    pub fn compute_unchecked(temperature: Float, dewpoint: Float, pressure: Float) -> Float {
+    fn compute_unchecked(
+        temperature: DryBulbTemperature,
+        dewpoint: DewPointTemperature,
+        pressure: AtmosphericPressure,
+    ) -> VapourPressureDeficit {
         let vapour_pressure = vapour_pressure::Buck3::compute_unchecked(dewpoint, pressure);
         let saturation_vapour_pressure =
-            vapour_pressure::Buck3::compute_unchecked(temperature, pressure);
+            saturation_vapour_pressure::Buck3::compute_unchecked(temperature, pressure);
 
-        General1::compute_unchecked(vapour_pressure, saturation_vapour_pressure)
+        Definition1::compute_unchecked(vapour_pressure, saturation_vapour_pressure)
     }
 }
 
-
-///Formula for computing vapour pressure deficit from temperature, relative humidity and pressure
-///using [`buck3`](vapour_pressure::buck3) function for vapour pressure calculation
+/// Formula for computing vapour pressure deficit from temperature, relative humidity and pressure
+/// using [`buck3`](vapour_pressure::buck3) function for vapour pressure calculation
 ///
-///# Errors
+/// Valid `temperature` range: 253K - 319K
 ///
-///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
-///Valid `vapour_pressure` range: 0Pa - 10000Pa
-///Valid `saturation_vapour_pressure` range: 0Pa - 10000Pa
-pub struct General3;
+/// Valid `relative_humidity` range: 0.05 - 2.0
+///
+/// Valid `pressure` range: 100Pa - 150000Pa
+pub struct General2;
 
-impl General3 {
-    #[allow(missing_docs)]
-    #[allow(clippy::missing_errors_doc)]
+impl Formula3<FormulaQuantity, DryBulbTemperature, RelativeHumidity, AtmosphericPressure>
+    for General2
+{
     #[inline(always)]
-    
-    pub fn validate_inputs(
-        temperature: Float,
-        relative_humidity: Float,
-        pressure: Float,
+    fn validate_inputs(
+        temperature: DryBulbTemperature,
+        relative_humidity: RelativeHumidity,
+        pressure: AtmosphericPressure,
     ) -> Result<(), InputError> {
-        if !(253.0..=319.0).contains(&temperature) {
+        let temperature_si = temperature.get_si_value();
+        let relative_humidity_si = relative_humidity.get_si_value();
+        let pressure_si = pressure.get_si_value();
+
+        if !(253.0..=319.0).contains(&temperature_si) {
             return Err(InputError::OutOfRange(String::from("temperature")));
         }
 
-        if !(0.05..=1.0).contains(&relative_humidity) {
+        if !(0.05..=2.0).contains(&relative_humidity_si) {
             return Err(InputError::OutOfRange(String::from("relative_humidity")));
         }
 
-        if !(10000.0..=150_000.0).contains(&pressure) {
+        if !(10000.0..=150_000.0).contains(&pressure_si) {
             return Err(InputError::OutOfRange(String::from("pressure")));
         }
 
@@ -134,92 +142,98 @@ impl General3 {
     }
 
     #[inline(always)]
-    #[allow(missing_docs)]
-    pub fn compute_unchecked(
-        temperature: Float,
-        relative_humidity: Float,
-        pressure: Float,
-    ) -> Float {
+    fn compute_unchecked(
+        temperature: DryBulbTemperature,
+        relative_humidity: RelativeHumidity,
+        pressure: AtmosphericPressure,
+    ) -> VapourPressureDeficit {
         let saturation_vapour_pressure =
-            vapour_pressure::Buck3::compute_unchecked(temperature, pressure);
-        let vapour_pressure = vapour_pressure::SaturationSpecific1::compute_unchecked(
+            saturation_vapour_pressure::Buck3::compute_unchecked(temperature, pressure);
+        let vapour_pressure = vapour_pressure::Definition2::compute_unchecked(
             saturation_vapour_pressure,
             relative_humidity,
         );
 
-        General1::compute_unchecked(vapour_pressure, saturation_vapour_pressure)
+        Definition1::compute_unchecked(vapour_pressure, saturation_vapour_pressure)
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use crate::tests::{test_with_2args, test_with_3args, Argument};
 
-// #[cfg(test)]
-// mod tests {
-//     use crate::{
-//         tests_framework::{self, Argument},
-//         vapour_pressure_deficit,
-//     };
+    use super::*;
 
-//     #[test]
-//     fn general1() {
-//         assert!(tests_framework::test_with_2args(
-//             &vapour_pressure_deficit::general1,
-//             Argument {
-//                 name: "vapour_pressure",
-//                 def_val: 3000.0,
-//                 range: [0.0, 50_000.0]
-//             },
-//             Argument {
-//                 name: "saturation_vapour_pressure",
-//                 def_val: 3550.0,
-//                 range: [0.0, 50_000.0]
-//             },
-//             550.0
-//         ));
-//     }
+    #[test]
+    fn definition1() {
+        test_with_2args::<FormulaQuantity, VapourPressure, SaturationVapourPressure, Definition1>(
+            Argument {
+                name: "vapour_pressure",
+                def_val: 3000.0,
+                range: [0.0, 50_000.0],
+            },
+            Argument {
+                name: "saturation_vapour_pressure",
+                def_val: 3550.0,
+                range: [0.0, 50_000.0],
+            },
+            550.0,
+        );
+    }
 
-//     #[test]
-//     fn general2() {
-//         assert!(tests_framework::test_with_3args(
-//             &vapour_pressure_deficit::general2,
-//             Argument {
-//                 name: "temperature",
-//                 def_val: 300.0,
-//                 range: [253.0, 324.0]
-//             },
-//             Argument {
-//                 name: "dewpoint",
-//                 def_val: 290.0,
-//                 range: [253.0, 324.0]
-//             },
-//             Argument {
-//                 name: "pressure",
-//                 def_val: 101325.0,
-//                 range: [100.0, 150_000.0]
-//             },
-//             1621.9415403325527
-//         ));
-//     }
+    #[test]
+    fn general1() {
+        test_with_3args::<
+            FormulaQuantity,
+            DryBulbTemperature,
+            DewPointTemperature,
+            AtmosphericPressure,
+            General1,
+        >(
+            Argument {
+                name: "temperature",
+                def_val: 300.0,
+                range: [253.0, 324.0],
+            },
+            Argument {
+                name: "dewpoint",
+                def_val: 290.0,
+                range: [253.0, 324.0],
+            },
+            Argument {
+                name: "pressure",
+                def_val: 101325.0,
+                range: [100.0, 150_000.0],
+            },
+            1621.9415403325527,
+        );
+    }
 
-//     #[test]
-//     fn general3() {
-//         assert!(tests_framework::test_with_3args(
-//             &vapour_pressure_deficit::general3,
-//             Argument {
-//                 name: "temperature",
-//                 def_val: 300.0,
-//                 range: [253.0, 319.0]
-//             },
-//             Argument {
-//                 name: "relative_humidity",
-//                 def_val: 0.5,
-//                 range: [0.05, 1.0]
-//             },
-//             Argument {
-//                 name: "pressure",
-//                 def_val: 101325.0,
-//                 range: [10000.0, 150_000.0]
-//             },
-//             1774.2520524017948
-//         ));
-//     }
-// }
+    #[test]
+    fn general2() {
+        test_with_3args::<
+            FormulaQuantity,
+            DryBulbTemperature,
+            RelativeHumidity,
+            AtmosphericPressure,
+            General2,
+        >(
+            Argument {
+                name: "temperature",
+                def_val: 300.0,
+                range: [253.0, 319.0],
+            },
+            Argument {
+                name: "relative_humidity",
+                def_val: 0.5,
+                range: [0.05, 2.0],
+            },
+            Argument {
+                name: "pressure",
+                def_val: 101325.0,
+                range: [10000.0, 150_000.0],
+            },
+            1774.2520524017948,
+        );
+    }
+}
