@@ -1,17 +1,14 @@
 //!Functions to calculate potential temperature of dry air in K.
 
-use crate::compute_macros::{
-    generate_compute, generate_ndarray_compute, generate_par_ndarray_compute,
-    generate_par_vec_compute, generate_vec_compute,
-};
+
 use crate::Float;
 use crate::{
     constants::{C_P, R_D},
     errors::InputError,
 };
 use float_cmp::approx_eq;
-#[cfg(feature = "debug")]
-use floccus_proc::logerr;
+
+
 use itertools::izip;
 use ndarray::{Array, Dimension, FoldWhile};
 use rayon::iter::{ParallelBridge, ParallelIterator};
@@ -38,7 +35,7 @@ impl DaviesJones1 {
     #[allow(missing_docs)]
     #[inline(always)]
     #[allow(clippy::missing_errors_doc)]
-    #[cfg_attr(feature = "debug", logerr)]
+    
     pub fn validate_inputs(
         temperature: Float,
         pressure: Float,
@@ -79,11 +76,6 @@ impl DaviesJones1 {
     }
 }
 
-generate_compute!(DaviesJones1, temperature, pressure, vapour_pressure);
-generate_vec_compute!(DaviesJones1, temperature, pressure, vapour_pressure);
-generate_par_vec_compute!(DaviesJones1, temperature, pressure, vapour_pressure);
-generate_ndarray_compute!(DaviesJones1, temperature, pressure, vapour_pressure);
-generate_par_ndarray_compute!(DaviesJones1, temperature, pressure, vapour_pressure);
 
 // #[cfg(test)]
 // mod tests {

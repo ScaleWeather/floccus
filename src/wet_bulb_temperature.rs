@@ -1,13 +1,10 @@
 //!Functions to calculate wet bulb temperature of unsaturated air in K.
 
-use crate::compute_macros::{
-    generate_compute, generate_ndarray_compute, generate_par_ndarray_compute,
-    generate_par_vec_compute, generate_vec_compute,
-};
+
 use crate::Float;
 use crate::{constants::ZERO_CELSIUS, errors::InputError};
-#[cfg(feature = "debug")]
-use floccus_proc::logerr;
+
+
 use itertools::izip;
 use ndarray::{Array, Dimension, FoldWhile};
 use rayon::iter::{ParallelBridge, ParallelIterator};
@@ -29,7 +26,7 @@ impl Stull1 {
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
     #[inline(always)]
-    #[cfg_attr(feature = "debug", logerr)]
+    
     pub fn validate_inputs(temperature: Float, relative_humidity: Float) -> Result<(), InputError> {
         if !(253.0..=324.0).contains(&temperature) {
             return Err(InputError::OutOfRange(String::from("temperature")));
@@ -58,11 +55,6 @@ impl Stull1 {
     }
 }
 
-generate_compute!(Stull1, temperature, relative_humidity);
-generate_vec_compute!(Stull1, temperature, relative_humidity);
-generate_par_vec_compute!(Stull1, temperature, relative_humidity);
-generate_ndarray_compute!(Stull1, temperature, relative_humidity);
-generate_par_ndarray_compute!(Stull1, temperature, relative_humidity);
 
 // #[cfg(test)]
 // mod tests {

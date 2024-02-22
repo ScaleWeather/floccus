@@ -81,23 +81,23 @@
 //! information about the error. This feature potentially is not zero-cost so it is optional.
 
 pub mod constants;
-pub mod equivalent_potential_temperature;
 pub mod errors;
-pub mod mixing_ratio;
-pub mod potential_temperature;
-pub mod relative_humidity;
-pub mod specific_humidity;
-pub mod vapour_pressure;
-pub mod vapour_pressure_deficit;
-pub mod virtual_temperature;
-pub mod wet_bulb_potential_temperature;
-pub mod wet_bulb_temperature;
-
-mod compute_macros;
-mod tests_framework;
-
-pub mod quantities;
 pub mod formula;
+pub mod quantities;
+
+// pub mod equivalent_potential_temperature;
+// pub mod mixing_ratio;
+// pub mod potential_temperature;
+// pub mod relative_humidity;
+// pub mod specific_humidity;
+pub mod vapour_pressure;
+// pub mod vapour_pressure_deficit;
+// pub mod virtual_temperature;
+// pub mod wet_bulb_potential_temperature;
+// pub mod wet_bulb_temperature;
+
+#[cfg(test)]
+mod tests;
 
 #[cfg(not(feature = "double_precision"))]
 type Float = f32;
@@ -105,10 +105,8 @@ type Float = f32;
 #[cfg(feature = "double_precision")]
 type Float = f64;
 
-
 #[cfg(not(feature = "double_precision"))]
 pub(crate) use uom::si::f32 as Storage;
 
 #[cfg(feature = "double_precision")]
 pub(crate) use uom::si::f64 as Storage;
-

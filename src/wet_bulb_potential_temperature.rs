@@ -1,16 +1,13 @@
 //!Functions to calculate wet bulb potential temperature of unsaturated air in K.
 
-use crate::compute_macros::{
-    generate_compute, generate_ndarray_compute, generate_par_ndarray_compute,
-    generate_par_vec_compute, generate_vec_compute,
-};
+ 
 use crate::Float;
 use crate::{
     constants::{C_P, R_D, ZERO_CELSIUS},
     errors::InputError,
 };
-#[cfg(feature = "debug")]
-use floccus_proc::logerr;
+
+
 use ndarray::{Array, Dimension, FoldWhile};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
@@ -37,7 +34,7 @@ impl DaviesJones1 {
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
     #[inline(always)]
-    #[cfg_attr(feature = "debug", logerr)]
+    
     pub fn validate_inputs(equivalent_potential_temperature: Float) -> Result<(), InputError> {
         if !(257.0..=377.0).contains(&equivalent_potential_temperature) {
             return Err(InputError::OutOfRange(String::from(
@@ -49,29 +46,24 @@ impl DaviesJones1 {
     }
 }
 
-generate_compute!(DaviesJones1, equivalent_potential_temperature);
-generate_vec_compute!(DaviesJones1, equivalent_potential_temperature);
-generate_ndarray_compute!(DaviesJones1, equivalent_potential_temperature);
-generate_par_vec_compute!(DaviesJones1, equivalent_potential_temperature);
-generate_par_ndarray_compute!(DaviesJones1, equivalent_potential_temperature);
 
-#[cfg(test)]
-mod tests {
-    use crate::{
-        tests_framework::{self, Argument},
-        wet_bulb_potential_temperature,
-    };
+// #[cfg(test)]
+// mod tests {
+//     use crate::{
+//         tests_framework::{self, Argument},
+//         wet_bulb_potential_temperature,
+//     };
 
-    #[test]
-    fn davies_jones1() {
-        assert!(tests_framework::test_with_1arg(
-            &wet_bulb_potential_temperature::DaviesJones1::compute,
-            Argument {
-                name: "equivalent_potential_temperature",
-                def_val: 300.0,
-                range: [257.0, 377.0]
-            },
-            281.17941447108467
-        ));
-    }
-}
+//     #[test]
+//     fn davies_jones1() {
+//         assert!(tests_framework::test_with_1arg(
+//             &wet_bulb_potential_temperature::DaviesJones1::compute,
+//             Argument {
+//                 name: "equivalent_potential_temperature",
+//                 def_val: 300.0,
+//                 range: [257.0, 377.0]
+//             },
+//             281.17941447108467
+//         ));
+//     }
+// }

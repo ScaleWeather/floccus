@@ -1,17 +1,9 @@
 //!Functions to calculate equivalent potential temperature of air in K.
 
-use crate::compute_macros::{
-    generate_compute, generate_ndarray_compute, generate_par_ndarray_compute,
-    generate_par_vec_compute, generate_vec_compute,
-};
+
 use crate::constants::{C_L, C_P, EPSILON, L_V, R_D, R_V};
 use crate::errors::InputError;
 use crate::{mixing_ratio, potential_temperature, relative_humidity, vapour_pressure, Float};
-#[cfg(feature = "debug")]
-use floccus_proc::logerr;
-use itertools::izip;
-use ndarray::{Array, Dimension, FoldWhile};
-use rayon::iter::{ParallelBridge, ParallelIterator};
 
 ///Most accuarte formula for computing equivalent potential temperature of unsaturated air from
 ///temperature, pressure and vapour pressure.
@@ -34,7 +26,7 @@ impl Paluch1 {
     #[allow(missing_docs)]
     #[inline(always)]
     #[allow(clippy::missing_errors_doc)]
-    #[cfg_attr(feature = "debug", logerr)]
+    
     pub fn validate_inputs(
         temperature: Float,
         pressure: Float,
@@ -76,11 +68,6 @@ impl Paluch1 {
     }
 }
 
-generate_compute!(Paluch1, temperature, pressure, vapour_pressure);
-generate_vec_compute!(Paluch1, temperature, pressure, vapour_pressure);
-generate_par_vec_compute!(Paluch1, temperature, pressure, vapour_pressure);
-generate_ndarray_compute!(Paluch1, temperature, pressure, vapour_pressure);
-generate_par_ndarray_compute!(Paluch1, temperature, pressure, vapour_pressure);
 
 ///Formula for computing equivalent potential temperature of unsaturated air from
 ///temperature, pressure and vapour pressure.
@@ -99,7 +86,7 @@ impl Bryan1 {
     #[allow(missing_docs)]
     #[inline(always)]
     #[allow(clippy::missing_errors_doc)]
-    #[cfg_attr(feature = "debug", logerr)]
+    
     pub fn validate_inputs(
         temperature: Float,
         pressure: Float,
@@ -146,11 +133,6 @@ impl Bryan1 {
     }
 }
 
-generate_compute!(Bryan1, temperature, pressure, vapour_pressure);
-generate_vec_compute!(Bryan1, temperature, pressure, vapour_pressure);
-generate_par_vec_compute!(Bryan1, temperature, pressure, vapour_pressure);
-generate_ndarray_compute!(Bryan1, temperature, pressure, vapour_pressure);
-generate_par_ndarray_compute!(Bryan1, temperature, pressure, vapour_pressure);
 
 ///Approximate formula for computing equivalent potential temperature of unsaturated air from
 ///temperature, pressure and dewpoint.
@@ -170,7 +152,7 @@ impl Bolton1 {
     #[allow(missing_docs)]
     #[inline(always)]
     #[allow(clippy::missing_errors_doc)]
-    #[cfg_attr(feature = "debug", logerr)]
+    
     pub fn validate_inputs(
         pressure: Float,
         temperature: Float,
@@ -211,10 +193,6 @@ impl Bolton1 {
     }
 }
 
-generate_compute!(Bolton1, pressure, temperature, dewpoint);
-generate_vec_compute!(Bolton1, pressure, temperature, dewpoint);
-generate_par_vec_compute!(Bolton1, pressure, temperature, dewpoint);
-generate_ndarray_compute!(Bolton1, pressure, temperature, dewpoint);
 
 // #[cfg(test)]
 // mod tests {

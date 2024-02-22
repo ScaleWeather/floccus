@@ -5,14 +5,11 @@
 //!
 //!Specific humidity is approximately equal to mixing ratio.
 
-use crate::compute_macros::{
-    generate_compute, generate_ndarray_compute, generate_par_ndarray_compute,
-    generate_par_vec_compute, generate_vec_compute,
-};
+
 use crate::Float;
 use crate::{constants::EPSILON, errors::InputError};
-#[cfg(feature = "debug")]
-use floccus_proc::logerr;
+
+
 use itertools::izip;
 use ndarray::{Array, Dimension, FoldWhile};
 use rayon::iter::{ParallelBridge, ParallelIterator};
@@ -34,7 +31,7 @@ impl General1 {
     #[allow(missing_docs)]
     #[inline(always)]
     #[allow(clippy::missing_errors_doc)]
-    #[cfg_attr(feature = "debug", logerr)]
+    
     pub fn validate_inputs(vapour_pressure: Float, pressure: Float) -> Result<(), InputError> {
         if !(0.0..=50_000.0).contains(&vapour_pressure) {
             return Err(InputError::OutOfRange(String::from("vapour_pressure")));
@@ -54,11 +51,6 @@ impl General1 {
     }
 }
 
-generate_compute!(General1, vapour_pressure, pressure);
-generate_vec_compute!(General1, vapour_pressure, pressure);
-generate_par_vec_compute!(General1, vapour_pressure, pressure);
-generate_ndarray_compute!(General1, vapour_pressure, pressure);
-generate_par_ndarray_compute!(General1, vapour_pressure, pressure);
 
 // #[cfg(test)]
 // mod tests {

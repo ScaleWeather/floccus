@@ -3,15 +3,12 @@
 //!To calculate saturation mixing ratio input dry-bulb temperature in place of dewpoint
 //!or saturation vapour pressure in place of vapour pressure.
 
-use crate::compute_macros::{
-    generate_compute, generate_ndarray_compute, generate_par_ndarray_compute,
-    generate_par_vec_compute, generate_vec_compute,
-};
+
 use crate::{constants::EPSILON, errors::InputError};
 use crate::{vapour_pressure, Float};
 use float_cmp::approx_eq;
-#[cfg(feature = "debug")]
-use floccus_proc::logerr;
+
+
 use itertools::izip;
 use ndarray::{Array, Dimension, FoldWhile};
 use rayon::iter::{ParallelBridge, ParallelIterator};
@@ -32,7 +29,7 @@ impl General1 {
     #[allow(missing_docs)]
     #[inline(always)]
     #[allow(clippy::missing_errors_doc)]
-    #[cfg_attr(feature = "debug", logerr)]
+    
     pub fn validate_inputs(pressure: Float, vapour_pressure: Float) -> Result<(), InputError> {
         if !(100.0..=150_000.0).contains(&pressure) {
             return Err(InputError::OutOfRange(String::from("pressure")));
@@ -57,11 +54,6 @@ impl General1 {
     }
 }
 
-generate_compute!(General1, pressure, vapour_pressure);
-generate_vec_compute!(General1, pressure, vapour_pressure);
-generate_ndarray_compute!(General1, pressure, vapour_pressure);
-generate_par_vec_compute!(General1, pressure, vapour_pressure);
-generate_par_ndarray_compute!(General1, pressure, vapour_pressure);
 
 ///Formula for computing mixing ratio of unsaturated air from dewpoint temperature and pressure.
 ///Optimised for performance.
@@ -77,7 +69,7 @@ impl Performance1 {
     #[inline(always)]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
-    #[cfg_attr(feature = "debug", logerr)]
+    
     pub fn validate_inputs(dewpoint: Float, pressure: Float) -> Result<(), InputError> {
         //validate inputs
         if !(273.0..=353.0).contains(&dewpoint) {
@@ -100,11 +92,6 @@ impl Performance1 {
     }
 }
 
-generate_compute!(Performance1, dewpoint, pressure);
-generate_vec_compute!(Performance1, dewpoint, pressure);
-generate_ndarray_compute!(Performance1, dewpoint, pressure);
-generate_par_vec_compute!(Performance1, dewpoint, pressure);
-generate_par_ndarray_compute!(Performance1, dewpoint, pressure);
 
 ///Formula for computing mixing ratio of unsaturated air from dewpoint temperature and pressure.
 ///Optimised for accuracy.
@@ -120,7 +107,7 @@ impl Accuracy1 {
     #[inline(always)]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
-    #[cfg_attr(feature = "debug", logerr)]
+    
     pub fn validate_inputs(dewpoint: Float, pressure: Float) -> Result<(), InputError> {
         if !(232.0..=324.0).contains(&dewpoint) {
             return Err(InputError::OutOfRange(String::from("dewpoint")));

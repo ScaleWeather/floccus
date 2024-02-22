@@ -4,14 +4,11 @@
 //!at which a theoretical dry air parcel would have a total pressure and density equal
 //!to the moist parcel of air ([Wikipedia](https://en.wikipedia.org/wiki/Virtual_temperature)).
 
-use crate::compute_macros::{
-    generate_compute, generate_ndarray_compute, generate_par_ndarray_compute,
-    generate_par_vec_compute, generate_vec_compute,
-};
+
 use crate::Float;
 use crate::{constants::EPSILON, errors::InputError};
-#[cfg(feature = "debug")]
-use floccus_proc::logerr;
+
+
 use itertools::izip;
 use ndarray::{Array, Dimension, FoldWhile};
 use rayon::iter::{ParallelBridge, ParallelIterator};
@@ -29,7 +26,7 @@ impl General1 {
     #[allow(missing_docs)]
     #[inline(always)]
     #[allow(clippy::missing_errors_doc)]
-    #[cfg_attr(feature = "debug", logerr)]
+    
     pub fn validate_inputs(temperature: Float, mixing_ratio: Float) -> Result<(), InputError> {
         if !(173.0..=354.0).contains(&temperature) {
             return Err(InputError::OutOfRange(String::from("temperature")));
@@ -49,11 +46,6 @@ impl General1 {
     }
 }
 
-generate_compute!(General1, temperature, mixing_ratio);
-generate_vec_compute!(General1, temperature, mixing_ratio);
-generate_par_vec_compute!(General1, temperature, mixing_ratio);
-generate_ndarray_compute!(General1, temperature, mixing_ratio);
-generate_par_ndarray_compute!(General1, temperature, mixing_ratio);
 
 ///Formula for computing virtual temperature from air temperature, pressure and vapour pressure.
 ///
@@ -69,7 +61,7 @@ impl General2 {
     #[allow(missing_docs)]
     #[inline(always)]
     #[allow(clippy::missing_errors_doc)]
-    #[cfg_attr(feature = "debug", logerr)]
+    
     pub fn validate_inputs(
         temperature: Float,
         pressure: Float,
@@ -96,11 +88,6 @@ impl General2 {
     }
 }
 
-generate_compute!(General2, temperature, pressure, vapour_pressure);
-generate_vec_compute!(General2, temperature, pressure, vapour_pressure);
-generate_par_vec_compute!(General2, temperature, pressure, vapour_pressure);
-generate_ndarray_compute!(General2, temperature, pressure, vapour_pressure);
-generate_par_ndarray_compute!(General2, temperature, pressure, vapour_pressure);
 
 ///Formula for computing virtual temperature from air temperature and specific humidity.
 ///
@@ -115,7 +102,7 @@ impl General3 {
     #[allow(missing_docs)]
     #[inline(always)]
     #[allow(clippy::missing_errors_doc)]
-    #[cfg_attr(feature = "debug", logerr)]
+    
     pub fn validate_inputs(temperature: Float, specific_humidity: Float) -> Result<(), InputError> {
         if !(173.0..=354.0).contains(&temperature) {
             return Err(InputError::OutOfRange(String::from("temperature")));
@@ -135,11 +122,6 @@ impl General3 {
     }
 }
 
-generate_compute!(General3, temperature, specific_humidity);
-generate_vec_compute!(General3, temperature, specific_humidity);
-generate_par_vec_compute!(General3, temperature, specific_humidity);
-generate_ndarray_compute!(General3, temperature, specific_humidity);
-generate_par_ndarray_compute!(General3, temperature, specific_humidity);
 
 // #[cfg(test)]
 // mod tests {

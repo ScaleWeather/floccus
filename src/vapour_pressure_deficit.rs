@@ -4,14 +4,11 @@
 //!the amount of moisture in the air and how much moisture the air can hold
 //!when it is saturated ([Wikipedia](https://en.wikipedia.org/wiki/Vapour-pressure_deficit)).
 
-use crate::compute_macros::{
-    generate_compute, generate_ndarray_compute, generate_par_ndarray_compute,
-    generate_par_vec_compute, generate_vec_compute,
-};
+
 use crate::errors::InputError;
 use crate::{vapour_pressure, Float};
-#[cfg(feature = "debug")]
-use floccus_proc::logerr;
+
+
 use itertools::izip;
 use ndarray::{Array, Dimension, FoldWhile};
 use rayon::iter::{ParallelBridge, ParallelIterator};
@@ -29,7 +26,7 @@ impl General1 {
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
     #[inline(always)]
-    #[cfg_attr(feature = "debug", logerr)]
+    
     pub fn validate_inputs(
         vapour_pressure: Float,
         saturation_vapour_pressure: Float,
@@ -54,11 +51,6 @@ impl General1 {
     }
 }
 
-generate_compute!(General1, vapour_pressure, saturation_vapour_pressure);
-generate_vec_compute!(General1, vapour_pressure, saturation_vapour_pressure);
-generate_ndarray_compute!(General1, vapour_pressure, saturation_vapour_pressure);
-generate_par_vec_compute!(General1, vapour_pressure, saturation_vapour_pressure);
-generate_par_ndarray_compute!(General1, vapour_pressure, saturation_vapour_pressure);
 
 ///Formula for computing vapour pressure deficit from temperature, dewpoint and pressure
 ///using [`buck3`](vapour_pressure::buck3) function for vapour pressure calculation
@@ -74,7 +66,7 @@ impl General2 {
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
     #[inline(always)]
-    #[cfg_attr(feature = "debug", logerr)]
+    
     pub fn validate_inputs(
         temperature: Float,
         dewpoint: Float,
@@ -105,11 +97,6 @@ impl General2 {
     }
 }
 
-generate_compute!(General2, temperature, dewpoint, pressure);
-generate_vec_compute!(General2, temperature, dewpoint, pressure);
-generate_ndarray_compute!(General2, temperature, dewpoint, pressure);
-generate_par_vec_compute!(General2, temperature, dewpoint, pressure);
-generate_par_ndarray_compute!(General2, temperature, dewpoint, pressure);
 
 ///Formula for computing vapour pressure deficit from temperature, relative humidity and pressure
 ///using [`buck3`](vapour_pressure::buck3) function for vapour pressure calculation
@@ -125,7 +112,7 @@ impl General3 {
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
     #[inline(always)]
-    #[cfg_attr(feature = "debug", logerr)]
+    
     pub fn validate_inputs(
         temperature: Float,
         relative_humidity: Float,
@@ -164,11 +151,6 @@ impl General3 {
     }
 }
 
-generate_compute!(General3, temperature, relative_humidity, pressure);
-generate_vec_compute!(General3, temperature, relative_humidity, pressure);
-generate_ndarray_compute!(General3, temperature, relative_humidity, pressure);
-generate_par_vec_compute!(General3, temperature, relative_humidity, pressure);
-generate_par_ndarray_compute!(General3, temperature, relative_humidity, pressure);
 
 // #[cfg(test)]
 // mod tests {

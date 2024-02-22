@@ -1,13 +1,10 @@
 //!Functions to calculate relative humidity in %/100
 
-use crate::compute_macros::{
-    generate_compute, generate_ndarray_compute, generate_par_ndarray_compute,
-    generate_par_vec_compute, generate_vec_compute,
-};
+
 use crate::errors::InputError;
 use crate::{mixing_ratio, vapour_pressure, Float};
-#[cfg(feature = "debug")]
-use floccus_proc::logerr;
+
+
 use itertools::izip;
 use ndarray::{Array, Dimension, FoldWhile};
 use rayon::iter::{ParallelBridge, ParallelIterator};
@@ -29,7 +26,7 @@ impl General1 {
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
     #[inline(always)]
-    #[cfg_attr(feature = "debug", logerr)]
+    
     pub fn validate_inputs(
         mixing_ratio: Float,
         saturation_mixing_ratio: Float,
@@ -54,11 +51,6 @@ impl General1 {
     }
 }
 
-generate_compute!(General1, mixing_ratio, saturation_mixing_ratio);
-generate_vec_compute!(General1, mixing_ratio, saturation_mixing_ratio);
-generate_ndarray_compute!(General1, mixing_ratio, saturation_mixing_ratio);
-generate_par_vec_compute!(General1, mixing_ratio, saturation_mixing_ratio);
-generate_par_ndarray_compute!(General1, mixing_ratio, saturation_mixing_ratio);
 
 ///Formula for computing relative humidity from vapour pressure and saturation vapour pressure.
 ///Can be used interchangeably with [`general1`].
@@ -74,7 +66,7 @@ impl General2 {
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
     #[inline(always)]
-    #[cfg_attr(feature = "debug", logerr)]
+    
     pub fn validate_inputs(
         vapour_pressure: Float,
         saturation_vapour_pressure: Float,
@@ -99,11 +91,6 @@ impl General2 {
     }
 }
 
-generate_compute!(General2, vapour_pressure, saturation_vapour_pressure);
-generate_vec_compute!(General2, vapour_pressure, saturation_vapour_pressure);
-generate_ndarray_compute!(General2, vapour_pressure, saturation_vapour_pressure);
-generate_par_vec_compute!(General2, vapour_pressure, saturation_vapour_pressure);
-generate_par_ndarray_compute!(General2, vapour_pressure, saturation_vapour_pressure);
 
 ///Formula for computing relative humidity from temperature and dewpoint using [`tetens1`](vapour_pressure::tetens1)
 ///function for vapour pressure calculation
@@ -119,7 +106,7 @@ impl General3 {
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
     #[inline(always)]
-    #[cfg_attr(feature = "debug", logerr)]
+    
     pub fn validate_inputs(temperature: Float, dewpoint: Float) -> Result<(), InputError> {
         if !(273.0..=353.0).contains(&temperature) {
             return Err(InputError::OutOfRange(String::from("temperature")));
@@ -142,11 +129,6 @@ impl General3 {
     }
 }
 
-generate_compute!(General3, temperature, dewpoint);
-generate_vec_compute!(General3, temperature, dewpoint);
-generate_ndarray_compute!(General3, temperature, dewpoint);
-generate_par_vec_compute!(General3, temperature, dewpoint);
-generate_par_ndarray_compute!(General3, temperature, dewpoint);
 
 ///Formula for computing relative humidity from temperature, dewpoint and pressure using [`buck3`](vapour_pressure::buck3)
 ///function for vapour pressure calculation
@@ -163,7 +145,7 @@ impl General4 {
     #[allow(missing_docs)]
     #[inline(always)]
     #[allow(clippy::missing_errors_doc)]
-    #[cfg_attr(feature = "debug", logerr)]
+    
     pub fn validate_inputs(
         temperature: Float,
         dewpoint: Float,
@@ -195,11 +177,6 @@ impl General4 {
     }
 }
 
-generate_compute!(General4, temperature, dewpoint, pressure);
-generate_vec_compute!(General4, temperature, dewpoint, pressure);
-generate_ndarray_compute!(General4, temperature, dewpoint, pressure);
-generate_par_vec_compute!(General4, temperature, dewpoint, pressure);
-generate_par_ndarray_compute!(General4, temperature, dewpoint, pressure);
 
 ///Formula for computing relative humidity from temperature, dewpoint and pressure using [`accuracy1`](mixing_ratio::accuracy1)
 ///function for mixing ratio calculation
@@ -216,7 +193,7 @@ impl General5 {
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
     #[inline(always)]
-    #[cfg_attr(feature = "debug", logerr)]
+    
     pub fn validate_inputs(
         temperature: Float,
         dewpoint: Float,

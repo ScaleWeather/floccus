@@ -14,8 +14,7 @@ exclude = [".github/*"]
 [dependencies]
 thiserror = "1.0"
 float-cmp = "0.9"
-floccus-proc = { version = "0.2.5", optional = true }
-log = "0.4"
+log = { version = "0.4", optional = true }
 itertools = { version = "0.12", default-features = false, optional = true, features = [
     "use_std",
 ] }
@@ -34,8 +33,13 @@ num-traits = { version = "0.2", default-features = false, features = ["std"] }
 criterion = "0.5.1"
 
 [features]
-default = ["array_compute", "array_compute_parallel", "debug", "double_precision"]
-debug = ["floccus-proc"]
+default = [
+    "array_compute",
+    "array_compute_parallel",
+    "debug",
+    "double_precision",
+]
+debug = ["log"]
 double_precision = []
 array_compute = ["ndarray", "itertools"]
 array_compute_parallel = ["array_compute", "ndarray/rayon", "rayon"]
