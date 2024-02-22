@@ -34,15 +34,15 @@ criterion = "0.5.1"
 
 [features]
 default = [
-    "array_compute",
-    "array_compute_parallel",
+    "array",
+    "array_parallel",
     "debug",
     "double_precision",
 ]
 debug = ["log"]
 double_precision = []
-array_compute = ["ndarray", "itertools"]
-array_compute_parallel = ["array_compute", "ndarray/rayon", "rayon"]
+array = ["ndarray", "itertools"]
+array_parallel = ["array", "ndarray/rayon", "rayon"]
 
 # [[bench]]
 # name = "virtual_temperature"

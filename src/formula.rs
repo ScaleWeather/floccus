@@ -1,6 +1,8 @@
 #![allow(missing_docs)]
 
 use crate::{errors::InputError, quantities::ThermodynamicQuantity};
+use ndarray::{Array, Dimension, FoldWhile, Zip};
+use rayon::iter::{ParallelIterator, ParallelBridge, IntoParallelIterator};
 
 pub trait Formula1<O: ThermodynamicQuantity, I1: ThermodynamicQuantity> {
     #[allow(missing_docs)]
@@ -39,6 +41,35 @@ pub trait Formula1<O: ThermodynamicQuantity, I1: ThermodynamicQuantity> {
             );
             Err(err)
         })
+    }
+
+    #[cfg(feature = "array")]
+    #[allow(missing_docs)]
+    #[allow(clippy::missing_errors_doc)]
+    fn compute_vec(i1: &[I1]) -> Result<Vec<O>, InputError> {
+        i1.iter().map(|&i1| Self::compute(i1)).collect()
+    }
+
+    #[cfg(feature = "array")]
+    #[allow(missing_docs)]
+    #[allow(clippy::missing_errors_doc)]
+    fn compute_ndarray<D: Dimension>(i1: &Array<I1, D>) -> Result<Array<O, D>, InputError> {
+        Zip::from(i1)
+            .fold_while(Ok(()), |_, &a| match Self::validate_inputs(a) {
+                Ok(_) => FoldWhile::Continue(Ok(())),
+                Err(e) => FoldWhile::Done(Err(e)),
+            })
+            .into_inner()?;
+
+        Ok(Zip::from(i1).map_collect(|&a| Self::compute_unchecked(a)))
+    }
+
+    #[cfg(feature = "array")]
+    #[allow(missing_docs)]
+    #[allow(clippy::missing_errors_doc)]
+    fn compute_vec_parallel(i1: &[I1]) -> Result<Vec<O>, InputError> {
+
+        i1.into_par_iter().map(|&i1| Self::compute(i1)).collect()
     }
 }
 
