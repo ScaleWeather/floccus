@@ -1,4 +1,4 @@
-//! Functions to calculate vapour pressure deficit in Pa.
+//! Functions to calculate vapour pressure deficit
 //!
 //! Vapour-pressure deficit, is the difference (deficit) between
 //! the amount of moisture in the air and how much moisture the air can hold

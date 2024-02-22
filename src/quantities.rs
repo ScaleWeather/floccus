@@ -47,6 +47,9 @@ pub struct VapourPressureDeficit(pub Storage::Pressure);
 pub struct MixingRatio(pub Storage::Ratio);
 
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+pub struct SaturationMixingRatio(pub Storage::Ratio);
+
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
 pub struct SpecificHumidity(pub Storage::Ratio);
 
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
@@ -159,6 +162,15 @@ impl VapourPressureDeficit {
 }
 
 impl MixingRatio {
+    pub fn new<T>(value: Float) -> Self
+    where
+        T: uom::si::ratio::Unit + uom::si::ratio::Conversion<Float>,
+    {
+        Self(Storage::Ratio::new::<T>(value))
+    }
+}
+
+impl SaturationMixingRatio {
     pub fn new<T>(value: Float) -> Self
     where
         T: uom::si::ratio::Unit + uom::si::ratio::Conversion<Float>,
@@ -296,6 +308,17 @@ impl ThermodynamicQuantity for MixingRatio {
         Self::new::<ratio>(value)
     }
 }
+
+impl ThermodynamicQuantity for SaturationMixingRatio {
+    fn get_si_value(&self) -> Float {
+        self.0.get::<ratio>()
+    }
+
+    fn new_si(value: Float) -> Self {
+        Self::new::<ratio>(value)
+    }
+}
+
 impl ThermodynamicQuantity for SpecificHumidity {
     fn get_si_value(&self) -> Float {
         self.0.get::<ratio>()

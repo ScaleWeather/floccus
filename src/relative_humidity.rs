@@ -1,33 +1,26 @@
-//!Functions to calculate relative humidity in %/100
-
+//! Functions to calculate relative humidity
 
 use crate::errors::InputError;
+use crate::formula::Formula2;
+use crate::quantities::{MixingRatio, RelativeHumidity};
 use crate::{mixing_ratio, vapour_pressure, Float};
 
+type FormulaQuantity = RelativeHumidity;
 
-use itertools::izip;
-use ndarray::{Array, Dimension, FoldWhile};
-use rayon::iter::{ParallelBridge, ParallelIterator};
+/// Formula for computing relative humidity from mixing ratio and saturation mixing ratio.
+/// Can be used interchangeably with [`general2`].
+///
+/// By the definition of mixing ratio, this formula is mathematically equivalent of
+/// formula used in [`general2`].
+///
+/// Valid `mixing_ratio` range: 0.00001 - 10.0
+///
+/// Valid `saturation_mixing_ratio` range: 0.00001 - 10.0
+pub struct Definition1;
 
-///Formula for computing relative humidity from mixing ratio and saturation mixing ratio.
-///Can be used interchangeably with [`general2`].
-///
-///By the definition of mixing ratio, this formula is mathematically equivalent of
-///formula used in [`general2`].
-///
-///# Errors
-///
-///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
-///Valid `mixing_ratio` range: 0.00001 - 0.5\
-///Valid `saturation_mixing_ratio` range: 0.00001 - 0.5
-pub struct General1;
-
-impl General1 {
-    #[allow(missing_docs)]
-    #[allow(clippy::missing_errors_doc)]
+impl Formula2<FormulaQuantity, MixingRatio, SaturationMixingRatio> for Definition1 {
     #[inline(always)]
-    
-    pub fn validate_inputs(
+    fn validate_inputs(
         mixing_ratio: Float,
         saturation_mixing_ratio: Float,
     ) -> Result<(), InputError> {
@@ -45,12 +38,10 @@ impl General1 {
     }
 
     #[inline(always)]
-    #[allow(missing_docs)]
-    pub fn compute_unchecked(mixing_ratio: Float, saturation_mixing_ratio: Float) -> Float {
+    fn compute_unchecked(mixing_ratio: Float, saturation_mixing_ratio: Float) -> Float {
         mixing_ratio / saturation_mixing_ratio
     }
 }
-
 
 ///Formula for computing relative humidity from vapour pressure and saturation vapour pressure.
 ///Can be used interchangeably with [`general1`].
@@ -60,13 +51,13 @@ impl General1 {
 ///Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
 ///Valid `vapour_pressure` range: 0Pa - 10000Pa
 ///Valid `saturation_vapour_pressure` range: 0Pa - 10000Pa
-pub struct General2;
+pub struct Definition2;
 
-impl General2 {
+impl Definition2 {
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
     #[inline(always)]
-    
+
     pub fn validate_inputs(
         vapour_pressure: Float,
         saturation_vapour_pressure: Float,
@@ -91,7 +82,6 @@ impl General2 {
     }
 }
 
-
 ///Formula for computing relative humidity from temperature and dewpoint using [`tetens1`](vapour_pressure::tetens1)
 ///function for vapour pressure calculation
 ///
@@ -106,7 +96,7 @@ impl General3 {
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
     #[inline(always)]
-    
+
     pub fn validate_inputs(temperature: Float, dewpoint: Float) -> Result<(), InputError> {
         if !(273.0..=353.0).contains(&temperature) {
             return Err(InputError::OutOfRange(String::from("temperature")));
@@ -129,7 +119,6 @@ impl General3 {
     }
 }
 
-
 ///Formula for computing relative humidity from temperature, dewpoint and pressure using [`buck3`](vapour_pressure::buck3)
 ///function for vapour pressure calculation
 ///
@@ -145,7 +134,7 @@ impl General4 {
     #[allow(missing_docs)]
     #[inline(always)]
     #[allow(clippy::missing_errors_doc)]
-    
+
     pub fn validate_inputs(
         temperature: Float,
         dewpoint: Float,
@@ -177,7 +166,6 @@ impl General4 {
     }
 }
 
-
 ///Formula for computing relative humidity from temperature, dewpoint and pressure using [`accuracy1`](mixing_ratio::accuracy1)
 ///function for mixing ratio calculation
 ///
@@ -193,7 +181,7 @@ impl General5 {
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
     #[inline(always)]
-    
+
     pub fn validate_inputs(
         temperature: Float,
         dewpoint: Float,

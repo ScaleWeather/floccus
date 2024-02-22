@@ -11,6 +11,8 @@ use crate::{constants::EPSILON, errors::InputError};
 use crate::{vapour_pressure, Float};
 use float_cmp::approx_eq;
 
+type FormulaQuantity = MixingRatio;
+
 /// Formula for computing mixing ratio of unsaturated air from air pressure and vapour pressure
 ///
 /// Valid `pressure` range: 100Pa - 150000Pa
@@ -20,7 +22,7 @@ use float_cmp::approx_eq;
 /// Returns [`InputError::IncorrectArgumentSet`] when inputs are equal and division by 0 would occur.
 pub struct Definition1;
 
-impl Formula2<MixingRatio, AtmosphericPressure, VapourPressure> for Definition1 {
+impl Formula2<FormulaQuantity, AtmosphericPressure, VapourPressure> for Definition1 {
     #[inline(always)]
     fn validate_inputs(
         pressure: AtmosphericPressure,
@@ -62,7 +64,7 @@ impl Formula2<MixingRatio, AtmosphericPressure, VapourPressure> for Definition1 
 /// Valid `pressure` range: 100Pa - 150000Pa
 pub struct Performance1;
 
-impl Formula2<MixingRatio, DewPointTemperature, AtmosphericPressure> for Performance1 {
+impl Formula2<FormulaQuantity, DewPointTemperature, AtmosphericPressure> for Performance1 {
     #[inline(always)]
     fn validate_inputs(
         dewpoint: DewPointTemperature,
@@ -101,7 +103,7 @@ impl Formula2<MixingRatio, DewPointTemperature, AtmosphericPressure> for Perform
 /// Valid `pressure` range: 100Pa - 150000Pa
 pub struct Accuracy1;
 
-impl Formula2<MixingRatio, DewPointTemperature, AtmosphericPressure> for Accuracy1 {
+impl Formula2<FormulaQuantity, DewPointTemperature, AtmosphericPressure> for Accuracy1 {
     #[inline(always)]
     fn validate_inputs(
         dewpoint: DewPointTemperature,
@@ -133,16 +135,13 @@ impl Formula2<MixingRatio, DewPointTemperature, AtmosphericPressure> for Accurac
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        quantities::MixingRatio,
-        tests::{test_with_2args, Argument},
-    };
+    use crate::tests::{test_with_2args, Argument};
 
     use super::*;
 
     #[test]
     fn general1() {
-        test_with_2args::<MixingRatio, AtmosphericPressure, VapourPressure, Definition1>(
+        test_with_2args::<FormulaQuantity, AtmosphericPressure, VapourPressure, Definition1>(
             Argument {
                 name: "pressure",
                 def_val: 101325.0,
@@ -159,7 +158,7 @@ mod tests {
 
     #[test]
     fn performance1() {
-        test_with_2args::<MixingRatio, DewPointTemperature, AtmosphericPressure, Performance1>(
+        test_with_2args::<FormulaQuantity, DewPointTemperature, AtmosphericPressure, Performance1>(
             Argument {
                 name: "dewpoint",
                 def_val: 300.0,
@@ -176,7 +175,7 @@ mod tests {
 
     #[test]
     fn accuracy1() {
-        test_with_2args::<MixingRatio, DewPointTemperature, AtmosphericPressure, Accuracy1>(
+        test_with_2args::<FormulaQuantity, DewPointTemperature, AtmosphericPressure, Accuracy1>(
             Argument {
                 name: "dewpoint",
                 def_val: 300.0,
