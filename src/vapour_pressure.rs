@@ -4,17 +4,17 @@
 
 //! Formulae to calculate partial vapour pressure of the unsaturated air.
 
+use crate::constants::DIMLESS_ONE;
 use crate::formula::{Formula1, Formula2};
 use crate::quantities::{
     AtmosphericPressure, DewPointTemperature, RelativeHumidity, SaturationVapourPressure,
     SpecificHumidity, ThermodynamicQuantity, VapourPressure,
 };
 use crate::Float;
-use crate::Storage::{Pressure, Ratio};
+use crate::Storage::Pressure;
 use crate::{constants::EPSILON, errors::InputError};
 
 use uom::si::pressure::{hectopascal, kilopascal, pascal};
-use uom::si::ratio::ratio;
 use uom::si::thermodynamic_temperature::{degree_celsius, kelvin};
 
 /// Formula for computing vapour pressure from specific humidity and pressure.
@@ -55,10 +55,8 @@ impl Formula2<VapourPressure, SpecificHumidity, AtmosphericPressure> for Definit
         let specific_humidity = specific_humidity.0;
         let pressure = pressure.0;
 
-        let one = Ratio::new::<ratio>(1.0);
-
-        let result =
-            -((pressure * specific_humidity) / ((specific_humidity * (EPSILON - one)) - EPSILON));
+        let result = -((pressure * specific_humidity)
+            / ((specific_humidity * (EPSILON - DIMLESS_ONE)) - EPSILON));
 
         VapourPressure(result)
     }

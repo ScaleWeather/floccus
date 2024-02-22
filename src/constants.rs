@@ -5,7 +5,7 @@ use std::marker::PhantomData;
 use crate::Storage;
 
 /// Gravitational acceleration of Earth
-pub const G : Storage::Acceleration = Storage::Acceleration {
+pub const G: Storage::Acceleration = Storage::Acceleration {
     dimension: PhantomData,
     units: PhantomData,
     value: 9.806_65,
@@ -101,3 +101,18 @@ pub const R_V: Storage::SpecificHeatCapacity = Storage::SpecificHeatCapacity {
     units: PhantomData,
     value: R.value / M_V.value,
 };
+
+// Internal Constants (commonly appearing in formulas to use them with oum units)
+
+pub(crate) const DIMLESS_ONE: Storage::Ratio = Storage::Ratio {
+    dimension: PhantomData,
+    units: PhantomData,
+    value: 1.0,
+};
+
+pub(crate) const ZERO_KELVIN: Storage::ThermodynamicTemperature =
+    Storage::ThermodynamicTemperature {
+        dimension: PhantomData,
+        units: PhantomData,
+        value: 0.0,
+    };
