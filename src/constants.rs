@@ -81,13 +81,6 @@ pub const L_V: Storage::AvailableEnergy = Storage::AvailableEnergy {
     value: 2_500_800.0,
 };
 
-/// Ratio of molar masses of dry air and water vapour
-pub const EPSILON: Storage::Ratio = Storage::Ratio {
-    dimension: PhantomData,
-    units: PhantomData,
-    value: M_V.value / M_D.value,
-};
-
 /// Specific gas constant for dry air
 pub const R_D: Storage::SpecificHeatCapacity = Storage::SpecificHeatCapacity {
     dimension: PhantomData,
@@ -103,6 +96,20 @@ pub const R_V: Storage::SpecificHeatCapacity = Storage::SpecificHeatCapacity {
 };
 
 // Internal Constants (commonly appearing in formulas to use them with oum units)
+
+/// Ratio of molar masses of dry air and water vapour
+pub(crate) const EPSILON: Storage::Ratio = Storage::Ratio {
+    dimension: PhantomData,
+    units: PhantomData,
+    value: M_V.value / M_D.value,
+};
+
+/// Ratio of specific gas constant and specific heat capacity for dry air
+pub(crate) const KAPPA: Storage::Ratio = Storage::Ratio {
+    dimension: PhantomData,
+    units: PhantomData,
+    value: R_D.value / C_P.value,
+};
 
 pub(crate) const DIMLESS_ONE: Storage::Ratio = Storage::Ratio {
     dimension: PhantomData,

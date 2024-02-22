@@ -85,7 +85,7 @@ pub mod errors;
 pub mod formula;
 pub mod quantities;
 
-// pub mod equivalent_potential_temperature;
+pub mod equivalent_potential_temperature;
 pub mod mixing_ratio;
 pub mod saturation_mixing_ratio;
 pub mod potential_temperature;
