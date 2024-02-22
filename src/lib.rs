@@ -86,7 +86,7 @@ pub mod formula;
 pub mod quantities;
 
 // pub mod equivalent_potential_temperature;
-// pub mod mixing_ratio;
+pub mod mixing_ratio;
 // pub mod potential_temperature;
 // pub mod relative_humidity;
 // pub mod specific_humidity;

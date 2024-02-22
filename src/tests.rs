@@ -69,9 +69,9 @@ pub fn test_with_2args<
 
             match result {
                 Ok(r) => assert!(r.get_si_value().is_finite()),
-                Err(e) => assert!(
-                    discriminant(&InputError::IncorrectArgumentSet(String::new()))
-                        == discriminant(&e)
+                Err(e) => assert_eq!(
+                    discriminant(&InputError::IncorrectArgumentSet(String::new())),
+                    discriminant(&e)
                 ),
             }
         }
@@ -137,8 +137,9 @@ pub fn test_with_1arg<O: ThermodynamicQuantity, I1: ThermodynamicQuantity, F: Fo
 
         match result {
             Ok(r) => assert!(r.get_si_value().is_finite()),
-            Err(e) => assert!(
-                discriminant(&InputError::IncorrectArgumentSet(String::new())) == discriminant(&e)
+            Err(e) => assert_eq!(
+                discriminant(&InputError::IncorrectArgumentSet(String::new())),
+                discriminant(&e)
             ),
         }
     }
@@ -151,48 +152,6 @@ pub fn test_with_1arg<O: ThermodynamicQuantity, I1: ThermodynamicQuantity, F: Fo
     let result = F::compute(I1::new_si(arg1.range[1] + 0.1)).unwrap_err();
     assert_eq!(result, expected);
 }
-
-// #[allow(dead_code)]
-// pub fn test_with_1arg(
-//     tested_function: &dyn Fn(Float) -> Result<Float, InputError>,
-//     arg1: Argument,
-//     expected_result: Float,
-// ) -> bool {
-//     let result = tested_function(arg1.def_val).unwrap();
-//     assert_approx_eq!(Float, result, expected_result, epsilon = 0.01);
-
-//     let results = vec![tested_function(0.0)];
-
-//     for result in results {
-//         if result.is_ok() {
-//             assert!(result.unwrap().is_finite());
-//         }
-//     }
-
-//     for arg1_itr in 0..=100 {
-//         let arg1_tmp =
-//             (((arg1.range[1] - arg1.range[0]) / 100.0) * arg1_itr as Float) + arg1.range[0];
-
-//         let result = tested_function(arg1_tmp);
-
-//         if result.is_err() {
-//             assert!(
-//                 discriminant(&InputError::IncorrectArgumentSet(String::new()))
-//                     == discriminant(&result.unwrap_err())
-//             );
-//         } else {
-//             assert!(result.unwrap().is_finite());
-//         }
-//     }
-
-//     let expected = InputError::OutOfRange(String::from(arg1.name));
-//     let result = tested_function(arg1.range[0] - 0.1).unwrap_err();
-//     assert_eq!(result, expected);
-//     let result = tested_function(arg1.range[1] + 0.1).unwrap_err();
-//     assert_eq!(result, expected);
-
-//     true
-// }
 
 // #[allow(dead_code)]
 // pub fn test_with_3args(

@@ -4,6 +4,13 @@ use std::marker::PhantomData;
 
 use crate::Storage;
 
+/// Gravitational acceleration of Earth
+pub const G : Storage::Acceleration = Storage::Acceleration {
+    dimension: PhantomData,
+    units: PhantomData,
+    value: 9.806_65,
+};
+
 /// Universal gas constant
 pub const R: Storage::MolarHeatCapacity = Storage::MolarHeatCapacity {
     dimension: PhantomData,
