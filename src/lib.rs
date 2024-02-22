@@ -90,7 +90,7 @@ pub mod mixing_ratio;
 // pub mod saturation_mixing_ratio;
 // pub mod potential_temperature;
 // pub mod relative_humidity;
-// pub mod specific_humidity;
+pub mod specific_humidity;
 pub mod vapour_pressure;
 // pub mod saturation_vapour_pressure;
 // pub mod vapour_pressure_deficit;
