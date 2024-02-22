@@ -17,10 +17,7 @@ use crate::{
 ///
 /// Derived by R. Davies-Jones (2008) [(doi:10.1175/2007MWR2224.1)](https://doi.org/10.1175/2007MWR2224.1)
 ///
-/// # Errors
-///
-/// Returns [`InputError::OutOfRange`] when one of inputs is out of range.\
-/// Valid `temperature` range: 257K - 377K\
+/// Valid `temperature` range: 257K - 377K
 pub struct DaviesJones1;
 
 impl Formula1<WetBulbPotentialTemperature, EquivalentPotentialTemperature> for DaviesJones1 {
