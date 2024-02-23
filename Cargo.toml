@@ -15,9 +15,6 @@ exclude = [".github/*"]
 thiserror = "1.0"
 float-cmp = "0.9"
 log = { version = "0.4", optional = true }
-itertools = { version = "0.12", default-features = false, optional = true, features = [
-    "use_std",
-] }
 ndarray = { version = "0.15", default-features = false, optional = true }
 rayon = { version = "1.8", default-features = false, optional = true }
 uom = { version = "0.35", default-features = false, features = [
@@ -33,16 +30,11 @@ num-traits = { version = "0.2", default-features = false, features = ["std"] }
 criterion = "0.5.1"
 
 [features]
-default = [
-    "array",
-    "array_parallel",
-    "debug",
-    "double_precision",
-]
+default = ["array", "parallel", "debug", "double_precision"]
 debug = ["log"]
 double_precision = []
-array = ["ndarray", "itertools"]
-array_parallel = ["array", "ndarray/rayon", "rayon"]
+array = ["ndarray"]
+parallel = ["array", "ndarray/rayon", "rayon"]
 
 # [[bench]]
 # name = "virtual_temperature"

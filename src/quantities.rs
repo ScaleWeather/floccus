@@ -5,7 +5,9 @@ use uom::si::{pressure::pascal, ratio::ratio, thermodynamic_temperature::kelvin}
 use crate::{Float, Storage};
 use std::fmt::Debug;
 
-pub trait ThermodynamicQuantity: Debug + Clone + Copy + PartialEq + PartialOrd + Default {
+pub trait ThermodynamicQuantity:
+    Debug + Clone + Copy + PartialEq + PartialOrd + Default + Send + Sync
+{
     fn get_si_value(&self) -> Float;
     fn new_si(value: Float) -> Self;
 }
