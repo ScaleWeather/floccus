@@ -97,6 +97,8 @@ impl Formula3<PotentialTemperature, DryBulbTemperature, AtmosphericPressure, Vap
 
 #[cfg(test)]
 mod tests {
+    use std::marker::PhantomData;
+
     use crate::tests::{test_with_3args, Argument};
 
     use super::*;
@@ -113,16 +115,19 @@ mod tests {
                 name: "temperature",
                 def_val: 300.0,
                 range: [253.0, 324.0],
+                _quantity: PhantomData,
             },
             Argument {
                 name: "pressure",
                 def_val: 101325.0,
                 range: [100.0, 150_000.0],
+                _quantity: PhantomData,
             },
             Argument {
                 name: "vapour_pressure",
                 def_val: 3000.0,
                 range: [0.0, 10_000.0],
+                _quantity: PhantomData,
             },
             301.45136519081666,
         );

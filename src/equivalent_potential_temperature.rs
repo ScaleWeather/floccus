@@ -256,6 +256,8 @@ impl Formula3<FormulaQuantity, AtmosphericPressure, DryBulbTemperature, DewPoint
 
 #[cfg(test)]
 mod tests {
+    use std::marker::PhantomData;
+
     use crate::{
         quantities::{AtmosphericPressure, DryBulbTemperature, VapourPressure},
         tests::{test_with_3args, Argument},
@@ -276,16 +278,19 @@ mod tests {
                 name: "temperature",
                 def_val: 300.0,
                 range: [253.0, 324.0],
+                _quantity: PhantomData,
             },
             Argument {
                 name: "pressure",
                 def_val: 101325.0,
                 range: [20000.0, 150_000.0],
+                _quantity: PhantomData,
             },
             Argument {
                 name: "vapour_pressure",
                 def_val: 991.189131,
                 range: [0.0, 10_000.0],
+                _quantity: PhantomData,
             },
             315.23724970376776,
         );
@@ -304,16 +309,19 @@ mod tests {
                 name: "temperature",
                 def_val: 300.0,
                 range: [253.0, 324.0],
+                _quantity: PhantomData,
             },
             Argument {
                 name: "pressure",
                 def_val: 101325.0,
                 range: [20000.0, 150_000.0],
+                _quantity: PhantomData,
             },
             Argument {
                 name: "vapour_pressure",
                 def_val: 991.189131,
                 range: [0.0, 10_000.0],
+                _quantity: PhantomData,
             },
             316.52762026634014,
         );
@@ -332,16 +340,19 @@ mod tests {
                 name: "pressure",
                 def_val: 101325.0,
                 range: [20000.0, 150_000.0],
+                _quantity: PhantomData,
             },
             Argument {
                 name: "temperature",
                 def_val: 300.0,
                 range: [253.0, 324.0],
+                _quantity: PhantomData,
             },
             Argument {
                 name: "dewpoint",
                 def_val: 280.0,
                 range: [253.0, 324.0],
+                _quantity: PhantomData,
             },
             317.3855211897774,
         );

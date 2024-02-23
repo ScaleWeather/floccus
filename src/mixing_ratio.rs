@@ -135,6 +135,8 @@ impl Formula2<FormulaQuantity, DewPointTemperature, AtmosphericPressure> for Acc
 
 #[cfg(test)]
 mod tests {
+    use std::marker::PhantomData;
+
     use crate::tests::{test_with_2args, Argument};
 
     use super::*;
@@ -146,11 +148,13 @@ mod tests {
                 name: "pressure",
                 def_val: 101325.0,
                 range: [100.0, 150_000.0],
+                _quantity: PhantomData,
             },
             Argument {
                 name: "vapour_pressure",
                 def_val: 3500.0,
                 range: [0.0, 50_000.0],
+                _quantity: PhantomData,
             },
             0.022253316630823517,
         );
@@ -163,11 +167,13 @@ mod tests {
                 name: "dewpoint",
                 def_val: 300.0,
                 range: [273.0, 353.0],
+                _quantity: PhantomData,
             },
             Argument {
                 name: "pressure",
                 def_val: 101325.0,
                 range: [100.0, 150_000.0],
+                _quantity: PhantomData,
             },
             0.022477100514593465,
         );
@@ -180,11 +186,13 @@ mod tests {
                 name: "dewpoint",
                 def_val: 300.0,
                 range: [232.0, 324.0],
+                _quantity: PhantomData,
             },
             Argument {
                 name: "pressure",
                 def_val: 101325.0,
                 range: [100.0, 150_000.0],
+                _quantity: PhantomData,
             },
             0.022587116896465847,
         );

@@ -1,25 +1,42 @@
+pub(crate) mod quantities_testing;
+
 use crate::errors::InputError;
 use crate::formula::{Formula1, Formula2, Formula3};
 use crate::quantities::ThermodynamicQuantity;
 use crate::Float;
 use float_cmp::assert_approx_eq;
+use std::marker::PhantomData;
 use std::mem::discriminant;
 
+use self::quantities_testing::TestingQuantity;
+
 #[derive(Copy, Clone, Debug)]
-pub struct Argument {
+pub struct Argument<I: ThermodynamicQuantity + TestingQuantity> {
     pub name: &'static str,
     pub def_val: Float,
     pub range: [Float; 2],
+    _quantity: PhantomData<I>,
+}
+
+impl<I: ThermodynamicQuantity + TestingQuantity> Argument<I> {
+    pub fn new(range: [Float; 2]) -> Self {
+        Self {
+            name: "",
+            def_val: 0.0,
+            range,
+            _quantity: PhantomData,
+        }
+    }
 }
 
 pub fn test_with_2args<
     O: ThermodynamicQuantity,
-    I1: ThermodynamicQuantity,
-    I2: ThermodynamicQuantity,
+    I1: ThermodynamicQuantity + TestingQuantity,
+    I2: ThermodynamicQuantity + TestingQuantity,
     F: Formula2<O, I1, I2>,
 >(
-    arg1: Argument,
-    arg2: Argument,
+    arg1: Argument<I1>,
+    arg2: Argument<I2>,
     expected_result: Float,
 ) {
     //the first promise of the crate is that returned value
@@ -92,8 +109,12 @@ pub fn test_with_2args<
     assert_eq!(result, expected);
 }
 
-pub fn test_with_1arg<O: ThermodynamicQuantity, I1: ThermodynamicQuantity, F: Formula1<O, I1>>(
-    arg1: Argument,
+pub fn test_with_1arg<
+    O: ThermodynamicQuantity,
+    I1: ThermodynamicQuantity + TestingQuantity,
+    F: Formula1<O, I1>,
+>(
+    arg1: Argument<I1>,
     expected_result: Float,
 ) {
     //the first promise of the crate is that returned value
@@ -155,14 +176,14 @@ pub fn test_with_1arg<O: ThermodynamicQuantity, I1: ThermodynamicQuantity, F: Fo
 
 pub fn test_with_3args<
     O: ThermodynamicQuantity,
-    I1: ThermodynamicQuantity,
-    I2: ThermodynamicQuantity,
-    I3: ThermodynamicQuantity,
+    I1: ThermodynamicQuantity + TestingQuantity,
+    I2: ThermodynamicQuantity + TestingQuantity,
+    I3: ThermodynamicQuantity + TestingQuantity,
     F: Formula3<O, I1, I2, I3>,
 >(
-    arg1: Argument,
-    arg2: Argument,
-    arg3: Argument,
+    arg1: Argument<I1>,
+    arg2: Argument<I2>,
+    arg3: Argument<I3>,
     expected_result: Float,
 ) {
     //the first promise of the crate is that returned value

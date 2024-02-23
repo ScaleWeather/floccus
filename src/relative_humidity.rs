@@ -238,6 +238,8 @@ impl Formula3<FormulaQuantity, DryBulbTemperature, DewPointTemperature, Atmosphe
 
 #[cfg(test)]
 mod tests {
+    use std::marker::PhantomData;
+
     use crate::tests::{test_with_2args, test_with_3args, Argument};
 
     use super::*;
@@ -249,11 +251,13 @@ mod tests {
                 name: "mixing_ratio",
                 def_val: 0.01064,
                 range: [0.00001, 10.0],
+                _quantity: PhantomData,
             },
             Argument {
                 name: "saturation_mixing_ratio",
                 def_val: 0.01467,
                 range: [0.00001, 10.0],
+                _quantity: PhantomData,
             },
             0.7252897068847989,
         );
@@ -266,11 +270,13 @@ mod tests {
                 name: "vapour_pressure",
                 def_val: 1706.0,
                 range: [0.0, 50_000.0],
+                _quantity: PhantomData,
             },
             Argument {
                 name: "saturation_vapour_pressure",
                 def_val: 2339.0,
                 range: [0.1, 50_000.0],
+                _quantity: PhantomData,
             },
             0.7293715262932877,
         );
@@ -283,11 +289,13 @@ mod tests {
                 name: "temperature",
                 def_val: 300.0,
                 range: [273.0, 353.0],
+                _quantity: PhantomData,
             },
             Argument {
                 name: "dewpoint",
                 def_val: 290.0,
                 range: [273.0, 353.0],
+                _quantity: PhantomData,
             },
             0.5431069897660531,
         );
@@ -306,16 +314,19 @@ mod tests {
                 name: "temperature",
                 def_val: 300.0,
                 range: [253.0, 324.0],
+                _quantity: PhantomData,
             },
             Argument {
                 name: "dewpoint",
                 def_val: 290.0,
                 range: [253.0, 324.0],
+                _quantity: PhantomData,
             },
             Argument {
                 name: "pressure",
                 def_val: 101325.0,
                 range: [100.0, 150_000.0],
+                _quantity: PhantomData,
             },
             0.5429224562155812,
         );
@@ -334,16 +345,19 @@ mod tests {
                 name: "temperature",
                 def_val: 300.0,
                 range: [232.0, 314.0],
+                _quantity: PhantomData,
             },
             Argument {
                 name: "dewpoint",
                 def_val: 290.0,
                 range: [232.0, 314.0],
+                _quantity: PhantomData,
             },
             Argument {
                 name: "pressure",
                 def_val: 101325.0,
                 range: [10000.0, 150_000.0],
+                _quantity: PhantomData,
             },
             0.5338747953552858,
         );
