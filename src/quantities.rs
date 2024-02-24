@@ -1,61 +1,77 @@
 #![allow(missing_docs)]
 
+use floccus_proc::Name;
 use uom::si::{pressure::pascal, ratio::ratio, thermodynamic_temperature::kelvin};
 
-use crate::{Float, Storage};
+use crate::{errors::InputError, Float, Storage};
 use std::fmt::Debug;
 
+pub trait QuantityName {
+    fn type_name_as_str() -> &'static str;
+}
+
 pub trait ThermodynamicQuantity:
-    Debug + Clone + Copy + PartialEq + PartialOrd + Default + Send + Sync
+    Debug + Clone + Copy + PartialEq + PartialOrd + Default + Send + Sync + QuantityName
 {
     fn get_si_value(&self) -> Float;
     fn new_si(value: Float) -> Self;
-    fn name(&self) -> &'static str;
+
+    fn name(&self) -> &'static str {
+        Self::type_name_as_str()
+    }
+
+    fn check_range_si(&self, lower_bound: Float, upper_bound: Float) -> Result<(), InputError> {
+        if !(lower_bound..=upper_bound).contains(&self.get_si_value()) {
+            return Err(InputError::OutOfRange(self.name().to_string()));
+        }
+
+        Ok(())
+    }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default, Name)]
 pub struct DryBulbTemperature(pub Storage::ThermodynamicTemperature);
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default, Name)]
 pub struct WetBulbTemperature(pub Storage::ThermodynamicTemperature);
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default, Name)]
 pub struct DewPointTemperature(pub Storage::ThermodynamicTemperature);
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default, Name)]
 pub struct VirtualTemperature(pub Storage::ThermodynamicTemperature);
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default, Name)]
 pub struct PotentialTemperature(pub Storage::ThermodynamicTemperature);
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default, Name)]
 pub struct EquivalentPotentialTemperature(pub Storage::ThermodynamicTemperature);
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default, Name)]
 pub struct WetBulbPotentialTemperature(pub Storage::ThermodynamicTemperature);
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default, Name)]
 pub struct AtmosphericPressure(pub Storage::Pressure);
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default, Name)]
 pub struct VapourPressure(pub Storage::Pressure);
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default, Name)]
 pub struct SaturationVapourPressure(pub Storage::Pressure);
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default, Name)]
 pub struct VapourPressureDeficit(pub Storage::Pressure);
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default, Name)]
 pub struct MixingRatio(pub Storage::Ratio);
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default, Name)]
 pub struct SaturationMixingRatio(pub Storage::Ratio);
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default, Name)]
 pub struct SpecificHumidity(pub Storage::Ratio);
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default, Name)]
 pub struct RelativeHumidity(pub Storage::Ratio);
 
 impl DryBulbTemperature {
@@ -208,10 +224,6 @@ impl ThermodynamicQuantity for DryBulbTemperature {
     fn new_si(value: Float) -> Self {
         Self::new::<kelvin>(value)
     }
-
-    fn name(&self) -> &'static str {
-        "DryBulbTemperature"
-    }
 }
 impl ThermodynamicQuantity for WetBulbTemperature {
     fn get_si_value(&self) -> Float {
@@ -220,10 +232,6 @@ impl ThermodynamicQuantity for WetBulbTemperature {
 
     fn new_si(value: Float) -> Self {
         Self::new::<kelvin>(value)
-    }
-
-    fn name(&self) -> &'static str {
-        "WetBulbTemperature"
     }
 }
 impl ThermodynamicQuantity for DewPointTemperature {
@@ -234,10 +242,6 @@ impl ThermodynamicQuantity for DewPointTemperature {
     fn new_si(value: Float) -> Self {
         Self::new::<kelvin>(value)
     }
-
-    fn name(&self) -> &'static str {
-        "DewPointTemperature"
-    }
 }
 impl ThermodynamicQuantity for VirtualTemperature {
     fn get_si_value(&self) -> Float {
@@ -246,10 +250,6 @@ impl ThermodynamicQuantity for VirtualTemperature {
 
     fn new_si(value: Float) -> Self {
         Self::new::<kelvin>(value)
-    }
-
-    fn name(&self) -> &'static str {
-        "VirtualTemperature"
     }
 }
 impl ThermodynamicQuantity for PotentialTemperature {
@@ -260,10 +260,6 @@ impl ThermodynamicQuantity for PotentialTemperature {
     fn new_si(value: Float) -> Self {
         Self::new::<kelvin>(value)
     }
-
-    fn name(&self) -> &'static str {
-        "PotentialTemperature"
-    }
 }
 impl ThermodynamicQuantity for EquivalentPotentialTemperature {
     fn get_si_value(&self) -> Float {
@@ -273,10 +269,6 @@ impl ThermodynamicQuantity for EquivalentPotentialTemperature {
     fn new_si(value: Float) -> Self {
         Self::new::<kelvin>(value)
     }
-
-    fn name(&self) -> &'static str {
-        "EquivalentPotentialTemperature"
-    }
 }
 impl ThermodynamicQuantity for WetBulbPotentialTemperature {
     fn get_si_value(&self) -> Float {
@@ -285,10 +277,6 @@ impl ThermodynamicQuantity for WetBulbPotentialTemperature {
 
     fn new_si(value: Float) -> Self {
         Self::new::<kelvin>(value)
-    }
-
-    fn name(&self) -> &'static str {
-        "WetBulbPotentialTemperature"
     }
 }
 
@@ -300,10 +288,6 @@ impl ThermodynamicQuantity for AtmosphericPressure {
     fn new_si(value: Float) -> Self {
         Self::new::<pascal>(value)
     }
-
-    fn name(&self) -> &'static str {
-        "AtmosphericPressure"
-    }
 }
 impl ThermodynamicQuantity for VapourPressure {
     fn get_si_value(&self) -> Float {
@@ -313,10 +297,6 @@ impl ThermodynamicQuantity for VapourPressure {
     fn new_si(value: Float) -> Self {
         Self::new::<pascal>(value)
     }
-
-    fn name(&self) -> &'static str {
-        "VapourPressure"
-    }
 }
 impl ThermodynamicQuantity for SaturationVapourPressure {
     fn get_si_value(&self) -> Float {
@@ -325,10 +305,6 @@ impl ThermodynamicQuantity for SaturationVapourPressure {
 
     fn new_si(value: Float) -> Self {
         Self::new::<pascal>(value)
-    }
-
-    fn name(&self) -> &'static str {
-        "SaturationVapourPressure"
     }
 }
 
@@ -340,10 +316,6 @@ impl ThermodynamicQuantity for VapourPressureDeficit {
     fn new_si(value: Float) -> Self {
         Self::new::<pascal>(value)
     }
-
-    fn name(&self) -> &'static str {
-        "VapourPressureDeficit"
-    }
 }
 
 impl ThermodynamicQuantity for MixingRatio {
@@ -353,10 +325,6 @@ impl ThermodynamicQuantity for MixingRatio {
 
     fn new_si(value: Float) -> Self {
         Self::new::<ratio>(value)
-    }
-
-    fn name(&self) -> &'static str {
-        "MixingRatio"
     }
 }
 
@@ -368,10 +336,6 @@ impl ThermodynamicQuantity for SaturationMixingRatio {
     fn new_si(value: Float) -> Self {
         Self::new::<ratio>(value)
     }
-
-    fn name(&self) -> &'static str {
-        "SaturationMixingRatio"
-    }
 }
 
 impl ThermodynamicQuantity for SpecificHumidity {
@@ -382,10 +346,6 @@ impl ThermodynamicQuantity for SpecificHumidity {
     fn new_si(value: Float) -> Self {
         Self::new::<ratio>(value)
     }
-
-    fn name(&self) -> &'static str {
-        "SpecificHumidity"
-    }
 }
 impl ThermodynamicQuantity for RelativeHumidity {
     fn get_si_value(&self) -> Float {
@@ -394,9 +354,5 @@ impl ThermodynamicQuantity for RelativeHumidity {
 
     fn new_si(value: Float) -> Self {
         Self::new::<ratio>(value)
-    }
-
-    fn name(&self) -> &'static str {
-        "RelativeHumidity"
     }
 }

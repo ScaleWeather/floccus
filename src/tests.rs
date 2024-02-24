@@ -1,4 +1,5 @@
-pub(crate) mod quantities_testing;
+mod quantities;
+pub(crate) mod testing_traits;
 
 use crate::errors::InputError;
 use crate::formula::{Formula1, Formula2, Formula3};
@@ -8,12 +9,10 @@ use float_cmp::assert_approx_eq;
 use std::marker::PhantomData;
 use std::mem::discriminant;
 
-use self::quantities_testing::TestingQuantity;
+use self::testing_traits::TestingQuantity;
 
 #[derive(Copy, Clone, Debug)]
 pub struct Argument<I: ThermodynamicQuantity + TestingQuantity> {
-    pub name: &'static str,
-    pub def_val: Float,
     pub range: [Float; 2],
     _quantity: PhantomData<I>,
 }
@@ -21,11 +20,13 @@ pub struct Argument<I: ThermodynamicQuantity + TestingQuantity> {
 impl<I: ThermodynamicQuantity + TestingQuantity> Argument<I> {
     pub fn new(range: [Float; 2]) -> Self {
         Self {
-            name: "",
-            def_val: 0.0,
             range,
             _quantity: PhantomData,
         }
+    }
+
+    pub fn quantity_name(&self) -> String {
+        I::type_name_as_str().to_string()
     }
 }
 
@@ -41,7 +42,7 @@ pub fn test_with_2args<
 ) {
     //the first promise of the crate is that returned value
     //is calculated correctly
-    let result = F::compute(I1::new_si(arg1.def_val), I2::new_si(arg2.def_val)).unwrap();
+    let result = F::compute(I1::default_si(), I2::default_si()).unwrap();
     assert_approx_eq!(
         Float,
         result.get_si_value(),
@@ -56,9 +57,9 @@ pub fn test_with_2args<
     // is not Ok() then it is Err()
     // here we don't care about error being correct
     let results = vec![
-        F::compute(I1::new_si(arg1.def_val), I2::new_si(arg2.def_val)),
-        F::compute(I1::new_si(-9999.0), I2::new_si(arg2.def_val)),
-        F::compute(I1::new_si(arg1.def_val), I2::new_si(-9999.0)),
+        F::compute(I1::default_si(), I2::default_si()),
+        F::compute(I1::new_si(-9999.0), I2::default_si()),
+        F::compute(I1::default_si(), I2::new_si(-9999.0)),
         F::compute(I1::new_si(-9999.0), I2::new_si(-9999.0)),
     ];
 
@@ -96,16 +97,16 @@ pub fn test_with_2args<
 
     //the fourth promise of the crate is to return an error with
     //erronous variable name when input is out of range
-    let expected = InputError::OutOfRange(String::from(arg1.name));
-    let result = F::compute(I1::new_si(arg1.range[0] - 0.1), I2::new_si(arg2.def_val)).unwrap_err();
+    let expected = InputError::OutOfRange(arg1.quantity_name());
+    let result = F::compute(I1::new_si(arg1.range[0] - 0.1), I2::default_si()).unwrap_err();
     assert_eq!(result, expected);
-    let result = F::compute(I1::new_si(arg1.range[1] + 0.1), I2::new_si(arg2.def_val)).unwrap_err();
+    let result = F::compute(I1::new_si(arg1.range[1] + 0.1), I2::default_si()).unwrap_err();
     assert_eq!(result, expected);
 
-    let expected = InputError::OutOfRange(String::from(arg2.name));
-    let result = F::compute(I1::new_si(arg1.def_val), I2::new_si(arg2.range[0] - 0.1)).unwrap_err();
+    let expected = InputError::OutOfRange(arg2.quantity_name());
+    let result = F::compute(I1::default_si(), I2::new_si(arg2.range[0] - 0.1)).unwrap_err();
     assert_eq!(result, expected);
-    let result = F::compute(I1::new_si(arg1.def_val), I2::new_si(arg2.range[1] + 0.1)).unwrap_err();
+    let result = F::compute(I1::default_si(), I2::new_si(arg2.range[1] + 0.1)).unwrap_err();
     assert_eq!(result, expected);
 }
 
@@ -119,7 +120,7 @@ pub fn test_with_1arg<
 ) {
     //the first promise of the crate is that returned value
     //is calculated correctly
-    let result = F::compute(I1::new_si(arg1.def_val)).unwrap();
+    let result = F::compute(I1::default_si()).unwrap();
     assert_approx_eq!(
         Float,
         result.get_si_value(),
@@ -134,7 +135,7 @@ pub fn test_with_1arg<
     // is not Ok() then it is Err()
     // here we don't care about error being correct
     let results = vec![
-        F::compute(I1::new_si(arg1.def_val)),
+        F::compute(I1::default_si()),
         F::compute(I1::new_si(-9999.0)),
     ];
 
@@ -167,7 +168,7 @@ pub fn test_with_1arg<
 
     //the fourth promise of the crate is to return an error with
     //erronous variable name when input is out of range
-    let expected = InputError::OutOfRange(String::from(arg1.name));
+    let expected = InputError::OutOfRange(arg1.quantity_name());
     let result = F::compute(I1::new_si(arg1.range[0] - 0.1)).unwrap_err();
     assert_eq!(result, expected);
     let result = F::compute(I1::new_si(arg1.range[1] + 0.1)).unwrap_err();
@@ -189,9 +190,9 @@ pub fn test_with_3args<
     //the first promise of the crate is that returned value
     //is calculated correctly
     let result = F::compute(
-        I1::new_si(arg1.def_val),
-        I2::new_si(arg2.def_val),
-        I3::new_si(arg3.def_val),
+        I1::default_si(),
+        I2::default_si(),
+        I3::default_si(),
     )
     .unwrap();
     assert_approx_eq!(
@@ -208,41 +209,13 @@ pub fn test_with_3args<
     // is not Ok() then it is Err()
     // here we don't care about error being correct
     let results = vec![
-        F::compute(
-            I1::new_si(arg1.def_val),
-            I2::new_si(arg2.def_val),
-            I3::new_si(arg3.def_val),
-        ),
-        F::compute(
-            I1::new_si(-9999.0),
-            I2::new_si(arg2.def_val),
-            I3::new_si(arg3.def_val),
-        ),
-        F::compute(
-            I1::new_si(arg1.def_val),
-            I2::new_si(-9999.0),
-            I3::new_si(arg3.def_val),
-        ),
-        F::compute(
-            I1::new_si(arg1.def_val),
-            I2::new_si(arg2.def_val),
-            I3::new_si(-9999.0),
-        ),
-        F::compute(
-            I1::new_si(-9999.0),
-            I2::new_si(-9999.0),
-            I3::new_si(arg3.def_val),
-        ),
-        F::compute(
-            I1::new_si(arg1.def_val),
-            I2::new_si(-9999.0),
-            I3::new_si(-9999.0),
-        ),
-        F::compute(
-            I1::new_si(-9999.0),
-            I2::new_si(arg2.def_val),
-            I3::new_si(-9999.0),
-        ),
+        F::compute(I1::default_si(), I2::default_si(), I3::default_si()),
+        F::compute(I1::new_si(-9999.0), I2::default_si(), I3::default_si()),
+        F::compute(I1::default_si(), I2::new_si(-9999.0), I3::default_si()),
+        F::compute(I1::default_si(), I2::default_si(), I3::new_si(-9999.0)),
+        F::compute(I1::default_si(), I2::new_si(-9999.0), I3::default_si()),
+        F::compute(I1::default_si(), I2::new_si(-9999.0), I3::new_si(-9999.0)),
+        F::compute(I1::new_si(-9999.0), I2::default_si(), I3::new_si(-9999.0)),
         F::compute(
             I1::new_si(-9999.0),
             I2::new_si(-9999.0),
@@ -289,49 +262,49 @@ pub fn test_with_3args<
 
     //the fourth promise of the crate is to return an error with
     //erronous variable name when input is out of range
-    let expected = InputError::OutOfRange(String::from(arg1.name));
+    let expected = InputError::OutOfRange(arg1.quantity_name());
     let result = F::compute(
         I1::new_si(arg1.range[0] - 0.1),
-        I2::new_si(arg2.def_val),
-        I3::new_si(arg3.def_val),
+        I2::default_si(),
+        I3::default_si(),
     )
     .unwrap_err();
     assert_eq!(result, expected);
     let result = F::compute(
         I1::new_si(arg1.range[1] + 0.1),
-        I2::new_si(arg2.def_val),
-        I3::new_si(arg3.def_val),
+        I2::default_si(),
+        I3::default_si(),
     )
     .unwrap_err();
     assert_eq!(result, expected);
 
-    let expected = InputError::OutOfRange(String::from(arg2.name));
+    let expected = InputError::OutOfRange(arg2.quantity_name());
     let result = F::compute(
-        I1::new_si(arg1.def_val),
+        I1::default_si(),
         I2::new_si(arg2.range[0] - 0.1),
-        I3::new_si(arg3.def_val),
+        I3::default_si(),
     )
     .unwrap_err();
     assert_eq!(result, expected);
     let result = F::compute(
-        I1::new_si(arg1.def_val),
+        I1::default_si(),
         I2::new_si(arg2.range[1] + 0.1),
-        I3::new_si(arg3.def_val),
+        I3::default_si(),
     )
     .unwrap_err();
     assert_eq!(result, expected);
 
-    let expected = InputError::OutOfRange(String::from(arg3.name));
+    let expected = InputError::OutOfRange(arg3.quantity_name());
     let result = F::compute(
-        I1::new_si(arg1.def_val),
-        I2::new_si(arg2.def_val),
+        I1::default_si(),
+        I2::default_si(),
         I3::new_si(arg3.range[0] - 0.1),
     )
     .unwrap_err();
     assert_eq!(result, expected);
     let result = F::compute(
-        I1::new_si(arg1.def_val),
-        I2::new_si(arg2.def_val),
+        I1::default_si(),
+        I2::default_si(),
         I3::new_si(arg3.range[1] + 0.1),
     )
     .unwrap_err();
