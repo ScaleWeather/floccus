@@ -10,8 +10,10 @@ keywords = ["oceanography", "thermodynamics", "meteorology", "weather"]
 categories = ["mathematics", "science"]
 license = "Apache-2.0"
 exclude = [".github/*"]
+publish = false
 
 [dependencies]
+floccus-proc = { path = "../floccus-proc" }
 thiserror = "1.0"
 float-cmp = "0.9"
 log = { version = "0.4", optional = true }
@@ -28,9 +30,6 @@ num-traits = { version = "0.2", default-features = false, features = ["std"] }
 
 [dev-dependencies]
 criterion = "0.5.1"
-
-[workspace]
-members = ["floccus-proc"]
 
 [features]
 default = ["array", "parallel", "debug", "double_precision"]
