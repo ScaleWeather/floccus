@@ -1,3 +1,5 @@
+use std::marker::PhantomData;
+
 use uom::si::{
     pressure::{pascal, pound_force_per_square_inch},
     ratio::{per_mille, percent, ratio},
@@ -6,6 +8,7 @@ use uom::si::{
 
 use crate::quantities::*;
 
+pub(crate) trait ReferenceAtmosphere {}
 pub(crate) trait TestingQuantity: ThermodynamicQuantity {
     fn default_si() -> Self;
     fn default_imperial() -> Self;
@@ -57,7 +60,7 @@ impl TestingQuantity for AtmosphericPressure {
 
 impl TestingQuantity for VapourPressure {
     fn default_si() -> Self {
-        Self::new::<pascal>(1706.0)
+        Self::new::<pascal>(1920.0)
     }
     fn default_imperial() -> Self {
         let value = Self::default_si().0.get::<pound_force_per_square_inch>();
@@ -68,7 +71,7 @@ impl TestingQuantity for VapourPressure {
 
 impl TestingQuantity for SaturationVapourPressure {
     fn default_si() -> Self {
-        Self::new::<pascal>(2339.0)
+        Self::new::<pascal>(3535.0)
     }
     fn default_imperial() -> Self {
         let value = Self::default_si().0.get::<pound_force_per_square_inch>();
@@ -79,7 +82,7 @@ impl TestingQuantity for SaturationVapourPressure {
 
 impl TestingQuantity for MixingRatio {
     fn default_si() -> Self {
-        Self::new::<ratio>(0.01064)
+        Self::new::<ratio>(0.012)
     }
     fn default_imperial() -> Self {
         let value = Self::default_si().0.get::<per_mille>();
@@ -90,7 +93,7 @@ impl TestingQuantity for MixingRatio {
 
 impl TestingQuantity for SaturationMixingRatio {
     fn default_si() -> Self {
-        Self::new::<ratio>(0.01467)
+        Self::new::<ratio>(0.022)
     }
     fn default_imperial() -> Self {
         let value = Self::default_si().0.get::<per_mille>();

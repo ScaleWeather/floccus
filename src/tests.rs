@@ -189,12 +189,7 @@ pub fn test_with_3args<
 ) {
     //the first promise of the crate is that returned value
     //is calculated correctly
-    let result = F::compute(
-        I1::default_si(),
-        I2::default_si(),
-        I3::default_si(),
-    )
-    .unwrap();
+    let result = F::compute(I1::default_si(), I2::default_si(), I3::default_si()).unwrap();
     assert_approx_eq!(
         Float,
         result.get_si_value(),

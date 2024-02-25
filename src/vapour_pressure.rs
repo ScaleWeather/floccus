@@ -35,16 +35,8 @@ impl Formula2<FormulaQuantity, SpecificHumidity, AtmosphericPressure> for Defini
         specific_humidity: SpecificHumidity,
         pressure: AtmosphericPressure,
     ) -> Result<(), InputError> {
-        let specific_humidity_si = specific_humidity.get_si_value();
-        let pressure_si = pressure.get_si_value();
-
-        if !(0.00001..=2.0).contains(&specific_humidity_si) {
-            return Err(InputError::OutOfRange(String::from("specific_humidity")));
-        }
-
-        if !(100.0..=150_000.0).contains(&pressure_si) {
-            return Err(InputError::OutOfRange(String::from("pressure")));
-        }
+        specific_humidity.check_range_si(0.00001, 2.0)?;
+        pressure.check_range_si(100.0, 150_000.0)?;
 
         Ok(())
     }
@@ -77,18 +69,8 @@ impl Formula2<FormulaQuantity, SaturationVapourPressure, RelativeHumidity> for D
         saturation_vapour_pressure: SaturationVapourPressure,
         relative_humidity: RelativeHumidity,
     ) -> Result<(), InputError> {
-        let saturation_vapour_pressure_si = saturation_vapour_pressure.get_si_value();
-        let relative_humidity_si = relative_humidity.get_si_value();
-
-        if !(0.0..=2.0).contains(&relative_humidity_si) {
-            return Err(InputError::OutOfRange(String::from("relative_humidity")));
-        }
-
-        if !(0.0..=50_000.0).contains(&saturation_vapour_pressure_si) {
-            return Err(InputError::OutOfRange(String::from(
-                "saturation_vapour_pressure",
-            )));
-        }
+        relative_humidity.check_range_si(0.0, 2.0)?;
+        saturation_vapour_pressure.check_range_si(0.0, 50_000.0)?;
 
         Ok(())
     }
@@ -120,16 +102,8 @@ impl Formula2<FormulaQuantity, DewPointTemperature, AtmosphericPressure> for Buc
         dewpoint: DewPointTemperature,
         pressure: AtmosphericPressure,
     ) -> Result<(), InputError> {
-        let dewpoint_si = dewpoint.get_si_value();
-        let pressure_si = pressure.get_si_value();
-
-        if !(232.0..=324.0).contains(&dewpoint_si) {
-            return Err(InputError::OutOfRange(String::from("dewpoint")));
-        }
-
-        if !(100.0..=150_000.0).contains(&pressure_si) {
-            return Err(InputError::OutOfRange(String::from("pressure")));
-        }
+        dewpoint.check_range_si(232.0, 324.0)?;
+        pressure.check_range_si(100.0, 150_000.0)?;
 
         Ok(())
     }
@@ -177,16 +151,8 @@ impl Formula2<FormulaQuantity, DewPointTemperature, AtmosphericPressure> for Buc
         dewpoint: DewPointTemperature,
         pressure: AtmosphericPressure,
     ) -> Result<(), InputError> {
-        let dewpoint_si = dewpoint.get_si_value();
-        let pressure_si = pressure.get_si_value();
-
-        if !(193.0..=274.0).contains(&dewpoint_si) {
-            return Err(InputError::OutOfRange(String::from("dewpoint")));
-        }
-
-        if !(100.0..=150_000.0).contains(&pressure_si) {
-            return Err(InputError::OutOfRange(String::from("pressure")));
-        }
+        dewpoint.check_range_si(193.0, 274.0)?;
+        pressure.check_range_si(100.0, 150_000.0)?;
 
         Ok(())
     }
@@ -234,16 +200,8 @@ impl Formula2<FormulaQuantity, DewPointTemperature, AtmosphericPressure> for Buc
         dewpoint: DewPointTemperature,
         pressure: AtmosphericPressure,
     ) -> Result<(), InputError> {
-        let dewpoint_si = dewpoint.get_si_value();
-        let pressure_si = pressure.get_si_value();
-
-        if !(253.0..=324.0).contains(&dewpoint_si) {
-            return Err(InputError::OutOfRange(String::from("dewpoint")));
-        }
-
-        if !(100.0..=150_000.0).contains(&pressure_si) {
-            return Err(InputError::OutOfRange(String::from("pressure")));
-        }
+        dewpoint.check_range_si(253.0, 324.0)?;
+        pressure.check_range_si(100.0, 150_000.0)?;
 
         Ok(())
     }
@@ -283,11 +241,7 @@ pub struct Buck3Simplified;
 impl Formula1<FormulaQuantity, DewPointTemperature> for Buck3Simplified {
     #[inline(always)]
     fn validate_inputs(dewpoint: DewPointTemperature) -> Result<(), InputError> {
-        let dewpoint_si = dewpoint.get_si_value();
-
-        if !(253.0..=324.0).contains(&dewpoint_si) {
-            return Err(InputError::OutOfRange(String::from("dewpoint")));
-        }
+        dewpoint.check_range_si(253.0, 324.0)?;
 
         Ok(())
     }
@@ -324,16 +278,8 @@ impl Formula2<FormulaQuantity, DewPointTemperature, AtmosphericPressure> for Buc
         dewpoint: DewPointTemperature,
         pressure: AtmosphericPressure,
     ) -> Result<(), InputError> {
-        let dewpoint_si = dewpoint.get_si_value();
-        let pressure_si = pressure.get_si_value();
-
-        if !(223.0..=274.0).contains(&dewpoint_si) {
-            return Err(InputError::OutOfRange(String::from("dewpoint")));
-        }
-
-        if !(100.0..=150_000.0).contains(&pressure_si) {
-            return Err(InputError::OutOfRange(String::from("pressure")));
-        }
+        dewpoint.check_range_si(223.0, 274.0)?;
+        pressure.check_range_si(100.0, 150_000.0)?;
 
         Ok(())
     }
@@ -373,11 +319,7 @@ pub struct Buck4Simplified;
 impl Formula1<FormulaQuantity, DewPointTemperature> for Buck4Simplified {
     #[inline(always)]
     fn validate_inputs(dewpoint: DewPointTemperature) -> Result<(), InputError> {
-        let dewpoint_si = dewpoint.get_si_value();
-
-        if !(223.0..=274.0).contains(&dewpoint_si) {
-            return Err(InputError::OutOfRange(String::from("dewpoint")));
-        }
+        dewpoint.check_range_si(223.0, 274.0)?;
 
         Ok(())
     }
@@ -410,11 +352,7 @@ pub struct Tetens1;
 impl Formula1<FormulaQuantity, DewPointTemperature> for Tetens1 {
     #[inline(always)]
     fn validate_inputs(dewpoint: DewPointTemperature) -> Result<(), InputError> {
-        let dewpoint_si = dewpoint.get_si_value();
-
-        if !(273.0..=353.0).contains(&dewpoint_si) {
-            return Err(InputError::OutOfRange(String::from("dewpoint")));
-        }
+        dewpoint.check_range_si(273.0, 353.0)?;
 
         Ok(())
     }
@@ -447,11 +385,7 @@ pub struct Wexler1;
 impl Formula1<FormulaQuantity, DewPointTemperature> for Wexler1 {
     #[inline(always)]
     fn validate_inputs(dewpoint: DewPointTemperature) -> Result<(), InputError> {
-        let dewpoint_si = dewpoint.get_si_value();
-
-        if !(273.0..=374.0).contains(&dewpoint_si) {
-            return Err(InputError::OutOfRange(String::from("dewpoint")));
-        }
+        dewpoint.check_range_si(273.0, 374.0)?;
 
         Ok(())
     }
@@ -496,11 +430,8 @@ pub struct Wexler2;
 impl Formula1<FormulaQuantity, DewPointTemperature> for Wexler2 {
     #[inline(always)]
     fn validate_inputs(dewpoint: DewPointTemperature) -> Result<(), InputError> {
-        let dewpoint_si = dewpoint.get_si_value();
+        dewpoint.check_range_si(173.0, 274.0)?;
 
-        if !(173.0..=274.0).contains(&dewpoint_si) {
-            return Err(InputError::OutOfRange(String::from("dewpoint")));
-        }
         Ok(())
     }
 
@@ -550,148 +481,88 @@ mod tests {
         );
     }
 
-    // #[test]
-    // fn definition2() {
-    //     test_with_2args::<FormulaQuantity, SaturationVapourPressure, RelativeHumidity, Definition2>(
-    //         Argument {
-    //             name: "saturation_vapour_pressure",
-    //             def_val: 3550.0,
-    //             range: [0.0, 50_000.0],
-    //         },
-    //         Argument {
-    //             name: "relative_humidity",
-    //             def_val: 0.5,
-    //             range: [0.0, 2.0],
-    //         },
-    //         1775.0,
-    //     );
-    // }
+    #[test]
+    fn definition2() {
+        test_with_2args::<FormulaQuantity, SaturationVapourPressure, RelativeHumidity, Definition2>(
+            Argument::new([0.0, 50_000.0]),
+            Argument::new([0.0, 2.0]),
+            1767.5,
+        );
+    }
 
-    // #[test]
-    // fn buck1() {
-    //     test_with_2args::<FormulaQuantity, DewPointTemperature, AtmosphericPressure, Buck1>(
-    //         Argument {
-    //             name: "dewpoint",
-    //             def_val: 300.0,
-    //             range: [232.0, 324.0],
-    //         },
-    //         Argument {
-    //             name: "pressure",
-    //             def_val: 101325.0,
-    //             range: [100.0, 150_000.0],
-    //         },
-    //         3550.6603579471303,
-    //     );
-    // }
+    #[test]
+    fn buck1() {
+        test_with_2args::<FormulaQuantity, DewPointTemperature, AtmosphericPressure, Buck1>(
+            Argument::new([232.0, 324.0]),
+            Argument::new([100.0, 150_000.0]),
+            1927.0852679081806,
+        );
+    }
 
-    // #[test]
-    // fn buck2() {
-    //     test_with_2args::<FormulaQuantity, DewPointTemperature, AtmosphericPressure, Buck2>(
-    //         Argument {
-    //             name: "dewpoint",
-    //             def_val: 250.0,
-    //             range: [193.0, 274.0],
-    //         },
-    //         Argument {
-    //             name: "pressure",
-    //             def_val: 101325.0,
-    //             range: [100.0, 150_000.0],
-    //         },
-    //         76.38781790372722,
-    //     );
-    // }
+    #[test]
+    fn buck2() {
+        test_with_2args::<FormulaQuantity, DewPointTemperature, AtmosphericPressure, Buck2>(
+            Argument::new([193.0, 274.0]),
+            Argument::new([100.0, 150_000.0]),
+            76.38781790372722,
+        );
+    }
 
-    // #[test]
-    // fn buck3() {
-    //     test_with_2args::<FormulaQuantity, DewPointTemperature, AtmosphericPressure, Buck3>(
-    //         Argument {
-    //             name: "dewpoint",
-    //             def_val: 300.0,
-    //             range: [253.0, 324.0],
-    //         },
-    //         Argument {
-    //             name: "pressure",
-    //             def_val: 101325.0,
-    //             range: [100.0, 150_000.0],
-    //         },
-    //         3548.5041048035896,
-    //     );
-    // }
+    #[test]
+    fn buck3() {
+        test_with_2args::<FormulaQuantity, DewPointTemperature, AtmosphericPressure, Buck3>(
+            Argument::new([253.0, 324.0]),
+            Argument::new([100.0, 150_000.0]),
+            3548.5041048035896,
+        );
+    }
 
-    // #[test]
-    // fn buck4() {
-    //     test_with_2args::<FormulaQuantity, DewPointTemperature, AtmosphericPressure, Buck4>(
-    //         Argument {
-    //             name: "dewpoint",
-    //             def_val: 250.0,
-    //             range: [223.0, 274.0],
-    //         },
-    //         Argument {
-    //             name: "pressure",
-    //             def_val: 101325.0,
-    //             range: [100.0, 150_000.0],
-    //         },
-    //         76.38685471836712,
-    //     );
-    // }
+    #[test]
+    fn buck4() {
+        test_with_2args::<FormulaQuantity, DewPointTemperature, AtmosphericPressure, Buck4>(
+            Argument::new([223.0, 274.0]),
+            Argument::new([100.0, 150_000.0]),
+            76.38685471836712,
+        );
+    }
 
-    // #[test]
-    // fn buck3_simplified() {
-    //     test_with_1arg::<FormulaQuantity, DewPointTemperature, Buck3Simplified>(
-    //         Argument {
-    //             name: "dewpoint",
-    //             def_val: 300.0,
-    //             range: [253.0, 324.0],
-    //         },
-    //         3533.6421536199978,
-    //     );
-    // }
+    #[test]
+    fn buck3_simplified() {
+        test_with_1arg::<FormulaQuantity, DewPointTemperature, Buck3Simplified>(
+            Argument::new([253.0, 324.0]),
+            3533.6421536199978,
+        );
+    }
 
-    // #[test]
-    // fn buck4_simplified() {
-    //     test_with_1arg::<FormulaQuantity, DewPointTemperature, Buck4Simplified>(
-    //         Argument {
-    //             name: "dewpoint",
-    //             def_val: 250.0,
-    //             range: [223.0, 274.0],
-    //         },
-    //         76.04197508519536,
-    //     );
-    // }
+    #[test]
+    fn buck4_simplified() {
+        test_with_1arg::<FormulaQuantity, DewPointTemperature, Buck4Simplified>(
+            Argument::new([223.0, 274.0]),
+            76.04197508519536,
+        );
+    }
 
-    // #[test]
-    // fn tetens1() {
-    //     test_with_1arg::<FormulaQuantity, DewPointTemperature, Tetens1>(
-    //         Argument {
-    //             name: "dewpoint",
-    //             def_val: 300.0,
-    //             range: [273.0, 353.0],
-    //         },
-    //         3533.969137160892,
-    //     );
-    // }
+    #[test]
+    fn tetens1() {
+        test_with_1arg::<FormulaQuantity, DewPointTemperature, Tetens1>(
+            Argument::new([273.0, 353.0]),
+            3533.969137160892,
+        );
+    }
 
-    // #[test]
-    // fn wexler1() {
-    //     test_with_1arg::<FormulaQuantity, DewPointTemperature, Wexler1>(
-    //         Argument {
-    //             name: "dewpoint",
-    //             def_val: 300.0,
-    //             range: [273.0, 374.0],
-    //         },
-    //         3535.4235919263083,
-    //     );
-    // }
+    #[test]
+    fn wexler1() {
+        test_with_1arg::<FormulaQuantity, DewPointTemperature, Wexler1>(
+            Argument::new([273.0, 374.0]),
+            3535.4235919263083,
+        );
+    }
 
-    // #[test]
-    // fn wexler2() {
-    //     test_with_1arg::<FormulaQuantity, DewPointTemperature, Wexler2>(
-    //         Argument {
-    //             name: "dewpoint",
-    //             def_val: 250.0,
-    //             range: [173.0, 274.0],
-    //         },
-    //         76.04351136780438,
-    //     );
-    // }
+    #[test]
+    fn wexler2() {
+        test_with_1arg::<FormulaQuantity, DewPointTemperature, Wexler2>(
+            Argument::new([173.0, 274.0]),
+            76.04351136780438,
+        );
+    }
 }

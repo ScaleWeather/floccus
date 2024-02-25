@@ -20,6 +20,8 @@ pub trait ThermodynamicQuantity:
         Self::type_name_as_str()
     }
 
+    #[must_use]
+    #[inline(always)]
     fn check_range_si(&self, lower_bound: Float, upper_bound: Float) -> Result<(), InputError> {
         if !(lower_bound..=upper_bound).contains(&self.get_si_value()) {
             return Err(InputError::OutOfRange(self.name().to_string()));
