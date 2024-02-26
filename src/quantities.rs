@@ -14,7 +14,6 @@ pub trait ThermodynamicQuantity:
     Debug + Clone + Copy + PartialEq + PartialOrd + Default + Send + Sync + QuantityName
 {
     fn get_si_value(&self) -> Float;
-    fn new_si(value: Float) -> Self;
 
     fn name(&self) -> &'static str {
         Self::type_name_as_str()
@@ -222,63 +221,35 @@ impl ThermodynamicQuantity for DryBulbTemperature {
     fn get_si_value(&self) -> Float {
         self.0.get::<kelvin>()
     }
-
-    fn new_si(value: Float) -> Self {
-        Self::new::<kelvin>(value)
-    }
 }
 impl ThermodynamicQuantity for WetBulbTemperature {
     fn get_si_value(&self) -> Float {
         self.0.get::<kelvin>()
-    }
-
-    fn new_si(value: Float) -> Self {
-        Self::new::<kelvin>(value)
     }
 }
 impl ThermodynamicQuantity for DewPointTemperature {
     fn get_si_value(&self) -> Float {
         self.0.get::<kelvin>()
     }
-
-    fn new_si(value: Float) -> Self {
-        Self::new::<kelvin>(value)
-    }
 }
 impl ThermodynamicQuantity for VirtualTemperature {
     fn get_si_value(&self) -> Float {
         self.0.get::<kelvin>()
-    }
-
-    fn new_si(value: Float) -> Self {
-        Self::new::<kelvin>(value)
     }
 }
 impl ThermodynamicQuantity for PotentialTemperature {
     fn get_si_value(&self) -> Float {
         self.0.get::<kelvin>()
     }
-
-    fn new_si(value: Float) -> Self {
-        Self::new::<kelvin>(value)
-    }
 }
 impl ThermodynamicQuantity for EquivalentPotentialTemperature {
     fn get_si_value(&self) -> Float {
         self.0.get::<kelvin>()
     }
-
-    fn new_si(value: Float) -> Self {
-        Self::new::<kelvin>(value)
-    }
 }
 impl ThermodynamicQuantity for WetBulbPotentialTemperature {
     fn get_si_value(&self) -> Float {
         self.0.get::<kelvin>()
-    }
-
-    fn new_si(value: Float) -> Self {
-        Self::new::<kelvin>(value)
     }
 }
 
@@ -286,27 +257,15 @@ impl ThermodynamicQuantity for AtmosphericPressure {
     fn get_si_value(&self) -> Float {
         self.0.get::<pascal>()
     }
-
-    fn new_si(value: Float) -> Self {
-        Self::new::<pascal>(value)
-    }
 }
 impl ThermodynamicQuantity for VapourPressure {
     fn get_si_value(&self) -> Float {
         self.0.get::<pascal>()
     }
-
-    fn new_si(value: Float) -> Self {
-        Self::new::<pascal>(value)
-    }
 }
 impl ThermodynamicQuantity for SaturationVapourPressure {
     fn get_si_value(&self) -> Float {
         self.0.get::<pascal>()
-    }
-
-    fn new_si(value: Float) -> Self {
-        Self::new::<pascal>(value)
     }
 }
 
@@ -314,19 +273,11 @@ impl ThermodynamicQuantity for VapourPressureDeficit {
     fn get_si_value(&self) -> Float {
         self.0.get::<pascal>()
     }
-
-    fn new_si(value: Float) -> Self {
-        Self::new::<pascal>(value)
-    }
 }
 
 impl ThermodynamicQuantity for MixingRatio {
     fn get_si_value(&self) -> Float {
         self.0.get::<ratio>()
-    }
-
-    fn new_si(value: Float) -> Self {
-        Self::new::<ratio>(value)
     }
 }
 
@@ -334,27 +285,15 @@ impl ThermodynamicQuantity for SaturationMixingRatio {
     fn get_si_value(&self) -> Float {
         self.0.get::<ratio>()
     }
-
-    fn new_si(value: Float) -> Self {
-        Self::new::<ratio>(value)
-    }
 }
 
 impl ThermodynamicQuantity for SpecificHumidity {
     fn get_si_value(&self) -> Float {
         self.0.get::<ratio>()
     }
-
-    fn new_si(value: Float) -> Self {
-        Self::new::<ratio>(value)
-    }
 }
 impl ThermodynamicQuantity for RelativeHumidity {
     fn get_si_value(&self) -> Float {
         self.0.get::<ratio>()
-    }
-
-    fn new_si(value: Float) -> Self {
-        Self::new::<ratio>(value)
     }
 }
