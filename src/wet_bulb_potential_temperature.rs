@@ -13,6 +13,8 @@ use crate::{
     errors::InputError,
 };
 
+type FormulaQuantity = WetBulbPotentialTemperature;
+
 /// Formula for computing wet bulb potential temperature from equivalent potential temperature.
 ///
 /// Derived by R. Davies-Jones (2008) [(doi:10.1175/2007MWR2224.1)](https://doi.org/10.1175/2007MWR2224.1)
@@ -20,18 +22,12 @@ use crate::{
 /// Valid `temperature` range: 257K - 377K
 pub struct DaviesJones1;
 
-impl Formula1<WetBulbPotentialTemperature, EquivalentPotentialTemperature> for DaviesJones1 {
+impl Formula1<FormulaQuantity, EquivalentPotentialTemperature> for DaviesJones1 {
     #[inline(always)]
     fn validate_inputs(
         equivalent_potential_temperature: EquivalentPotentialTemperature,
     ) -> Result<(), InputError> {
-        let equivalent_potential_temperature_si = equivalent_potential_temperature.get_si_value();
-
-        if !(257.0..=377.0).contains(&equivalent_potential_temperature_si) {
-            return Err(InputError::OutOfRange(String::from(
-                "equivalent_potential_temperature",
-            )));
-        }
+        equivalent_potential_temperature.check_range_si(257.0, 377.0)?;
 
         Ok(())
     }
@@ -53,21 +49,18 @@ impl Formula1<WetBulbPotentialTemperature, EquivalentPotentialTemperature> for D
 #[cfg(test)]
 mod tests {
     use crate::{
-        quantities::{EquivalentPotentialTemperature, WetBulbPotentialTemperature},
-        tests::{test_with_1arg, Argument},
+        quantities::EquivalentPotentialTemperature,
+        tests::{test_with_1arg, testing_traits::ReferenceAtmosphere, Argument},
     };
 
-    use super::DaviesJones1;
+    use super::*;
 
     #[test]
     fn davies_jones1() {
-        test_with_1arg::<WetBulbPotentialTemperature, EquivalentPotentialTemperature, DaviesJones1>(
-            Argument {
-                name: "equivalent_potential_temperature",
-                def_val: 300.0,
-                range: [257.0, 377.0],
-            },
-            281.17941447108467,
+        test_with_1arg::<FormulaQuantity, EquivalentPotentialTemperature, DaviesJones1>(
+            Argument::new([257.0, 377.0]),
+            ReferenceAtmosphere::Normal,
+            1e-12,
         );
     }
 }
