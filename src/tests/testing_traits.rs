@@ -208,3 +208,22 @@ impl TestingQuantity for SpecificHumidity {
         }
     }
 }
+
+impl TestingQuantity for VapourPressureDeficit {
+    fn new_si(value: Float) -> Self {
+        Self::new::<pascal>(value)
+    }
+
+    fn imperial(&self) -> Self {
+        let value = self.0.get::<pound_force_per_square_inch>();
+
+        Self::new::<pound_force_per_square_inch>(value)
+    }
+
+    fn ref_val_si(atm: ReferenceAtmosphere) -> Self {
+        match atm {
+            ReferenceAtmosphere::Normal => Self::new::<pascal>(VPD_NORM),
+            ReferenceAtmosphere::Freezing => Self::new::<pascal>(VPD_FREEZ),
+        }
+    }
+}
