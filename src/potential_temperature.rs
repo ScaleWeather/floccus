@@ -60,7 +60,7 @@ impl Formula3<FormulaQuantity, DryBulbTemperature, AtmosphericPressure, VapourPr
             )));
         }
 
-        if vapour_pressure.get_si_value() > pressure.get_si_value() {
+        if vapour_pressure.0 > pressure.0 {
             return Err(InputError::IncorrectArgumentSet(String::from(
                 "vapour_pressure cannot be greater or equal to pressure",
             )));

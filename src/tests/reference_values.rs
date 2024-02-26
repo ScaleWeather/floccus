@@ -16,7 +16,6 @@ pub(crate) const THETAW_NORM: Float = 292.0717306393948;
 pub(crate) const WBT_NORM: Float = 293.42728654340516;
 pub(crate) const VRT_NORM: Float = 302.1926517941886;
 
-
 pub(crate) const TEMP_FREEZ: Float = 260.0;
 pub(crate) const DWPT_FREEZ: Float = 255.0;
 pub(crate) const PRES_FREEZ: Float = 100000.0;

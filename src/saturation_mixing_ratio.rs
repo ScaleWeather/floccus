@@ -3,18 +3,18 @@
 //! Saturation mixing ration is the value of the mixing ratio of saturated air at the
 //! given temperature and pressure ([AMETSOC Glossary](https://glossary.ametsoc.org/wiki/Saturation_mixing_ratio)).
 
-use crate::formula::{Formula1, Formula2};
+use crate::formula::Formula2;
 use crate::quantities::{
-    AtmosphericPressure, DryBulbTemperature, SaturationMixingRatio, SaturationVapourPressure,
-    ThermodynamicQuantity,
+    AtmosphericPressure, MixingRatio, RelativeHumidity, SaturationMixingRatio,
+    SaturationVapourPressure, ThermodynamicQuantity,
 };
+use crate::Float;
 use crate::{constants::EPSILON, errors::InputError};
-use crate::{saturation_vapour_pressure, Float};
 use float_cmp::approx_eq;
 
 type FormulaQuantity = SaturationMixingRatio;
 
-/// Formula for computing mixing ratio of unsaturated air from air pressure and vapour pressure
+/// Formula for computing saturation mixing ratio of unsaturated air from air pressure and vapour pressure
 ///
 /// Valid `pressure` range: 100Pa - 150000Pa
 ///
@@ -29,20 +29,21 @@ impl Formula2<FormulaQuantity, AtmosphericPressure, SaturationVapourPressure> fo
         pressure: AtmosphericPressure,
         saturation_vapour_pressure: SaturationVapourPressure,
     ) -> Result<(), InputError> {
-        let pressure_si = pressure.get_si_value();
-        let saturation_vapour_pressure_si = saturation_vapour_pressure.get_si_value();
+        pressure.check_range_si(100.0, 150_000.0)?;
+        saturation_vapour_pressure.check_range_si(0.0, 50_000.0)?;
 
-        if !(100.0..=150_000.0).contains(&pressure_si) {
-            return Err(InputError::OutOfRange(String::from("pressure")));
-        }
-
-        if !(0.0..=50_000.0).contains(&saturation_vapour_pressure_si) {
+        if saturation_vapour_pressure.0 > pressure.0 {
             return Err(InputError::OutOfRange(String::from(
-                "saturation_vapour_pressure",
+                "saturation_vapour_pressure cannot be greater than pressure",
             )));
         }
 
-        if approx_eq!(Float, pressure_si, saturation_vapour_pressure_si, ulps = 2) {
+        if approx_eq!(
+            Float,
+            pressure.get_si_value(),
+            saturation_vapour_pressure.get_si_value(),
+            ulps = 2
+        ) {
             return Err(InputError::IncorrectArgumentSet(String::from(
                 "pressure and saturation_vapour_pressure cannot be equal",
             )));
@@ -61,147 +62,63 @@ impl Formula2<FormulaQuantity, AtmosphericPressure, SaturationVapourPressure> fo
     }
 }
 
-/// Formula for computing mixing ratio of unsaturated air from dewpoint temperature and pressure.
-/// Optimised for performance - uses [`Tetens1`].
+/// Formula for computing saturation mixing ratio of unsaturated air from
+/// mixing ratio and relative humidity.
 ///
-/// Valid `dewpoint` range: 273K - 353K
+/// Valid `mixing_ratio` range: 0.000_000_000_1 - 1.0
 ///
-/// Valid `pressure` range: 100Pa - 150000Pa
-pub struct Performance1;
+/// Valid `relative_humditity` range: 0.000_000_000_1 - 2.0
+pub struct Definition2;
 
-impl Formula2<FormulaQuantity, DryBulbTemperature, AtmosphericPressure> for Performance1 {
+impl Formula2<FormulaQuantity, MixingRatio, RelativeHumidity> for Definition2 {
     #[inline(always)]
     fn validate_inputs(
-        temperature: DryBulbTemperature,
-        pressure: AtmosphericPressure,
+        mixing_ratio: MixingRatio,
+        relative_humidity: RelativeHumidity,
     ) -> Result<(), InputError> {
-        let temperature_si = temperature.get_si_value();
-        let pressure_si = pressure.get_si_value();
-
-        if !(273.0..=353.0).contains(&temperature_si) {
-            return Err(InputError::OutOfRange(String::from("temperature")));
-        }
-
-        if !(100.0..=150_000.0).contains(&pressure_si) {
-            return Err(InputError::OutOfRange(String::from("pressure")));
-        }
+        mixing_ratio.check_range_si(0.000_000_000_1, 1.0)?;
+        relative_humidity.check_range_si(0.000_000_000_1, 2.0)?;
 
         Ok(())
     }
 
     #[inline(always)]
     fn compute_unchecked(
-        temperature: DryBulbTemperature,
-        pressure: AtmosphericPressure,
+        mixing_ratio: MixingRatio,
+        relative_humidity: RelativeHumidity,
     ) -> SaturationMixingRatio {
-        let saturation_vapour_pressure =
-            saturation_vapour_pressure::Tetens1::compute_unchecked(temperature);
-
-        Definition1::compute_unchecked(pressure, saturation_vapour_pressure)
-    }
-}
-
-/// Formula for computing mixing ratio of unsaturated air from dewpoint temperature and pressure.
-/// Optimised for accuracy - uses [`Buck1`].
-///
-/// Valid `dewpoint` range: 232K - 324K
-///
-/// Valid `pressure` range: 100Pa - 150000Pa
-pub struct Accuracy1;
-
-impl Formula2<FormulaQuantity, DryBulbTemperature, AtmosphericPressure> for Accuracy1 {
-    #[inline(always)]
-    fn validate_inputs(
-        temperature: DryBulbTemperature,
-        pressure: AtmosphericPressure,
-    ) -> Result<(), InputError> {
-        let temperature_si = temperature.get_si_value();
-        let pressure_si = pressure.get_si_value();
-
-        if !(232.0..=324.0).contains(&temperature_si) {
-            return Err(InputError::OutOfRange(String::from("temperature")));
-        }
-
-        if !(100.0..=150_000.0).contains(&pressure_si) {
-            return Err(InputError::OutOfRange(String::from("pressure")));
-        }
-        Ok(())
-    }
-
-    #[inline(always)]
-    fn compute_unchecked(
-        temperature: DryBulbTemperature,
-        pressure: AtmosphericPressure,
-    ) -> SaturationMixingRatio {
-        let saturation_vapour_pressure =
-            saturation_vapour_pressure::Buck1::compute_unchecked(temperature, pressure);
-
-        Definition1::compute_unchecked(pressure, saturation_vapour_pressure)
+        SaturationMixingRatio(mixing_ratio.0 / relative_humidity.0)
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        quantities::DryBulbTemperature,
-        tests::{test_with_2args, Argument},
-    };
+    use crate::tests::{test_with_2args, testing_traits::ReferenceAtmosphere, Argument};
 
     use super::*;
 
     #[test]
-    fn general1() {
+    fn definition1() {
         test_with_2args::<
             FormulaQuantity,
             AtmosphericPressure,
             SaturationVapourPressure,
             Definition1,
         >(
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [100.0, 150_000.0],
-            },
-            Argument {
-                name: "saturation_vapour_pressure",
-                def_val: 3500.0,
-                range: [0.0, 50_000.0],
-            },
-            0.022253316630823517,
+            Argument::new([100.0, 150_000.0]),
+            Argument::new([0.0, 50_000.0]),
+            ReferenceAtmosphere::Normal,
+            1e-2,
         );
     }
 
     #[test]
-    fn performance1() {
-        test_with_2args::<FormulaQuantity, DryBulbTemperature, AtmosphericPressure, Performance1>(
-            Argument {
-                name: "temperature",
-                def_val: 300.0,
-                range: [273.0, 353.0],
-            },
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [100.0, 150_000.0],
-            },
-            0.022477100514593465,
-        );
-    }
-
-    #[test]
-    fn accuracy1() {
-        test_with_2args::<FormulaQuantity, DryBulbTemperature, AtmosphericPressure, Accuracy1>(
-            Argument {
-                name: "temperature",
-                def_val: 300.0,
-                range: [232.0, 324.0],
-            },
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [100.0, 150_000.0],
-            },
-            0.022587116896465847,
+    fn definition2() {
+        test_with_2args::<FormulaQuantity, MixingRatio, RelativeHumidity, Definition2>(
+            Argument::new([0.000_000_000_1, 1.0]),
+            Argument::new([0.000_000_000_1, 2.0]),
+            ReferenceAtmosphere::Normal,
+            1e-12,
         );
     }
 }
