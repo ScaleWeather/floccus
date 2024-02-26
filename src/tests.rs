@@ -37,8 +37,6 @@ fn check_result<T: TestingQuantity>(result: T, atm: ReferenceAtmosphere, eps: Fl
     let expected = T::ref_val_si(atm).get_si_value();
     let result = result.get_si_value();
 
-    dbg!(result, expected, eps);
-
     assert_approx_eq!(Float, result, expected, epsilon = eps)
 }
 

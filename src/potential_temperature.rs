@@ -4,20 +4,20 @@
 //! adiabatically and reversibly from its initial state to a
 //! standard pressure, p0 = 100 kPa ([AMETSOC Glossary](https://glossary.ametsoc.org/wiki/Potential_temperature)).
 
+use crate::constants::KAPPA;
+use crate::errors::InputError;
 use crate::formula::Formula3;
 use crate::quantities::{
     AtmosphericPressure, DryBulbTemperature, PotentialTemperature, ThermodynamicQuantity,
     VapourPressure,
 };
-use crate::{
-    constants::{C_P, R_D},
-    errors::InputError,
-};
-use crate::{Float, Storage};
+use crate::Float;
 use float_cmp::approx_eq;
 use uom::si::pressure::pascal;
 use uom::si::ratio::ratio;
 use uom::si::thermodynamic_temperature::kelvin;
+
+type FormulaQuantity = PotentialTemperature;
 
 /// Formula for computing potential temperature of dry air from temperature, pressure and vapour pressure.
 ///
@@ -36,7 +36,7 @@ use uom::si::thermodynamic_temperature::kelvin;
 /// in which case floating-point exponentation of negative number occurs.
 pub struct Definition1;
 
-impl Formula3<PotentialTemperature, DryBulbTemperature, AtmosphericPressure, VapourPressure>
+impl Formula3<FormulaQuantity, DryBulbTemperature, AtmosphericPressure, VapourPressure>
     for Definition1
 {
     #[inline(always)]
@@ -45,31 +45,24 @@ impl Formula3<PotentialTemperature, DryBulbTemperature, AtmosphericPressure, Vap
         pressure: AtmosphericPressure,
         vapour_pressure: VapourPressure,
     ) -> Result<(), InputError> {
-        let temperature_si = temperature.get_si_value();
-        let pressure_si = pressure.get_si_value();
-        let vapour_pressure_si = vapour_pressure.get_si_value();
+        temperature.check_range_si(253.0, 324.0)?;
+        pressure.check_range_si(100.0, 150_000.0)?;
+        vapour_pressure.check_range_si(0.0, 10_000.0)?;
 
-        if !(253.0..=324.0).contains(&temperature_si) {
-            return Err(InputError::OutOfRange(String::from("temperature")));
-        }
-
-        if !(100.0..=150_000.0).contains(&pressure_si) {
-            return Err(InputError::OutOfRange(String::from("pressure")));
-        }
-
-        if !(0.0..=10_000.0).contains(&vapour_pressure_si) {
-            return Err(InputError::OutOfRange(String::from("vapour_pressure")));
-        }
-
-        if approx_eq!(Float, pressure_si, vapour_pressure_si, ulps = 2) {
+        if approx_eq!(
+            Float,
+            pressure.get_si_value(),
+            vapour_pressure.get_si_value(),
+            ulps = 2
+        ) {
             return Err(InputError::IncorrectArgumentSet(String::from(
                 "pressure and vapour_pressure cannot be equal",
             )));
         }
 
-        if vapour_pressure_si > pressure_si {
+        if vapour_pressure.get_si_value() > pressure.get_si_value() {
             return Err(InputError::IncorrectArgumentSet(String::from(
-                "vapour_pressure cannot be higher than pressure",
+                "vapour_pressure cannot be greater or equal to pressure",
             )));
         }
 
@@ -86,50 +79,32 @@ impl Formula3<PotentialTemperature, DryBulbTemperature, AtmosphericPressure, Vap
         let pressure = pressure.0.get::<pascal>();
         let vapour_pressure = vapour_pressure.0.get::<pascal>();
 
-        let kappa = (R_D / C_P).get::<ratio>();
+        let kappa = KAPPA.get::<ratio>();
         let result = temperature * (100_000.0 / (pressure - vapour_pressure)).powf(kappa);
 
-        let result = Storage::ThermodynamicTemperature::new::<kelvin>(result);
-
-        PotentialTemperature(result)
+        PotentialTemperature::new::<kelvin>(result)
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use std::marker::PhantomData;
-
-    use crate::tests::{test_with_3args, Argument};
+    use crate::tests::{test_with_3args, testing_traits::ReferenceAtmosphere, Argument};
 
     use super::*;
     #[test]
     fn definition1() {
         test_with_3args::<
-            PotentialTemperature,
+            FormulaQuantity,
             DryBulbTemperature,
             AtmosphericPressure,
             VapourPressure,
             Definition1,
         >(
-            Argument {
-                name: "temperature",
-                def_val: 300.0,
-                range: [253.0, 324.0],
-                _quantity: PhantomData,
-            },
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [100.0, 150_000.0],
-                _quantity: PhantomData,
-            },
-            Argument {
-                name: "vapour_pressure",
-                def_val: 3000.0,
-                range: [0.0, 10_000.0],
-                _quantity: PhantomData,
-            },
-            301.45136519081666,
+            Argument::new([253.0, 324.0]),
+            Argument::new([100.0, 150_000.0]),
+            Argument::new([0.0, 10_000.0]),
+            ReferenceAtmosphere::Normal,
+            1e-12,
         );
     }
 }

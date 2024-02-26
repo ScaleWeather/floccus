@@ -88,7 +88,7 @@ pub mod quantities;
 // pub mod equivalent_potential_temperature;
 // pub mod mixing_ratio;
 // pub mod saturation_mixing_ratio;
-// pub mod potential_temperature;
+pub mod potential_temperature;
 pub mod relative_humidity;
 pub mod specific_humidity;
 pub mod vapour_pressure;

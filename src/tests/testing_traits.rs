@@ -284,3 +284,22 @@ impl TestingQuantity for WetBulbPotentialTemperature {
         }
     }
 }
+
+impl TestingQuantity for PotentialTemperature {
+    fn new_si(value: Float) -> Self {
+        Self::new::<kelvin>(value)
+    }
+
+    fn imperial(&self) -> Self {
+        let value = self.0.get::<degree_fahrenheit>();
+
+        Self::new::<degree_fahrenheit>(value)
+    }
+
+    fn ref_val_si(atm: ReferenceAtmosphere) -> Self {
+        match atm {
+            ReferenceAtmosphere::Normal => Self::new::<kelvin>(THETA_NORM),
+            ReferenceAtmosphere::Freezing => Self::new::<kelvin>(THETA_FREEZ),
+        }
+    }
+}
