@@ -32,16 +32,8 @@ impl Formula2<FormulaQuantity, VapourPressure, RelativeHumidity> for Definition1
         vapour_pressure: VapourPressure,
         relative_humidity: RelativeHumidity,
     ) -> Result<(), InputError> {
-        let relative_humidity_si = relative_humidity.get_si_value();
-        let vapour_pressure_si = vapour_pressure.get_si_value();
-
-        if !(0.00001..=2.0).contains(&relative_humidity_si) {
-            return Err(InputError::OutOfRange(String::from("relative_humidity")));
-        }
-
-        if !(0.0..=50_000.0).contains(&vapour_pressure_si) {
-            return Err(InputError::OutOfRange(String::from("vapour_pressure")));
-        }
+        vapour_pressure.check_range_si(0.0, 50_000.0)?;
+        relative_humidity.check_range_si(0.00001, 2.0)?;
 
         Ok(())
     }
@@ -71,16 +63,8 @@ impl Formula2<FormulaQuantity, DryBulbTemperature, AtmosphericPressure> for Buck
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,
     ) -> Result<(), InputError> {
-        let temperature_si = temperature.get_si_value();
-        let pressure_si = pressure.get_si_value();
-
-        if !(232.0..=324.0).contains(&temperature_si) {
-            return Err(InputError::OutOfRange(String::from("temperature")));
-        }
-
-        if !(100.0..=150_000.0).contains(&pressure_si) {
-            return Err(InputError::OutOfRange(String::from("pressure")));
-        }
+        temperature.check_range_si(232.0, 324.0)?;
+        pressure.check_range_si(100.0, 150_000.0)?;
 
         Ok(())
     }
@@ -128,16 +112,8 @@ impl Formula2<FormulaQuantity, DryBulbTemperature, AtmosphericPressure> for Buck
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,
     ) -> Result<(), InputError> {
-        let temperature_si = temperature.get_si_value();
-        let pressure_si = pressure.get_si_value();
-
-        if !(193.0..=274.0).contains(&temperature_si) {
-            return Err(InputError::OutOfRange(String::from("temperature")));
-        }
-
-        if !(100.0..=150_000.0).contains(&pressure_si) {
-            return Err(InputError::OutOfRange(String::from("pressure")));
-        }
+        temperature.check_range_si(193.0, 274.0)?;
+        pressure.check_range_si(100.0, 150_000.0)?;
 
         Ok(())
     }
@@ -185,16 +161,8 @@ impl Formula2<FormulaQuantity, DryBulbTemperature, AtmosphericPressure> for Buck
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,
     ) -> Result<(), InputError> {
-        let temperature_si = temperature.get_si_value();
-        let pressure_si = pressure.get_si_value();
-
-        if !(253.0..=324.0).contains(&temperature_si) {
-            return Err(InputError::OutOfRange(String::from("temperature")));
-        }
-
-        if !(100.0..=150_000.0).contains(&pressure_si) {
-            return Err(InputError::OutOfRange(String::from("pressure")));
-        }
+        temperature.check_range_si(253.0, 324.0)?;
+        pressure.check_range_si(100.0, 150_000.0)?;
 
         Ok(())
     }
@@ -234,11 +202,7 @@ pub struct Buck3Simplified;
 impl Formula1<FormulaQuantity, DryBulbTemperature> for Buck3Simplified {
     #[inline(always)]
     fn validate_inputs(temperature: DryBulbTemperature) -> Result<(), InputError> {
-        let temperature_si = temperature.get_si_value();
-
-        if !(253.0..=324.0).contains(&temperature_si) {
-            return Err(InputError::OutOfRange(String::from("temperature")));
-        }
+        temperature.check_range_si(253.0, 324.0)?;
 
         Ok(())
     }
@@ -275,16 +239,8 @@ impl Formula2<FormulaQuantity, DryBulbTemperature, AtmosphericPressure> for Buck
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,
     ) -> Result<(), InputError> {
-        let temperature_si = temperature.get_si_value();
-        let pressure_si = pressure.get_si_value();
-
-        if !(223.0..=274.0).contains(&temperature_si) {
-            return Err(InputError::OutOfRange(String::from("temperature")));
-        }
-
-        if !(100.0..=150_000.0).contains(&pressure_si) {
-            return Err(InputError::OutOfRange(String::from("pressure")));
-        }
+        temperature.check_range_si(223.0, 274.0)?;
+        pressure.check_range_si(100.0, 150_000.0)?;
 
         Ok(())
     }
@@ -324,11 +280,7 @@ pub struct Buck4Simplified;
 impl Formula1<FormulaQuantity, DryBulbTemperature> for Buck4Simplified {
     #[inline(always)]
     fn validate_inputs(temperature: DryBulbTemperature) -> Result<(), InputError> {
-        let temperature_si = temperature.get_si_value();
-
-        if !(223.0..=274.0).contains(&temperature_si) {
-            return Err(InputError::OutOfRange(String::from("temperature")));
-        }
+        temperature.check_range_si(223.0, 274.0)?;
 
         Ok(())
     }
@@ -361,11 +313,7 @@ pub struct Tetens1;
 impl Formula1<FormulaQuantity, DryBulbTemperature> for Tetens1 {
     #[inline(always)]
     fn validate_inputs(temperature: DryBulbTemperature) -> Result<(), InputError> {
-        let temperature_si = temperature.get_si_value();
-
-        if !(273.0..=353.0).contains(&temperature_si) {
-            return Err(InputError::OutOfRange(String::from("temperature")));
-        }
+        temperature.check_range_si(273.0, 353.0)?;
 
         Ok(())
     }
@@ -398,11 +346,7 @@ pub struct Wexler1;
 impl Formula1<FormulaQuantity, DryBulbTemperature> for Wexler1 {
     #[inline(always)]
     fn validate_inputs(temperature: DryBulbTemperature) -> Result<(), InputError> {
-        let temperature_si = temperature.get_si_value();
-
-        if !(273.0..=374.0).contains(&temperature_si) {
-            return Err(InputError::OutOfRange(String::from("temperature")));
-        }
+        temperature.check_range_si(273.0, 374.0)?;
 
         Ok(())
     }
@@ -447,11 +391,8 @@ pub struct Wexler2;
 impl Formula1<FormulaQuantity, DryBulbTemperature> for Wexler2 {
     #[inline(always)]
     fn validate_inputs(temperature: DryBulbTemperature) -> Result<(), InputError> {
-        let temperature_si = temperature.get_si_value();
+        temperature.check_range_si(173.0, 274.0)?;
 
-        if !(173.0..=274.0).contains(&temperature_si) {
-            return Err(InputError::OutOfRange(String::from("temperature")));
-        }
         Ok(())
     }
 
@@ -484,8 +425,8 @@ impl Formula1<FormulaQuantity, DryBulbTemperature> for Wexler2 {
 #[cfg(test)]
 mod tests {
     use crate::{
-        quantities::{AtmosphericPressure, RelativeHumidity, VapourPressure, DryBulbTemperature},
-        tests::{test_with_1arg, test_with_2args, Argument},
+        quantities::{AtmosphericPressure, DryBulbTemperature, RelativeHumidity, VapourPressure},
+        tests::{test_with_1arg, test_with_2args, testing_traits::ReferenceAtmosphere, Argument},
     };
 
     use super::*;
@@ -493,145 +434,95 @@ mod tests {
     #[test]
     fn definition1() {
         test_with_2args::<FormulaQuantity, VapourPressure, RelativeHumidity, Definition1>(
-            Argument {
-                name: "vapour_pressure",
-                def_val: 3000.0,
-                range: [0.0, 50_000.0],
-            },
-            Argument {
-                name: "relative_humidity",
-                def_val: 0.5,
-                range: [0.00001, 2.0],
-            },
-            6000.0,
+            Argument::new([0.0, 50_000.0]),
+            Argument::new([0.00001, 2.0]),
+            ReferenceAtmosphere::Normal,
+            1e-12,
         );
     }
 
     #[test]
     fn buck1() {
         test_with_2args::<FormulaQuantity, DryBulbTemperature, AtmosphericPressure, Buck1>(
-            Argument {
-                name: "temperature",
-                def_val: 300.0,
-                range: [232.0, 324.0],
-            },
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [100.0, 150_000.0],
-            },
-            3550.6603579471303,
+            Argument::new([232.0, 324.0]),
+            Argument::new([100.0, 150_000.0]),
+            ReferenceAtmosphere::Normal,
+            1e2,
         );
     }
 
     #[test]
     fn buck2() {
         test_with_2args::<FormulaQuantity, DryBulbTemperature, AtmosphericPressure, Buck2>(
-            Argument {
-                name: "temperature",
-                def_val: 250.0,
-                range: [193.0, 274.0],
-            },
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [100.0, 150_000.0],
-            },
-            76.38781790372722,
+            Argument::new([193.0, 274.0]),
+            Argument::new([100.0, 150_000.0]),
+            ReferenceAtmosphere::Freezing,
+            1e0,
         );
     }
 
     #[test]
     fn buck3() {
         test_with_2args::<FormulaQuantity, DryBulbTemperature, AtmosphericPressure, Buck3>(
-            Argument {
-                name: "temperature",
-                def_val: 300.0,
-                range: [253.0, 324.0],
-            },
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [100.0, 150_000.0],
-            },
-            3548.5041048035896,
+            Argument::new([253.0, 324.0]),
+            Argument::new([100.0, 150_000.0]),
+            ReferenceAtmosphere::Normal,
+            1e2,
         );
     }
 
     #[test]
     fn buck4() {
         test_with_2args::<FormulaQuantity, DryBulbTemperature, AtmosphericPressure, Buck4>(
-            Argument {
-                name: "temperature",
-                def_val: 250.0,
-                range: [223.0, 274.0],
-            },
-            Argument {
-                name: "pressure",
-                def_val: 101325.0,
-                range: [100.0, 150_000.0],
-            },
-            76.38685471836712,
+            Argument::new([223.0, 274.0]),
+            Argument::new([100.0, 150_000.0]),
+            ReferenceAtmosphere::Freezing,
+            1e0,
         );
     }
 
     #[test]
     fn buck3_simplified() {
         test_with_1arg::<FormulaQuantity, DryBulbTemperature, Buck3Simplified>(
-            Argument {
-                name: "temperature",
-                def_val: 300.0,
-                range: [253.0, 324.0],
-            },
-            3533.6421536199978,
+            Argument::new([253.0, 324.0]),
+            ReferenceAtmosphere::Normal,
+            1e1,
         );
     }
 
     #[test]
     fn buck4_simplified() {
         test_with_1arg::<FormulaQuantity, DryBulbTemperature, Buck4Simplified>(
-            Argument {
-                name: "temperature",
-                def_val: 250.0,
-                range: [223.0, 274.0],
-            },
-            76.04197508519536,
+            Argument::new([223.0, 274.0]),
+            ReferenceAtmosphere::Freezing,
+            1e-1,
         );
     }
 
     #[test]
     fn tetens1() {
         test_with_1arg::<FormulaQuantity, DryBulbTemperature, Tetens1>(
-            Argument {
-                name: "temperature",
-                def_val: 300.0,
-                range: [273.0, 353.0],
-            },
-            3533.969137160892,
+            Argument::new([273.0, 353.0]),
+            ReferenceAtmosphere::Normal,
+            1e1,
         );
     }
 
     #[test]
     fn wexler1() {
         test_with_1arg::<FormulaQuantity, DryBulbTemperature, Wexler1>(
-            Argument {
-                name: "temperature",
-                def_val: 300.0,
-                range: [273.0, 374.0],
-            },
-            3535.4235919263083,
+            Argument::new([273.0, 374.0]),
+            ReferenceAtmosphere::Normal,
+            1e-12,
         );
     }
 
     #[test]
     fn wexler2() {
         test_with_1arg::<FormulaQuantity, DryBulbTemperature, Wexler2>(
-            Argument {
-                name: "temperature",
-                def_val: 250.0,
-                range: [173.0, 274.0],
-            },
-            76.04351136780438,
+            Argument::new([173.0, 274.0]),
+            ReferenceAtmosphere::Freezing,
+            1e-12,
         );
     }
 }
