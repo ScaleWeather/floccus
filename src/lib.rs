@@ -96,7 +96,7 @@ pub mod vapour_pressure;
 pub mod vapour_pressure_deficit;
 pub mod virtual_temperature;
 // pub mod wet_bulb_potential_temperature;
-// pub mod wet_bulb_temperature;
+pub mod wet_bulb_temperature;
 
 #[cfg(test)]
 mod tests;

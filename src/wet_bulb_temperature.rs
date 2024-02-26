@@ -10,6 +10,8 @@ use crate::quantities::{
 };
 use crate::Storage;
 
+type FormulaQuantity = WetBulbTemperature;
+
 /// Formula for computing wet bulb temperature pressure from dry bulb temperature and relative humidity.
 ///
 /// Derived by R. Stull (2011) [(doi:10.1175/JAMC-D-11-0143.1)](https://doi.org/10.1175/JAMC-D-11-0143.1)
@@ -22,22 +24,15 @@ use crate::Storage;
 /// Valid `relative_humidity` range: 0.05 - 0.99
 pub struct Stull1;
 
-impl Formula2<WetBulbTemperature, DryBulbTemperature, RelativeHumidity> for Stull1 {
+impl Formula2<FormulaQuantity, DryBulbTemperature, RelativeHumidity> for Stull1 {
     #[inline(always)]
     fn validate_inputs(
         temperature: DryBulbTemperature,
         relative_humidity: RelativeHumidity,
     ) -> Result<(), InputError> {
-        let temperature_si = temperature.get_si_value();
-        let relative_humidity_si = relative_humidity.get_si_value();
+        temperature.check_range_si(253.0, 324.0)?;
+        relative_humidity.check_range_si(0.05, 0.99)?;
 
-        if !(253.0..=324.0).contains(&temperature_si) {
-            return Err(InputError::OutOfRange(String::from("temperature")));
-        }
-
-        if !(0.05..=0.99).contains(&relative_humidity_si) {
-            return Err(InputError::OutOfRange(String::from("relative_humidity")));
-        }
         Ok(())
     }
 
@@ -63,24 +58,17 @@ impl Formula2<WetBulbTemperature, DryBulbTemperature, RelativeHumidity> for Stul
 
 #[cfg(test)]
 mod tests {
-    use crate::tests::{test_with_2args, Argument};
+    use crate::tests::{test_with_2args, testing_traits::ReferenceAtmosphere, Argument};
 
     use super::*;
 
     #[test]
     fn stull1() {
-        test_with_2args::<WetBulbTemperature, DryBulbTemperature, RelativeHumidity, Stull1>(
-            Argument {
-                name: "temperature",
-                def_val: 300.0,
-                range: [253.0, 324.0],
-            },
-            Argument {
-                name: "relative_humidity",
-                def_val: 0.5,
-                range: [0.05, 0.99],
-            },
-            292.73867410526674,
+        test_with_2args::<FormulaQuantity, DryBulbTemperature, RelativeHumidity, Stull1>(
+            Argument::new([253.0, 324.0]),
+            Argument::new([0.05, 0.99]),
+            ReferenceAtmosphere::Normal,
+            1e-12,
         );
     }
 }
