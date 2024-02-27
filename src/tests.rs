@@ -12,6 +12,7 @@ use std::marker::PhantomData;
 pub use self::one_arg::test_with_1arg;
 pub use self::three_arg::test_with_3args;
 pub use self::two_arg::test_with_2args;
+pub use self::four_arg::test_with_4args;
 
 use self::testing_traits::{ReferenceAtmosphere, TestingQuantity};
 

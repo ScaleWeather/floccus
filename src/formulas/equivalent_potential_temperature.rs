@@ -13,12 +13,12 @@ use uom::si::thermodynamic_temperature::kelvin;
 
 use crate::constants::{C_L, C_P, EPSILON, KAPPA, L_V, R_D, R_V};
 use crate::errors::InputError;
-use crate::{Formula2, Formula4};
 use crate::quantities::{
     AtmosphericPressure, DewPointTemperature, DryBulbTemperature, EquivalentPotentialTemperature,
     MixingRatio, PotentialTemperature, RelativeHumidity, ThermodynamicQuantity, VapourPressure,
 };
 use crate::{formulas::mixing_ratio, Float};
+use crate::{Formula2, Formula4};
 
 type FormulaQuantity = EquivalentPotentialTemperature;
 
@@ -214,6 +214,15 @@ impl
             ));
         }
 
+        let mixing_ratio = mixing_ratio::Definition1::compute_unchecked(pressure, vapour_pressure);
+
+        mixing_ratio.check_range_si(0.000_000_1, 2.0).or_else(|_| {
+            Err(InputError::IncorrectArgumentSet(
+                "pressure and vapour_pressure must give mixing_ratio less than 2 so cannot be close to each other".to_string(),
+            ))
+        }
+        )?;
+
         Ok(())
     }
 
@@ -234,6 +243,8 @@ impl
 
         let kappa = KAPPA.get::<ratio>();
 
+        // technically LCL and Theta-DL should be extracted to separate functions
+
         let lcl_temp =
             (1.0 / ((1.0 / (dewpoint - 56.0)) + ((temperature / dewpoint).ln() / 800.0))) + 56.0;
 
@@ -250,105 +261,67 @@ impl
 
 #[cfg(test)]
 mod tests {
-    use std::marker::PhantomData;
-
     use crate::{
         quantities::{AtmosphericPressure, DryBulbTemperature, VapourPressure},
-        tests::{test_with_3args, Argument},
+        tests::{test_with_4args, testing_traits::ReferenceAtmosphere, Argument},
     };
 
     use super::*;
 
-    // #[test]
-    // fn paluch1() {
-    //     test_with_3args::<
-    //         FormulaQuantity,
-    //         DryBulbTemperature,
-    //         AtmosphericPressure,
-    //         VapourPressure,
-    //         Paluch1,
-    //     >(
-    //         Argument {
-    //             name: "temperature",
-    //             def_val: 300.0,
-    //             range: [253.0, 324.0],
-    //             _quantity: PhantomData,
-    //         },
-    //         Argument {
-    //             name: "pressure",
-    //             def_val: 101325.0,
-    //             range: [20000.0, 150_000.0],
-    //             _quantity: PhantomData,
-    //         },
-    //         Argument {
-    //             name: "vapour_pressure",
-    //             def_val: 991.189131,
-    //             range: [0.0, 10_000.0],
-    //             _quantity: PhantomData,
-    //         },
-    //         315.23724970376776,
-    //     );
-    // }
+    #[test]
+    fn paluch1() {
+        test_with_4args::<
+            FormulaQuantity,
+            DryBulbTemperature,
+            AtmosphericPressure,
+            MixingRatio,
+            RelativeHumidity,
+            Paluch1,
+        >(
+            Argument::new([253.0, 324.0]),
+            Argument::new([100.0, 150_000.0]),
+            Argument::new([0.000_000_1, 2.0]),
+            Argument::new([0.000_000_1, 2.0]),
+            ReferenceAtmosphere::Normal,
+            1e-12,
+        );
+    }
 
-    // #[test]
-    // fn bryan1() {
-    //     test_with_3args::<
-    //         FormulaQuantity,
-    //         DryBulbTemperature,
-    //         AtmosphericPressure,
-    //         VapourPressure,
-    //         Bryan1,
-    //     >(
-    //         Argument {
-    //             name: "temperature",
-    //             def_val: 300.0,
-    //             range: [253.0, 324.0],
-    //             _quantity: PhantomData,
-    //         },
-    //         Argument {
-    //             name: "pressure",
-    //             def_val: 101325.0,
-    //             range: [20000.0, 150_000.0],
-    //             _quantity: PhantomData,
-    //         },
-    //         Argument {
-    //             name: "vapour_pressure",
-    //             def_val: 991.189131,
-    //             range: [0.0, 10_000.0],
-    //             _quantity: PhantomData,
-    //         },
-    //         316.52762026634014,
-    //     );
-    // }
+    #[test]
+    fn bryan1() {
+        test_with_4args::<
+            FormulaQuantity,
+            DryBulbTemperature,
+            MixingRatio,
+            RelativeHumidity,
+            PotentialTemperature,
+            Bryan1,
+        >(
+            Argument::new([253.0, 324.0]),
+            Argument::new([0.000_000_1, 2.0]),
+            Argument::new([0.000_000_1, 2.0]),
+            Argument::new([253.0, 324.0]),
+            ReferenceAtmosphere::Normal,
+            1e1,
+        );
+    }
 
-    // #[test]
-    // fn bolton1() {
-    //     test_with_3args::<
-    //         FormulaQuantity,
-    //         AtmosphericPressure,
-    //         DryBulbTemperature,
-    //         DewPointTemperature,
-    //         Bolton1,
-    //     >(
-    //         Argument {
-    //             name: "pressure",
-    //             def_val: 101325.0,
-    //             range: [20000.0, 150_000.0],
-    //             _quantity: PhantomData,
-    //         },
-    //         Argument {
-    //             name: "temperature",
-    //             def_val: 300.0,
-    //             range: [253.0, 324.0],
-    //             _quantity: PhantomData,
-    //         },
-    //         Argument {
-    //             name: "dewpoint",
-    //             def_val: 280.0,
-    //             range: [253.0, 324.0],
-    //             _quantity: PhantomData,
-    //         },
-    //         317.3855211897774,
-    //     );
-    // }
+    #[test]
+    fn bolton1() {
+        test_with_4args::<
+            FormulaQuantity,
+            AtmosphericPressure,
+            DryBulbTemperature,
+            DewPointTemperature,
+            VapourPressure,
+            Bolton1,
+        >(
+            Argument::new([100.0, 150_000.0]),
+            Argument::new([253.0, 324.0]),
+            Argument::new([253.0, 324.0]),
+            Argument::new([0.0, 50_000.0]),
+            ReferenceAtmosphere::Normal,
+            1e1,
+        );
+    }
 }
