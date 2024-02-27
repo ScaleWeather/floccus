@@ -31,7 +31,7 @@ uom = { version = "0.35", default-features = false, features = [
 doctest = false
 
 [dev-dependencies]
-criterion = "0.5.1"
+criterion = "0.5"
 
 [features]
 default = ["array", "parallel", "debug", "double_precision"]

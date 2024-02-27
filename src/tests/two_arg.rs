@@ -1,9 +1,11 @@
+use ndarray::Array1;
+
 use super::check_result;
 use super::testing_traits::{ReferenceAtmosphere, TestingQuantity};
 use super::Argument;
 use crate::errors::InputError;
-use crate::Formula2;
 use crate::Float;
+use crate::Formula2;
 use std::mem::discriminant;
 
 pub fn test_with_2args<
@@ -41,10 +43,6 @@ pub fn test_with_2args<
         }
     }
 
-    //the third promise of the crate is to always return finite f64
-    //if all inputs are within the range
-    //the only allowed error is InccorectArgumentsSet as it can occur
-    //for values within valid range
     for arg1_itr in 0..=100 {
         for arg2_itr in 0..=100 {
             let arg1_tmp =
@@ -80,4 +78,31 @@ pub fn test_with_2args<
     assert_eq!(result, expected);
     let result = F::compute(arg1.ref_val(atm), I2::new_si(arg2.range[1] + 0.1)).unwrap_err();
     assert_eq!(result, expected);
+
+    let arg_vecs: (Vec<_>, Vec<_>) = (-10..=10)
+        .map(|i| i as Float / 1000.0)
+        .map(|i| {
+            (
+                I1::new_si(arg1.ref_val(atm).get_si_value() + i),
+                I2::new_si(arg2.ref_val(atm).get_si_value() + i),
+            )
+        })
+        .unzip();
+
+    let arg_arrs = (
+        Array1::from(arg_vecs.0.clone()),
+        Array1::from(arg_vecs.1.clone()),
+    );
+
+    let result_vec = F::compute_vec(&arg_vecs.0, &arg_vecs.1).unwrap();
+    check_result(result_vec[10], atm, eps);
+
+    let result_arr = F::compute_ndarray(&arg_arrs.0, &arg_arrs.1).unwrap();
+    check_result(result_arr[10], atm, eps);
+
+    let result_vec = F::compute_vec_parallel(&arg_vecs.0, &arg_vecs.1).unwrap();
+    check_result(result_vec[10], atm, eps);
+
+    let result_arr = F::compute_ndarray_parallel(&arg_arrs.0, &arg_arrs.1).unwrap();
+    check_result(result_arr[10], atm, eps);
 }
