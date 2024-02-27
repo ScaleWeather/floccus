@@ -30,7 +30,7 @@ impl Formula2<FormulaQuantity, AtmosphericPressure, VapourPressure> for Definiti
         vapour_pressure.check_range_si(0.0, 50_000.0)?;
 
         if vapour_pressure.0 > pressure.0 {
-            return Err(InputError::OutOfRange(String::from(
+            return Err(InputError::IncorrectArgumentSet(String::from(
                 "vapour_pressure cannot be greater than pressure",
             )));
         }
@@ -65,7 +65,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn general1() {
+    fn definition1() {
         test_with_2args::<FormulaQuantity, AtmosphericPressure, VapourPressure, Definition1>(
             Argument::new([100.0, 150_000.0]),
             Argument::new([0.0, 50_000.0]),

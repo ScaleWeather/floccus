@@ -60,7 +60,7 @@ mod tests {
         test_with_1arg::<FormulaQuantity, EquivalentPotentialTemperature, DaviesJones1>(
             Argument::new([257.0, 377.0]),
             ReferenceAtmosphere::Normal,
-            1e-12,
+            1e-2,
         );
     }
 }

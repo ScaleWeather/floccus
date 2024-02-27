@@ -33,7 +33,7 @@ impl Formula2<FormulaQuantity, AtmosphericPressure, SaturationVapourPressure> fo
         saturation_vapour_pressure.check_range_si(0.0, 50_000.0)?;
 
         if saturation_vapour_pressure.0 > pressure.0 {
-            return Err(InputError::OutOfRange(String::from(
+            return Err(InputError::IncorrectArgumentSet(String::from(
                 "saturation_vapour_pressure cannot be greater than pressure",
             )));
         }
