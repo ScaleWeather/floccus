@@ -17,7 +17,10 @@ type FormulaQuantity = MixingRatio;
 ///
 /// Valid `vapour_pressure` range: 0Pa - 10000Pa
 ///
-/// Returns [`InputError::IncorrectArgumentSet`] when inputs are equal and division by 0 would occur.
+/// Returns [`InputError::IncorrectArgumentSet`] when:
+///
+/// - inputs are equal and division by 0 would occur
+/// - `vapour_pressure` is greater than `pressure`
 pub struct Definition1;
 
 impl Formula2<FormulaQuantity, AtmosphericPressure, VapourPressure> for Definition1 {
