@@ -32,6 +32,7 @@ doctest = false
 
 [dev-dependencies]
 criterion = "0.5"
+itertools = "0.12"
 
 [features]
 default = ["array", "parallel", "debug", "double_precision"]

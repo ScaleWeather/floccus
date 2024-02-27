@@ -1,3 +1,7 @@
+use float_cmp::assert_approx_eq;
+use itertools::multiunzip;
+use ndarray::Array1;
+
 use super::check_result;
 use super::testing_traits::{ReferenceAtmosphere, TestingQuantity};
 use super::Argument;
@@ -21,14 +25,14 @@ pub fn test_with_4args<
     atm: ReferenceAtmosphere,
     eps: Float,
 ) {
-    let result = F::compute(
+    let ref_result = F::compute(
         arg1.ref_val(atm),
         arg2.ref_val(atm),
         arg3.ref_val(atm),
         arg4.ref_val(atm),
     )
     .unwrap();
-    check_result(result, atm, eps);
+    check_result(ref_result, atm, eps);
 
     let results = vec![
         F::compute(
@@ -209,4 +213,72 @@ pub fn test_with_4args<
     )
     .unwrap_err();
     assert_eq!(result, expected);
+
+    let arg_vecs = (-10..=10).map(|i| i as Float / 1000.0).map(|i| {
+        (
+            I1::new_si(arg1.ref_val(atm).get_si_value() + i),
+            I2::new_si(arg2.ref_val(atm).get_si_value() + i),
+            I3::new_si(arg3.ref_val(atm).get_si_value() + i),
+            I4::new_si(arg4.ref_val(atm).get_si_value() + i),
+        )
+    });
+
+    let arg_vecs: (Vec<_>, Vec<_>, Vec<_>, Vec<_>) = multiunzip(arg_vecs);
+
+    let arg_arrs = (
+        Array1::from(arg_vecs.0.clone()),
+        Array1::from(arg_vecs.1.clone()),
+        Array1::from(arg_vecs.2.clone()),
+        Array1::from(arg_vecs.3.clone()),
+    );
+
+    let result_vec = F::compute_vec(&arg_vecs.0, &arg_vecs.1, &arg_vecs.2, &arg_vecs.3).unwrap();
+    assert_approx_eq!(
+        Float,
+        ref_result.get_si_value(),
+        result_vec[10].get_si_value(),
+        ulps = 4
+    );
+
+    let result_arr =
+        F::compute_ndarray(&arg_arrs.0, &arg_arrs.1, &arg_arrs.2, &arg_arrs.3).unwrap();
+    assert_approx_eq!(
+        Float,
+        ref_result.get_si_value(),
+        result_arr[10].get_si_value(),
+        ulps = 4
+    );
+
+    let result_vec =
+        F::compute_vec_parallel(&arg_vecs.0, &arg_vecs.1, &arg_vecs.2, &arg_vecs.3).unwrap();
+    assert_approx_eq!(
+        Float,
+        ref_result.get_si_value(),
+        result_vec[10].get_si_value(),
+        ulps = 4
+    );
+
+    let result_arr =
+        F::compute_ndarray_parallel(&arg_arrs.0, &arg_arrs.1, &arg_arrs.2, &arg_arrs.3).unwrap();
+    assert_approx_eq!(
+        Float,
+        ref_result.get_si_value(),
+        result_arr[10].get_si_value(),
+        ulps = 4
+    );
+
+    let result_imperial = F::compute(
+        arg1.ref_val(atm).imperial(),
+        arg2.ref_val(atm).imperial(),
+        arg3.ref_val(atm).imperial(),
+        arg4.ref_val(atm).imperial(),
+    )
+    .unwrap();
+
+    assert_approx_eq!(
+        Float,
+        ref_result.get_si_value(),
+        result_imperial.get_si_value(),
+        epsilon = 1e-12
+    );
 }

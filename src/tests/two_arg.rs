@@ -1,3 +1,4 @@
+use float_cmp::assert_approx_eq;
 use ndarray::Array1;
 
 use super::check_result;
@@ -21,8 +22,8 @@ pub fn test_with_2args<
 ) {
     //the first promise of the crate is that returned value
     //is calculated correctly
-    let result = F::compute(arg1.ref_val(atm), arg2.ref_val(atm)).unwrap();
-    check_result(result, atm, eps);
+    let ref_result = F::compute(arg1.ref_val(atm), arg2.ref_val(atm)).unwrap();
+    check_result(ref_result, atm, eps);
 
     // the second promise of the crate is to never return NaN or Inf
     // here we check several edge cases for that
@@ -95,14 +96,46 @@ pub fn test_with_2args<
     );
 
     let result_vec = F::compute_vec(&arg_vecs.0, &arg_vecs.1).unwrap();
-    check_result(result_vec[10], atm, eps);
+    assert_approx_eq!(
+        Float,
+        ref_result.get_si_value(),
+        result_vec[10].get_si_value(),
+        ulps = 4
+    );
 
     let result_arr = F::compute_ndarray(&arg_arrs.0, &arg_arrs.1).unwrap();
-    check_result(result_arr[10], atm, eps);
+    assert_approx_eq!(
+        Float,
+        ref_result.get_si_value(),
+        result_arr[10].get_si_value(),
+        ulps = 4
+    );
 
     let result_vec = F::compute_vec_parallel(&arg_vecs.0, &arg_vecs.1).unwrap();
-    check_result(result_vec[10], atm, eps);
+    assert_approx_eq!(
+        Float,
+        ref_result.get_si_value(),
+        result_vec[10].get_si_value(),
+        ulps = 4
+    );
 
     let result_arr = F::compute_ndarray_parallel(&arg_arrs.0, &arg_arrs.1).unwrap();
-    check_result(result_arr[10], atm, eps);
+    assert_approx_eq!(
+        Float,
+        ref_result.get_si_value(),
+        result_arr[10].get_si_value(),
+        ulps = 4
+    );
+
+    let result_imperial = F::compute(
+        arg1.ref_val(atm).imperial(),
+        arg2.ref_val(atm).imperial(),
+    ).unwrap();
+
+    assert_approx_eq!(
+        Float,
+        ref_result.get_si_value(),
+        result_imperial.get_si_value(),
+        epsilon = 1e-12
+    );
 }
