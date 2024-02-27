@@ -45,7 +45,6 @@ pub trait Formula1<O: ThermodynamicQuantity, I1: ThermodynamicQuantity> {
         })
     }
 
-    #[cfg(feature = "array")]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
     fn compute_vec(i1: &[I1]) -> Result<Vec<O>, InputError> {
@@ -132,7 +131,6 @@ pub trait Formula2<O: ThermodynamicQuantity, I1: ThermodynamicQuantity, I2: Ther
         })
     }
 
-    #[cfg(feature = "array")]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
     fn compute_vec(i1: &[I1], i2: &[I2]) -> Result<Vec<O>, InputError> {
@@ -242,7 +240,6 @@ pub trait Formula3<
         })
     }
 
-    #[cfg(feature = "array")]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
     fn compute_vec(i1: &[I1], i2: &[I2], i3: &[I3]) -> Result<Vec<O>, InputError> {
@@ -289,7 +286,7 @@ pub trait Formula3<
             .collect()
     }
 
-    #[cfg(feature = "array")]
+    #[cfg(feature = "parallel")]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
     fn compute_ndarray_parallel<D: Dimension>(
@@ -365,5 +362,90 @@ pub trait Formula4<
             Err(err)
         })
     }
-}
 
+    #[allow(missing_docs)]
+    #[allow(clippy::missing_errors_doc)]
+    fn compute_vec(i1: &[I1], i2: &[I2], i3: &[I3], i4: &[I4]) -> Result<Vec<O>, InputError> {
+        i1.iter()
+            .zip(i2.iter())
+            .zip(i3.iter())
+            .zip(i4.iter())
+            .map(|(((&i1, &i2), &i3), &i4)| Self::compute(i1, i2, i3, i4))
+            .collect()
+    }
+
+    #[cfg(feature = "array")]
+    #[allow(missing_docs)]
+    #[allow(clippy::missing_errors_doc)]
+    fn compute_ndarray<D: Dimension>(
+        i1: &Array<I1, D>,
+        i2: &Array<I2, D>,
+        i3: &Array<I3, D>,
+        i4: &Array<I4, D>,
+    ) -> Result<Array<O, D>, InputError> {
+        Zip::from(i1)
+            .and(i2)
+            .and(i3)
+            .and(i4)
+            .fold_while(
+                Ok(()),
+                |_, &i1, &i2, &i3, &i4| match Self::validate_inputs(i1, i2, i3, i4) {
+                    Ok(_) => FoldWhile::Continue(Ok(())),
+                    Err(e) => FoldWhile::Done(Err(e)),
+                },
+            )
+            .into_inner()?;
+
+        Ok(Zip::from(i1)
+            .and(i2)
+            .and(i3)
+            .and(i4)
+            .map_collect(|&i1, &i2, &i3, &i4| Self::compute_unchecked(i1, i2, i3, i4)))
+    }
+
+    #[cfg(feature = "parallel")]
+    #[allow(missing_docs)]
+    #[allow(clippy::missing_errors_doc)]
+    fn compute_vec_parallel(
+        i1: &[I1],
+        i2: &[I2],
+        i3: &[I3],
+        i4: &[I4],
+    ) -> Result<Vec<O>, InputError> {
+        i1.into_par_iter()
+            .zip(i2)
+            .zip(i3)
+            .zip(i4)
+            .map(|(((&i1, &i2), &i3), &i4)| Self::compute(i1, i2, i3, i4))
+            .collect()
+    }
+
+    #[cfg(feature = "parallel")]
+    #[allow(missing_docs)]
+    #[allow(clippy::missing_errors_doc)]
+    fn compute_ndarray_parallel<D: Dimension>(
+        i1: &Array<I1, D>,
+        i2: &Array<I2, D>,
+        i3: &Array<I3, D>,
+        i4: &Array<I4, D>,
+    ) -> Result<Array<O, D>, InputError> {
+        Zip::from(i1)
+            .and(i2)
+            .and(i3)
+            .and(i4)
+            .fold_while(
+                Ok(()),
+                |_, &i1, &i2, &i3, &i4| match Self::validate_inputs(i1, i2, i3, i4) {
+                    Ok(_) => FoldWhile::Continue(Ok(())),
+                    Err(e) => FoldWhile::Done(Err(e)),
+                },
+            )
+            .into_inner()?;
+
+        Ok(Zip::from(i1)
+            .and(i2)
+            .and(i3)
+            .and(i4)
+            .par_map_collect(|&i1, &i2, &i3, &i4| Self::compute_unchecked(i1, i2, i3, i4)))
+    }
+}
