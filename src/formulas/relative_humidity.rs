@@ -1,7 +1,7 @@
 //! Functions to calculate relative humidity
 
 use crate::errors::InputError;
-use crate::formula::Formula2;
+use crate::Formula2;
 use crate::quantities::{
     MixingRatio, RelativeHumidity, SaturationMixingRatio, SaturationVapourPressure,
     ThermodynamicQuantity, VapourPressure,

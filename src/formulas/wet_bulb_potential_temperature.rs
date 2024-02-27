@@ -3,7 +3,7 @@
 use uom::si::ratio::ratio;
 use uom::si::thermodynamic_temperature::{degree_celsius, kelvin};
 
-use crate::formula::Formula1;
+use crate::Formula1;
 use crate::quantities::{
     EquivalentPotentialTemperature, ThermodynamicQuantity, WetBulbPotentialTemperature,
 };

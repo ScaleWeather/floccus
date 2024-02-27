@@ -6,7 +6,7 @@
 //! Specific humidity is approximately equal to mixing ratio.
 
 use crate::constants::DIMLESS_ONE;
-use crate::formula::Formula2;
+use crate::Formula2;
 use crate::quantities::{
     AtmosphericPressure, SpecificHumidity, ThermodynamicQuantity, VapourPressure,
 };

@@ -6,7 +6,7 @@
 
 use crate::constants::{DIMLESS_ONE, EPSILON, ZERO_KELVIN};
 use crate::errors::InputError;
-use crate::formula::{Formula2, Formula3};
+use crate::{Formula2, Formula3};
 use crate::quantities::{
     AtmosphericPressure, DryBulbTemperature, MixingRatio, SpecificHumidity, ThermodynamicQuantity,
     VapourPressure, VirtualTemperature,

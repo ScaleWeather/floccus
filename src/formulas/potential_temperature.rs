@@ -6,7 +6,7 @@
 
 use crate::constants::KAPPA;
 use crate::errors::InputError;
-use crate::formula::Formula3;
+use crate::Formula3;
 use crate::quantities::{
     AtmosphericPressure, DryBulbTemperature, PotentialTemperature, ThermodynamicQuantity,
     VapourPressure,

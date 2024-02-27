@@ -3,7 +3,7 @@
 //! Saturation mixing ration is the value of the mixing ratio of saturated air at the
 //! given temperature and pressure ([AMETSOC Glossary](https://glossary.ametsoc.org/wiki/Saturation_mixing_ratio)).
 
-use crate::formula::Formula2;
+use crate::Formula2;
 use crate::quantities::{
     AtmosphericPressure, MixingRatio, RelativeHumidity, SaturationMixingRatio,
     SaturationVapourPressure, ThermodynamicQuantity,

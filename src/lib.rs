@@ -81,22 +81,13 @@
 //! information about the error. This feature potentially is not zero-cost so it is optional.
 
 pub mod constants;
-pub mod errors;
-pub mod formula;
+mod errors;
+pub mod formulas;
 pub mod quantities;
+mod traits;
 
-pub mod equivalent_potential_temperature;
-pub mod mixing_ratio;
-pub mod saturation_mixing_ratio;
-pub mod potential_temperature;
-pub mod relative_humidity;
-pub mod specific_humidity;
-pub mod vapour_pressure;
-pub mod saturation_vapour_pressure;
-pub mod vapour_pressure_deficit;
-pub mod virtual_temperature;
-pub mod wet_bulb_potential_temperature;
-pub mod wet_bulb_temperature;
+pub use errors::InputError;
+pub use traits::{Formula1, Formula2, Formula3, Formula4};
 
 #[cfg(test)]
 mod tests;

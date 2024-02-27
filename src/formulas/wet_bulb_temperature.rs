@@ -4,10 +4,10 @@ use uom::si::ratio::percent;
 use uom::si::thermodynamic_temperature::degree_celsius;
 
 use crate::errors::InputError;
-use crate::formula::Formula2;
 use crate::quantities::{
     DryBulbTemperature, RelativeHumidity, ThermodynamicQuantity, WetBulbTemperature,
 };
+use crate::Formula2;
 use crate::Storage;
 
 type FormulaQuantity = WetBulbTemperature;

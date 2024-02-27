@@ -13,12 +13,12 @@ use uom::si::thermodynamic_temperature::kelvin;
 
 use crate::constants::{C_L, C_P, EPSILON, KAPPA, L_V, R_D, R_V};
 use crate::errors::InputError;
-use crate::formula::{Formula2, Formula4};
+use crate::{Formula2, Formula4};
 use crate::quantities::{
     AtmosphericPressure, DewPointTemperature, DryBulbTemperature, EquivalentPotentialTemperature,
     MixingRatio, PotentialTemperature, RelativeHumidity, ThermodynamicQuantity, VapourPressure,
 };
-use crate::{mixing_ratio, Float};
+use crate::{formulas::mixing_ratio, Float};
 
 type FormulaQuantity = EquivalentPotentialTemperature;
 
@@ -99,9 +99,11 @@ impl
 ///
 /// Valid `temperature` range: 253K - 324K
 ///
-/// Valid `pressure` range: 100Pa - 150000Pa
+/// Valid `mixing_ratio` range: 0.000_000_1 - 2.0
 ///
-/// Valid `vapour_pressure` range: 0Pa - 10000Pa
+/// Valid `relative_humidity` range: 0.000_000_1 - 2.0
+///
+/// Valid `potential_temperature` range: 253K - 324K
 pub struct Bryan1;
 
 impl
@@ -164,6 +166,8 @@ impl
 /// Valid `temperature` range: 253K - 324K
 ///
 /// Valid `dewpoint` range: 253K - 324K
+///
+/// Valid `vapour_pressure` range: 0Pa - 50000Pa
 pub struct Bolton1;
 
 impl
@@ -195,6 +199,18 @@ impl
         ) {
             return Err(InputError::IncorrectArgumentSet(
                 "pressure must be greater than vapour pressure".to_string(),
+            ));
+        }
+
+        if vapour_pressure.0 > pressure.0 {
+            return Err(InputError::IncorrectArgumentSet(
+                "pressure must be greater than vapour pressure".to_string(),
+            ));
+        }
+
+        if dewpoint.0 > temperature.0 {
+            return Err(InputError::IncorrectArgumentSet(
+                "dewpoint must be less than temperature".to_string(),
             ));
         }
 
