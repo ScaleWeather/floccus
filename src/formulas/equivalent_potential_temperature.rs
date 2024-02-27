@@ -22,8 +22,8 @@ use crate::{Formula2, Formula4};
 
 type FormulaQuantity = EquivalentPotentialTemperature;
 
-/// Most accuarte formula for computing equivalent potential temperature of unsaturated air from
-/// temperature, pressure and vapour pressure.
+/// Most accurate formula for computing equivalent potential temperature of unsaturated air from
+/// temperature, pressure and mixing ratio and relative humidity.
 ///
 /// Implementation of this formula assumes no liquid or solid water in the air parcel.
 ///
@@ -93,7 +93,7 @@ impl
 }
 
 /// Formula for computing equivalent potential temperature of unsaturated air from
-/// temperature, pressure and vapour pressure.
+/// temperature, mixing ratio, relative humidity and potential temperature.
 ///
 /// Derived by G. H. Bryan (2008) [(doi:10.1175/2008MWR2593.1)](https://doi.org/10.1175/2008MWR2593.1)
 ///
@@ -156,7 +156,7 @@ impl
 }
 
 /// Approximate formula for computing equivalent potential temperature of unsaturated air from
-/// temperature, pressure and dewpoint.
+/// temperature, pressure, dewpoint and vapour pressure.
 ///
 /// Derived by D. Bolton (1980)
 /// [(doi:10.1175/1520-0493(1980)108<1046:TCOEPT>2.0.CO;2)](https://doi.org/10.1175/1520-0493(1980)108%3C1046:TCOEPT%3E2.0.CO;2)
@@ -243,7 +243,7 @@ impl
 
         let kappa = KAPPA.get::<ratio>();
 
-        // technically LCL and Theta-DL should be extracted to separate functions
+        // technically LCL and Theta-DL could be extracted to separate functions
 
         let lcl_temp =
             (1.0 / ((1.0 / (dewpoint - 56.0)) + ((temperature / dewpoint).ln() / 800.0))) + 56.0;
@@ -256,6 +256,68 @@ impl
             * (((3036.0 / lcl_temp) - 1.78) * mixing_ratio * (1.0 + 0.448 * mixing_ratio)).exp();
 
         EquivalentPotentialTemperature::new::<kelvin>(result)
+    }
+}
+
+/// Approximate formula for computing equivalent potential temperature of unsaturated air from
+/// temperature, dewpoint, mixing ratio and potential temperature.
+///
+/// Derived by D. Bolton (1980)
+/// [(doi:10.1175/1520-0493(1980)108<1046:TCOEPT>2.0.CO;2)](https://doi.org/10.1175/1520-0493(1980)108%3C1046:TCOEPT%3E2.0.CO;2)
+///
+/// Valid `temperature` range: 253K - 324K
+///
+/// Valid `dewpoint` range: 253K - 324K
+///
+/// Valid `mixing_ratio` range: 0.000_000_1 - 2.0
+///
+/// Valid `potential_temperature` range: 253K - 324K
+pub struct Bolton2;
+
+impl
+    Formula4<
+        EquivalentPotentialTemperature,
+        DryBulbTemperature,
+        DewPointTemperature,
+        MixingRatio,
+        PotentialTemperature,
+    > for Bolton2
+{
+    fn compute_unchecked(
+        temperature: DryBulbTemperature,
+        dewpoint: DewPointTemperature,
+        mixing_ratio: MixingRatio,
+        potential_temperature: PotentialTemperature,
+    ) -> EquivalentPotentialTemperature {
+        let temperature = temperature.0.get::<kelvin>();
+        let dewpoint = dewpoint.0.get::<kelvin>();
+        let mixing_ratio = mixing_ratio.0.get::<ratio>();
+        let theta = potential_temperature.0.get::<kelvin>();
+
+        let lcl_temp =
+            (1.0 / ((1.0 / (dewpoint - 56.0)) + ((temperature / dewpoint).ln() / 800.0))) + 56.0;
+
+        let result = theta
+            * (((3.376 / lcl_temp) - 0.00254)
+                * (1000.0 * mixing_ratio)
+                * (1.0 + (0.81 * mixing_ratio)))
+                .exp();
+
+        EquivalentPotentialTemperature::new::<kelvin>(result)
+    }
+
+    fn validate_inputs(
+        temperature: DryBulbTemperature,
+        dewpoint: DewPointTemperature,
+        mixing_ratio: MixingRatio,
+        potential_temperature: PotentialTemperature,
+    ) -> Result<(), InputError> {
+        temperature.check_range_si(253.0, 324.0)?;
+        dewpoint.check_range_si(253.0, 324.0)?;
+        mixing_ratio.check_range_si(0.000_000_1, 2.0)?;
+        potential_temperature.check_range_si(253.0, 324.0)?;
+
+        Ok(())
     }
 }
 
@@ -320,6 +382,25 @@ mod tests {
             Argument::new([253.0, 324.0]),
             Argument::new([253.0, 324.0]),
             Argument::new([0.0, 50_000.0]),
+            ReferenceAtmosphere::Normal,
+            1e1,
+        );
+    }
+
+    #[test]
+    fn bolton2() {
+        test_with_4args::<
+            FormulaQuantity,
+            DryBulbTemperature,
+            DewPointTemperature,
+            MixingRatio,
+            PotentialTemperature,
+            Bolton2,
+        >(
+            Argument::new([253.0, 324.0]),
+            Argument::new([253.0, 324.0]),
+            Argument::new([0.000_000_1, 2.0]),
+            Argument::new([253.0, 324.0]),
             ReferenceAtmosphere::Normal,
             1e1,
         );
