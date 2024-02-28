@@ -1,9 +1,9 @@
 # floccus
 
-[![License](https://img.shields.io/github/license/ScaleWeather/floccus)](https://choosealicense.com/licenses/apache-2.0/)
-[![Crates.io](https://img.shields.io/crates/v/floccus)](https://crates.io/crates/floccus)
-[![dependency status](https://deps.rs/repo/github/ScaleWeather/floccus/status.svg)](https://deps.rs/repo/github/ScaleWeather/floccus)
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/ScaleWeather/floccus/basic.yml?branch=main&label=cargo%20build)](https://github.com/ScaleWeather/floccus/actions)
+[![Github Repository](https://img.shields.io/badge/Github-Repository-blue?style=flat-square&logo=github&color=blue)](https://github.com/ScaleWeather/floccus)
+[![Crates.io](https://img.shields.io/crates/v/floccus?style=flat-square)](https://crates.io/crates/floccus)
+[![License](https://img.shields.io/github/license/ScaleWeather/floccus?style=flat-square)](https://choosealicense.com/licenses/apache-2.0/)
+[![dependency status](https://deps.rs/repo/github/ScaleWeather/floccus/status.svg?style=flat-square)](https://deps.rs/repo/github/ScaleWeather/floccus)
 
 Rust crate providing formulae for air thermodynamic calculations.
 
