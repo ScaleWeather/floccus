@@ -1,5 +1,6 @@
 use float_cmp::assert_approx_eq;
 use itertools::multiunzip;
+#[cfg(feature = "array")]
 use ndarray::Array1;
 
 use super::check_result;
@@ -225,6 +226,7 @@ pub fn test_with_4args<
 
     let arg_vecs: (Vec<_>, Vec<_>, Vec<_>, Vec<_>) = multiunzip(arg_vecs);
 
+    #[cfg(feature = "array")]
     let arg_arrs = (
         Array1::from(arg_vecs.0.clone()),
         Array1::from(arg_vecs.1.clone()),
@@ -240,8 +242,10 @@ pub fn test_with_4args<
         ulps = 4
     );
 
+    #[cfg(feature = "array")]
     let result_arr =
         F::compute_ndarray(&arg_arrs.0, &arg_arrs.1, &arg_arrs.2, &arg_arrs.3).unwrap();
+    #[cfg(feature = "array")]
     assert_approx_eq!(
         Float,
         ref_result.get_si_value(),
@@ -249,8 +253,10 @@ pub fn test_with_4args<
         ulps = 4
     );
 
+    #[cfg(feature = "parallel")]
     let result_vec =
         F::compute_vec_parallel(&arg_vecs.0, &arg_vecs.1, &arg_vecs.2, &arg_vecs.3).unwrap();
+    #[cfg(feature = "parallel")]
     assert_approx_eq!(
         Float,
         ref_result.get_si_value(),
@@ -258,8 +264,10 @@ pub fn test_with_4args<
         ulps = 4
     );
 
+    #[cfg(feature = "parallel")]
     let result_arr =
         F::compute_ndarray_parallel(&arg_arrs.0, &arg_arrs.1, &arg_arrs.2, &arg_arrs.3).unwrap();
+    #[cfg(feature = "parallel")]
     assert_approx_eq!(
         Float,
         ref_result.get_si_value(),
@@ -282,7 +290,9 @@ pub fn test_with_4args<
         epsilon = 1e-12
     );
 
+    #[cfg(feature = "debug")]
     testing_logger::setup();
+    #[cfg(feature = "debug")]
     let _ = F::compute(
         I1::new_si(-9999.0),
         I2::new_si(-9999.0),
@@ -290,6 +300,7 @@ pub fn test_with_4args<
         I4::new_si(-9999.0),
     );
 
+    #[cfg(feature = "debug")]
     testing_logger::validate(|captured_logs| {
         assert_eq!(captured_logs.len(), 1);
         let body = &captured_logs[0].body;

@@ -1,4 +1,5 @@
 use float_cmp::assert_approx_eq;
+#[cfg(feature = "array")]
 use ndarray::Array1;
 
 use super::check_result;
@@ -70,6 +71,7 @@ pub fn test_with_1arg<O: TestingQuantity, I1: TestingQuantity, F: Formula1<O, I1
         .map(|i| I1::new_si(arg1.ref_val(atm).get_si_value() + i))
         .collect();
 
+    #[cfg(feature = "array")]
     let arg_arrs = Array1::from(arg_vecs.clone());
 
     let result_vec = F::compute_vec(&arg_vecs).unwrap();
@@ -80,7 +82,9 @@ pub fn test_with_1arg<O: TestingQuantity, I1: TestingQuantity, F: Formula1<O, I1
         ulps = 4
     );
 
+    #[cfg(feature = "array")]
     let result_arr = F::compute_ndarray(&arg_arrs).unwrap();
+    #[cfg(feature = "array")]
     assert_approx_eq!(
         Float,
         ref_result.get_si_value(),
@@ -88,7 +92,9 @@ pub fn test_with_1arg<O: TestingQuantity, I1: TestingQuantity, F: Formula1<O, I1
         ulps = 4
     );
 
+    #[cfg(feature = "parallel")]
     let result_vec = F::compute_vec_parallel(&arg_vecs).unwrap();
+    #[cfg(feature = "parallel")]
     assert_approx_eq!(
         Float,
         ref_result.get_si_value(),
@@ -96,7 +102,9 @@ pub fn test_with_1arg<O: TestingQuantity, I1: TestingQuantity, F: Formula1<O, I1
         ulps = 4
     );
 
+    #[cfg(feature = "parallel")]
     let result_arr = F::compute_ndarray_parallel(&arg_arrs).unwrap();
+    #[cfg(feature = "parallel")]
     assert_approx_eq!(
         Float,
         ref_result.get_si_value(),
@@ -113,9 +121,12 @@ pub fn test_with_1arg<O: TestingQuantity, I1: TestingQuantity, F: Formula1<O, I1
         epsilon = 1e-12
     );
 
+    #[cfg(feature = "debug")]
     testing_logger::setup();
+    #[cfg(feature = "debug")]
     let _ = F::compute(I1::new_si(-9999.0));
 
+    #[cfg(feature = "debug")]
     testing_logger::validate(|captured_logs| {
         assert_eq!(captured_logs.len(), 1);
         let body = &captured_logs[0].body;

@@ -1,7 +1,9 @@
 #![allow(missing_docs)]
 
 use crate::{errors::InputError, quantities::ThermodynamicQuantity};
+#[cfg(feature = "array")]
 use ndarray::{Array, Dimension, FoldWhile, Zip};
+#[cfg(feature = "parallel")]
 use rayon::iter::{IndexedParallelIterator, IntoParallelIterator, ParallelIterator};
 
 pub trait Formula1<O: ThermodynamicQuantity, I1: ThermodynamicQuantity> {
@@ -16,11 +18,14 @@ pub trait Formula1<O: ThermodynamicQuantity, I1: ThermodynamicQuantity> {
     #[allow(missing_docs)]
     #[inline]
     fn compute(i1: I1) -> Result<O, InputError> {
-        if cfg!(feature = "debug") && cfg!(debug_assertions) {
-            Self::validate_inputs_loggerr(i1)?;
+        cfg_if::cfg_if! { 
+            if #[cfg(feature = "debug")] {
+            cfg_if::cfg_if! {  
+                if #[cfg(debug_assertions)] {
+            Self::validate_inputs_loggerr(i1)?;}}
         } else {
             Self::validate_inputs(i1)?;
-        }
+        }}
 
         Ok(Self::compute_unchecked(i1))
     }
@@ -101,11 +106,14 @@ pub trait Formula2<O: ThermodynamicQuantity, I1: ThermodynamicQuantity, I2: Ther
     #[allow(missing_docs)]
     #[inline]
     fn compute(i1: I1, i2: I2) -> Result<O, InputError> {
-        if cfg!(feature = "debug") && cfg!(debug_assertions) {
-            Self::validate_inputs_loggerr(i1, i2)?;
+        cfg_if::cfg_if! { 
+            if #[cfg(feature = "debug")] {
+            cfg_if::cfg_if! {  
+                if #[cfg(debug_assertions)] {
+            Self::validate_inputs_loggerr(i1,i2)?;}}
         } else {
-            Self::validate_inputs(i1, i2)?;
-        }
+            Self::validate_inputs(i1,i2)?;
+        }}
 
         Ok(Self::compute_unchecked(i1, i2))
     }
@@ -209,11 +217,14 @@ pub trait Formula3<
     #[allow(missing_docs)]
     #[inline]
     fn compute(i1: I1, i2: I2, i3: I3) -> Result<O, InputError> {
-        if cfg!(feature = "debug") && cfg!(debug_assertions) {
-            Self::validate_inputs_loggerr(i1, i2, i3)?;
+        cfg_if::cfg_if! { 
+            if #[cfg(feature = "debug")] {
+            cfg_if::cfg_if! { 
+                if #[cfg(debug_assertions)] {
+            Self::validate_inputs_loggerr(i1, i2, i3)?;}}
         } else {
-            Self::validate_inputs(i1, i2, i3)?;
-        }
+            Self::validate_inputs(i1,i2,i3)?;
+        }}
 
         Ok(Self::compute_unchecked(i1, i2, i3))
     }
@@ -331,11 +342,14 @@ pub trait Formula4<
     #[allow(missing_docs)]
     #[inline]
     fn compute(i1: I1, i2: I2, i3: I3, i4: I4) -> Result<O, InputError> {
-        if cfg!(feature = "debug") && cfg!(debug_assertions) {
-            Self::validate_inputs_loggerr(i1, i2, i3, i4)?;
+        cfg_if::cfg_if! {
+            if #[cfg(feature = "debug")] {
+                cfg_if::cfg_if! {  
+                    if #[cfg(debug_assertions)] {
+                Self::validate_inputs_loggerr(i1,i2,i3,i4)?;}}
         } else {
-            Self::validate_inputs(i1, i2, i3, i4)?;
-        }
+            Self::validate_inputs(i1,i2,i3,i4)?;
+        }}
 
         Ok(Self::compute_unchecked(i1, i2, i3, i4))
     }
