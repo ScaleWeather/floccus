@@ -13,7 +13,7 @@ exclude = [".github/*"]
 publish = false
 
 [dependencies]
-floccus-proc = { path = "../floccus-proc" }
+floccus-proc = "0.3.0"
 thiserror = "1.0"
 float-cmp = "0.9"
 log = { version = "0.4", optional = true }
