@@ -1,7 +1,6 @@
 use criterion::black_box;
 use floccus::quantities::{
-    AtmosphericPressure, DewPointTemperature, DryBulbTemperature, MixingRatio, RelativeHumidity,
-    SaturationMixingRatio, SaturationVapourPressure, SpecificHumidity, VapourPressure,
+    AtmosphericPressure, DewPointTemperature, DryBulbTemperature, EquivalentPotentialTemperature, MixingRatio, PotentialTemperature, RelativeHumidity, SaturationMixingRatio, SaturationVapourPressure, SpecificHumidity, VapourPressure
 };
 use uom::si::{pressure::pascal, ratio::ratio, thermodynamic_temperature::kelvin};
 
@@ -49,6 +48,8 @@ pub struct ReferenceValues {
     pub rehu: RelativeHumidity,
     pub mxrt: MixingRatio,
     pub smrt: SaturationMixingRatio,
+    pub thte: EquivalentPotentialTemperature,
+    pub thet: PotentialTemperature,
 }
 
 impl ReferenceValues {
@@ -63,6 +64,8 @@ impl ReferenceValues {
             rehu: black_box(RelativeHumidity::new::<ratio>(RH_NORM)),
             mxrt: black_box(MixingRatio::new::<ratio>(MR_NORM)),
             smrt: black_box(SaturationMixingRatio::new::<ratio>(SMR_NROM)),
+            thte: black_box(EquivalentPotentialTemperature::new::<kelvin>(THETAE_NORM)),
+            thet: black_box(PotentialTemperature::new::<kelvin>(THETA_NORM)),
         }
     }
 
@@ -77,6 +80,8 @@ impl ReferenceValues {
             rehu: black_box(RelativeHumidity::new::<ratio>(RH_FREEZ)),
             mxrt: black_box(MixingRatio::new::<ratio>(MR_FREEZ)),
             smrt: black_box(SaturationMixingRatio::new::<ratio>(SMR_FREEZ)),
+            thte: black_box(EquivalentPotentialTemperature::new::<kelvin>(THETAE_FREEZ)),
+            thet: black_box(PotentialTemperature::new::<kelvin>(THETA_FREEZ)),
         }
     }
 }

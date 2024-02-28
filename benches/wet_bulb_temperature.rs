@@ -1,11 +1,13 @@
-// use criterion::{Criterion, black_box, criterion_group, criterion_main};
-// use floccus::wet_bulb_temperature;
+use criterion::Criterion;
+use floccus::{formulas::wet_bulb_temperature, Formula2};
 
-// pub fn wet_bulb_temperature_benchmark(c: &mut Criterion) {
-//     c.bench_function("wet_bulb_temperature::stull1", |b| {
-//         b.iter(|| wet_bulb_temperature::stull1(black_box(300.0), black_box(0.5)))
-//     });
-// }
+// this is the best way to avoid code duplication I could find
+include!("./reference_values.rs");
 
-// criterion_group!(benches, wet_bulb_temperature_benchmark);
-// criterion_main!(benches);
+pub fn benchmark(c: &mut Criterion) {
+    let ref_norm = ReferenceValues::normal();
+
+    c.bench_function("wet_bulb_temperature::stull1", |b| {
+        b.iter(|| wet_bulb_temperature::Stull1::compute(ref_norm.temp, ref_norm.rehu))
+    });
+}
