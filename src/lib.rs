@@ -81,21 +81,25 @@
 //! information about the error. This feature potentially is not zero-cost so it is optional.
 
 pub mod constants;
-pub mod equivalent_potential_temperature;
-pub mod errors;
-pub mod mixing_ratio;
-pub mod potential_temperature;
-pub mod relative_humidity;
-pub mod specific_humidity;
-mod tests_framework;
-pub mod vapour_pressure;
-pub mod vapour_pressure_deficit;
-pub mod virtual_temperature;
-pub mod wet_bulb_potential_temperature;
-pub mod wet_bulb_temperature;
+mod errors;
+pub mod formulas;
+pub mod quantities;
+mod traits;
+
+pub use errors::InputError;
+pub use traits::{Formula1, Formula2, Formula3, Formula4};
+
+#[cfg(test)]
+mod tests;
 
 #[cfg(not(feature = "double_precision"))]
 type Float = f32;
 
 #[cfg(feature = "double_precision")]
 type Float = f64;
+
+#[cfg(not(feature = "double_precision"))]
+pub(crate) use uom::si::f32 as Storage;
+
+#[cfg(feature = "double_precision")]
+pub(crate) use uom::si::f64 as Storage;

@@ -1,48 +1,125 @@
-//!Module containing physical constants
+//! Module containing physical constants
 
-use crate::Float;
+use std::marker::PhantomData;
 
-///Temperature of 0 Celsius in `K`
-pub const ZERO_CELSIUS: Float = 273.15;
+use crate::Storage;
 
-///Gravitational acceleration in `m s^-2`
-pub const G: Float = 9.80665;
+/// Gravitational acceleration of Earth
+pub const G: Storage::Acceleration = Storage::Acceleration {
+    dimension: PhantomData,
+    units: PhantomData,
+    value: 9.806_65,
+};
 
-///Universal gas constant in `J K^-1 mol^-1`
-pub const R: Float = 8.314_462_618_153_24;
+/// Universal gas constant
+pub const R: Storage::MolarHeatCapacity = Storage::MolarHeatCapacity {
+    dimension: PhantomData,
+    units: PhantomData,
+    value: 8.314_462_618_153_24,
+};
 
-///Molar mass of dry air in `kg mol^-1` (ECMWF, 2020)
-pub const M_D: Float = 0.028_964_4;
+/// Molar mass of dry air (ECMWF, 2020)
+pub const M_D: Storage::MolarMass = Storage::MolarMass {
+    dimension: PhantomData,
+    units: PhantomData,
+    value: 0.028_964_4,
+};
 
-///Molar mass of water vapour in `kg mol^-1`
-pub const M_V: Float = 0.018_015_283_3;
+/// Molar mass of water vapour
+pub const M_V: Storage::MolarMass = Storage::MolarMass {
+    dimension: PhantomData,
+    units: PhantomData,
+    value: 0.018_015_283_3,
+};
 
-///Specific heat capacity of dry air at constant pressure in `J kg^-1 K^-1` (ECMWF, 2020)
-pub const C_P: Float = 1004.709;
+/// Specific heat capacity of dry air at constant pressure (ECMWF, 2020)
+pub const C_P: Storage::SpecificHeatCapacity = Storage::SpecificHeatCapacity {
+    dimension: PhantomData,
+    units: PhantomData,
+    value: 1004.709,
+};
 
-///Specific heat capacity of dry air at constant volume in `J kg^-1 K^-1` (ECMWF, 2020)
-pub const C_V: Float = 717.6493;
+/// Specific heat capacity of dry air at constant volume` (ECMWF, 2020)
+pub const C_V: Storage::SpecificHeatCapacity = Storage::SpecificHeatCapacity {
+    dimension: PhantomData,
+    units: PhantomData,
+    value: 717.6493,
+};
 
-///Specific heat capacity of water vapour at constant pressure in `J kg^-1 K^-1` (ECMWF, 2020)
-pub const C_PV: Float = 1846.1;
+/// Specific heat capacity of water vapour at constant pressure (ECMWF, 2020)
+pub const C_PV: Storage::SpecificHeatCapacity = Storage::SpecificHeatCapacity {
+    dimension: PhantomData,
+    units: PhantomData,
+    value: 1846.1,
+};
 
-///Specific heat capacity of water vapour at constant volume in `J kg^-1 K^-1` (ECMWF, 2020)
-pub const C_VV: Float = 1384.575;
+/// Specific heat capacity of water vapour at constant volume (ECMWF, 2020)
+pub const C_VV: Storage::SpecificHeatCapacity = Storage::SpecificHeatCapacity {
+    dimension: PhantomData,
+    units: PhantomData,
+    value: 1384.575,
+};
 
-///Specific heat capacity of liquid water in `J kg^-1 K^-1` (ECMWF, 2020)
-pub const C_L: Float = 4218.0;
+/// Specific heat capacity of liquid water (ECMWF, 2020)
+pub const C_L: Storage::SpecificHeatCapacity = Storage::SpecificHeatCapacity {
+    dimension: PhantomData,
+    units: PhantomData,
+    value: 4218.0,
+};
 
-///Specific heat capacity of solid water in `J kg^-1 K^-1` (ECMWF, 2020)
-pub const C_S: Float = 2106.0;
+/// Specific heat capacity of solid water (ECMWF, 2020)
+pub const C_S: Storage::SpecificHeatCapacity = Storage::SpecificHeatCapacity {
+    dimension: PhantomData,
+    units: PhantomData,
+    value: 2106.0,
+};
 
-///Mass latent heat of vapourization of water in `J kg^1`  (ECMWF, 2020)
-pub const L_V: Float = 2_500_800.0;
+/// Specific latent heat of vapourization of water (ECMWF, 2020)
+pub const L_V: Storage::AvailableEnergy = Storage::AvailableEnergy {
+    dimension: PhantomData,
+    units: PhantomData,
+    value: 2_500_800.0,
+};
 
-///Ratio of molar masses of dry air and water vapour in `no unit`
-pub const EPSILON: Float = M_V / M_D;
+/// Specific gas constant for dry air
+pub const R_D: Storage::SpecificHeatCapacity = Storage::SpecificHeatCapacity {
+    dimension: PhantomData,
+    units: PhantomData,
+    value: R.value / M_D.value,
+};
 
-///Specific gas constant for dry air in `J kg^-1 K^-1`
-pub const R_D: Float = R / M_D;
+/// Specific gas constant for water vapour
+pub const R_V: Storage::SpecificHeatCapacity = Storage::SpecificHeatCapacity {
+    dimension: PhantomData,
+    units: PhantomData,
+    value: R.value / M_V.value,
+};
 
-///Specific gas constant for water vapour in `J kg^-1 K^-1`
-pub const R_V: Float = R / M_V;
+// Internal Constants (commonly appearing in formulas to use them with oum units)
+
+/// Ratio of molar masses of dry air and water vapour
+pub(crate) const EPSILON: Storage::Ratio = Storage::Ratio {
+    dimension: PhantomData,
+    units: PhantomData,
+    value: M_V.value / M_D.value,
+};
+
+/// Ratio of specific gas constant and specific heat capacity for dry air
+pub(crate) const KAPPA: Storage::Ratio = Storage::Ratio {
+    dimension: PhantomData,
+    units: PhantomData,
+    value: R_D.value / C_P.value,
+};
+
+pub(crate) const DIMLESS_ONE: Storage::Ratio = Storage::Ratio {
+    dimension: PhantomData,
+    units: PhantomData,
+    value: 1.0,
+};
+
+pub(crate) const ZERO_KELVIN: Storage::ThermodynamicTemperature =
+    Storage::ThermodynamicTemperature {
+        dimension: PhantomData,
+        units: PhantomData,
+        value: 0.0,
+    };

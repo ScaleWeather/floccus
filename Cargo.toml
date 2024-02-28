@@ -9,59 +9,74 @@ readme = "README.md"
 keywords = ["oceanography", "thermodynamics", "meteorology", "weather"]
 categories = ["mathematics", "science"]
 license = "Apache-2.0"
-exclude = [
-    ".github/*",
-]
+exclude = [".github/*"]
+publish = false
 
 [dependencies]
+floccus-proc = "0.3.0"
 thiserror = "1.0"
 float-cmp = "0.9"
-floccus-proc = {version = "0.2.5", optional = true}
-log = "0.4"
+log = { version = "0.4", optional = true }
+ndarray = { version = "0.15", default-features = false, optional = true }
+rayon = { version = "1.8", default-features = false, optional = true }
+uom = { version = "0.35", default-features = false, features = [
+    "si",
+    "std",
+    "autoconvert",
+    "f32",
+    "f64",
+] }
+
+[lib]
+doctest = false
 
 [dev-dependencies]
-criterion = "0.5.1"
+criterion = "0.5"
+itertools = "0.12"
 
 [features]
-debug = ["floccus-proc"]
+default = ["array", "parallel", "debug", "double_precision"]
+debug = ["log"]
 double_precision = []
+array = ["ndarray"]
+parallel = ["array", "ndarray/rayon", "rayon"]
 
-[[bench]]
-name = "virtual_temperature"
-harness = false
+# [[bench]]
+# name = "virtual_temperature"
+# harness = false
 
-[[bench]]
-name = "vapour_pressure"
-harness = false
+# [[bench]]
+# name = "vapour_pressure"
+# harness = false
 
-[[bench]]
-name = "vapour_pressure_deficit"
-harness = false
+# [[bench]]
+# name = "vapour_pressure_deficit"
+# harness = false
 
-[[bench]]
-name = "mixing_ratio"
-harness = false
+# [[bench]]
+# name = "mixing_ratio"
+# harness = false
 
-[[bench]]
-name = "wet_bulb_temperature"
-harness = false
+# [[bench]]
+# name = "wet_bulb_temperature"
+# harness = false
 
-[[bench]]
-name = "relative_humidity"
-harness = false
+# [[bench]]
+# name = "relative_humidity"
+# harness = false
 
-[[bench]]
-name = "specific_humidity"
-harness = false
+# [[bench]]
+# name = "specific_humidity"
+# harness = false
 
-[[bench]]
-name = "potential_temperature"
-harness = false
+# [[bench]]
+# name = "potential_temperature"
+# harness = false
 
-[[bench]]
-name = "equivalent_potential_temperature"
-harness = false
+# [[bench]]
+# name = "equivalent_potential_temperature"
+# harness = false
 
-[[bench]]
-name = "wet_bulb_potential_temperature"
-harness = false
+# [[bench]]
+# name = "wet_bulb_potential_temperature"
+# harness = false
