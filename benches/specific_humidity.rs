@@ -1,11 +1,13 @@
-// use criterion::{Criterion, black_box, criterion_group, criterion_main};
-// use floccus::specific_humidity;
+use criterion::Criterion;
+use floccus::{formulas::specific_humidity, Formula2};
 
-// pub fn specific_humidity_benchmark(c: &mut Criterion) {
-//     c.bench_function("specific_humidity::general1", |b| {
-//         b.iter(|| specific_humidity::general1(black_box(3000.0), black_box(101325.0)))
-//     });
-// }
+// this is the best way to avoid code duplication I could find
+include!("./reference_values.rs");
 
-// criterion_group!(benches, specific_humidity_benchmark);
-// criterion_main!(benches);
+pub fn benchmark(c: &mut Criterion) {
+    let ref_norm = ReferenceValues::normal();
+
+    c.bench_function("specific_humidity::definition1", |b| {
+        b.iter(|| specific_humidity::Definition1::compute(ref_norm.vapr, ref_norm.pres))
+    });
+}
