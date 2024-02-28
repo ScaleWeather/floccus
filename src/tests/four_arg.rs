@@ -281,4 +281,23 @@ pub fn test_with_4args<
         result_imperial.get_si_value(),
         epsilon = 1e-12
     );
+
+    testing_logger::setup();
+    let _ = F::compute(
+        I1::new_si(-9999.0),
+        I2::new_si(-9999.0),
+        I3::new_si(-9999.0),
+        I4::new_si(-9999.0),
+    );
+
+    testing_logger::validate(|captured_logs| {
+        assert_eq!(captured_logs.len(), 1);
+        let body = &captured_logs[0].body;
+        assert!(body.contains("Formula"));
+        assert!(body.contains("calculating"));
+        assert!(body.contains("from"));
+        assert!(body.contains("inputs"));
+        assert!(body.contains("returned error:"));
+        assert_eq!(captured_logs[0].level, log::Level::Error);
+    });
 }
