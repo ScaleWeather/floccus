@@ -1,7 +1,7 @@
 use criterion::black_box;
 use floccus::quantities::{
     AtmosphericPressure, DewPointTemperature, DryBulbTemperature, RelativeHumidity,
-    SaturationVapourPressure, SpecificHumidity,
+    SaturationVapourPressure, SpecificHumidity, VapourPressure,
 };
 use uom::si::{pressure::pascal, ratio::ratio, thermodynamic_temperature::kelvin};
 
@@ -44,6 +44,7 @@ pub struct ReferenceValues {
     pub pres: AtmosphericPressure,
     pub dwpt: DewPointTemperature,
     pub sphu: SpecificHumidity,
+    pub vapr: VapourPressure,
     pub savp: SaturationVapourPressure,
     pub rehu: RelativeHumidity,
 }
@@ -55,6 +56,7 @@ impl ReferenceValues {
             pres: black_box(AtmosphericPressure::new::<pascal>(PRES_NORM)),
             dwpt: black_box(DewPointTemperature::new::<kelvin>(DWPT_NORM)),
             sphu: black_box(SpecificHumidity::new::<ratio>(SH_NORM)),
+            vapr: black_box(VapourPressure::new::<pascal>(VP_NORM)),
             savp: black_box(SaturationVapourPressure::new::<pascal>(SVP_NORM)),
             rehu: black_box(RelativeHumidity::new::<ratio>(RH_NORM)),
         }
@@ -66,6 +68,7 @@ impl ReferenceValues {
             pres: black_box(AtmosphericPressure::new::<pascal>(PRES_FREEZ)),
             dwpt: black_box(DewPointTemperature::new::<kelvin>(DWPT_FREEZ)),
             sphu: black_box(SpecificHumidity::new::<ratio>(SH_FREEZ)),
+            vapr: black_box(VapourPressure::new::<pascal>(VP_FREEZ)),
             savp: black_box(SaturationVapourPressure::new::<pascal>(SVP_FREEZ)),
             rehu: black_box(RelativeHumidity::new::<ratio>(RH_FREEZ)),
         }
