@@ -1,17 +1,17 @@
-use criterion::{Criterion, black_box, criterion_group, criterion_main};
-use floccus::mixing_ratio;
+#![allow(unused)]
+use criterion::Criterion;
+use floccus::{formulas::mixing_ratio, Formula2};
 
-pub fn mixing_ratio_benchmark(c: &mut Criterion) {
-    c.bench_function("mixing_ratio::general1", |b| {
-        b.iter(|| mixing_ratio::general1(black_box(101325.0), black_box(3500.0)))
+// this is the best way to avoid code duplication I could find
+include!("./reference_values.rs");
+
+pub fn benchmark(c: &mut Criterion) {
+    let ref_norm = ReferenceValues::normal();
+
+    let mut group = c.benchmark_group("mixing_ratio");
+
+    group.bench_function("definition1", |b| {
+        b.iter(|| mixing_ratio::Definition1::compute(ref_norm.pres, ref_norm.vapr))
     });
-    c.bench_function("mixing_ratio::performance1", |b| {
-        b.iter(|| mixing_ratio::performance1(black_box(300.0), black_box(101325.0)))
-    });
-    c.bench_function("mixing_ratio::accuracy1", |b| {
-        b.iter(|| mixing_ratio::accuracy1(black_box(300.0), black_box(101325.0)))
-    });
+    group.finish();
 }
-
-criterion_group!(benches, mixing_ratio_benchmark);
-criterion_main!(benches);

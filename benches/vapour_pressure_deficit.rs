@@ -1,19 +1,17 @@
-use criterion::{Criterion, black_box, criterion_group, criterion_main};
-use floccus::vapour_pressure_deficit;
+#![allow(unused)]
+use criterion::Criterion;
+use floccus::{formulas::vapour_pressure_deficit, Formula2};
 
-pub fn virtual_temperature_benchmark(c: &mut Criterion) {
-    c.bench_function("vapour_pressure_deficit::general1", |b| {
-        b.iter(|| vapour_pressure_deficit::general1(black_box(3000.0), black_box(3550.0)))
-    });
+// this is the best way to avoid code duplication I could find
+include!("./reference_values.rs");
 
-    c.bench_function("vapour_pressure_deficit::general2", |b| {
-        b.iter(|| vapour_pressure_deficit::general2(black_box(300.0), black_box(290.0), black_box(101325.0)))
-    });
+pub fn benchmark(c: &mut Criterion) {
+    let ref_norm = ReferenceValues::normal();
 
-    c.bench_function("vapour_pressure_deficit::general3", |b| {
-        b.iter(|| vapour_pressure_deficit::general3(black_box(300.0), black_box(0.5), black_box(101325.0)))
+    let mut group = c.benchmark_group("vapour_pressure_deficit");
+
+    group.bench_function("definition1", |b| {
+        b.iter(|| vapour_pressure_deficit::Definition1::compute(ref_norm.vapr, ref_norm.savp))
     });
+    group.finish();
 }
-
-criterion_group!(benches, virtual_temperature_benchmark);
-criterion_main!(benches);

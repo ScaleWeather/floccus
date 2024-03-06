@@ -1,11 +1,19 @@
-use criterion::{Criterion, black_box, criterion_group, criterion_main};
-use floccus::potential_temperature;
+#![allow(unused)]
+use criterion::Criterion;
+use floccus::{formulas::potential_temperature, Formula3};
 
-pub fn potential_temperature_benchmark(c: &mut Criterion) {
-    c.bench_function("potential_temperature::davies_jones1", |b| {
-        b.iter(|| potential_temperature::davies_jones1(black_box(300.0), black_box(101325.0), black_box(3000.0)))
+// this is the best way to avoid code duplication I could find
+include!("./reference_values.rs");
+
+pub fn benchmark(c: &mut Criterion) {
+    let ref_norm = ReferenceValues::normal();
+
+    let mut group = c.benchmark_group("potential_temperature");
+
+    group.bench_function("definition1", |b| {
+        b.iter(|| {
+            potential_temperature::Definition1::compute(ref_norm.temp, ref_norm.pres, ref_norm.vapr)
+        })
     });
+    group.finish();
 }
-
-criterion_group!(benches, potential_temperature_benchmark);
-criterion_main!(benches);

@@ -1,55 +1,59 @@
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use floccus::vapour_pressure;
+#![allow(unused)]
+use criterion::Criterion;
+use floccus::{formulas::vapour_pressure, Formula1, Formula2};
 
-pub fn vapour_pressure_benchmark(c: &mut Criterion) {
-    c.bench_function("vapour_pressure::general1", |b| {
-        b.iter(|| vapour_pressure::general1(black_box(0.022), black_box(101325.0)))
+// this is the best way to avoid code duplication I could find
+include!("./reference_values.rs");
+
+pub fn benchmark(c: &mut Criterion) {
+    let ref_norm = ReferenceValues::normal();
+    let ref_freeze = ReferenceValues::freeze();
+
+    let mut group = c.benchmark_group("vapour_pressure");
+
+
+    group.bench_function("definition1", |b| {
+        b.iter(|| vapour_pressure::Definition1::compute(ref_norm.sphu, ref_norm.pres))
     });
 
-    c.bench_function("vapour_pressure::tetens1", |b| {
-        b.iter(|| vapour_pressure::tetens1(black_box(300.0)))
+    group.bench_function("definition2", |b| {
+        b.iter(|| vapour_pressure::Definition2::compute(ref_norm.savp, ref_norm.rehu))
     });
 
-    c.bench_function("vapour_pressure::buck1", |b| {
-        b.iter(|| vapour_pressure::buck1(black_box(300.0), black_box(101325.0)))
+    group.bench_function("tetens1", |b| {
+        b.iter(|| vapour_pressure::Tetens1::compute(ref_norm.dwpt))
     });
 
-    c.bench_function("vapour_pressure::buck2", |b| {
-        b.iter(|| vapour_pressure::buck2(black_box(250.0), black_box(101325.0)))
+    group.bench_function("buck1", |b| {
+        b.iter(|| vapour_pressure::Buck1::compute(ref_norm.dwpt, ref_norm.pres))
     });
 
-    c.bench_function("vapour_pressure::buck3", |b| {
-        b.iter(|| vapour_pressure::buck3(black_box(300.0), black_box(101325.0)))
+    group.bench_function("buck2", |b| {
+        b.iter(|| vapour_pressure::Buck2::compute(ref_freeze.dwpt, ref_freeze.pres))
     });
 
-    c.bench_function("vapour_pressure::buck4", |b| {
-        b.iter(|| vapour_pressure::buck4(black_box(250.0), black_box(101325.0)))
+    group.bench_function("buck3", |b| {
+        b.iter(|| vapour_pressure::Buck3::compute(ref_norm.dwpt, ref_norm.pres))
     });
 
-    c.bench_function("vapour_pressure::buck3_simplified", |b| {
-        b.iter(|| vapour_pressure::buck3_simplified(black_box(300.0)))
+    group.bench_function("buck4", |b| {
+        b.iter(|| vapour_pressure::Buck4::compute(ref_freeze.dwpt, ref_freeze.pres))
     });
 
-    c.bench_function("vapour_pressure::buck4_simplified", |b| {
-        b.iter(|| vapour_pressure::buck4_simplified(black_box(250.0)))
+    group.bench_function("buck3_simplified", |b| {
+        b.iter(|| vapour_pressure::Buck3Simplified::compute(ref_norm.dwpt))
     });
 
-    c.bench_function("vapour_pressure::saturation_specific1", |b| {
-        b.iter(|| vapour_pressure::saturation_specific1(black_box(3000.0), black_box(0.5)))
+    group.bench_function("buck4_simplified", |b| {
+        b.iter(|| vapour_pressure::Buck4Simplified::compute(ref_freeze.dwpt))
     });
 
-    c.bench_function("vapour_pressure::saturation_specific2", |b| {
-        b.iter(|| vapour_pressure::saturation_specific2(black_box(3000.0), black_box(0.5)))
+    group.bench_function("wexler1", |b| {
+        b.iter(|| vapour_pressure::Wexler1::compute(ref_norm.dwpt))
     });
 
-    c.bench_function("vapour_pressure::wexler1", |b| {
-        b.iter(|| vapour_pressure::wexler1(black_box(300.0)))
+    group.bench_function("wexler2", |b| {
+        b.iter(|| vapour_pressure::Wexler2::compute(ref_freeze.dwpt))
     });
-
-    c.bench_function("vapour_pressure::wexler2", |b| {
-        b.iter(|| vapour_pressure::wexler2(black_box(250.0)))
-    });
+    group.finish();
 }
-
-criterion_group!(benches, vapour_pressure_benchmark);
-criterion_main!(benches);

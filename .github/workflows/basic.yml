@@ -1,0 +1,38 @@
+name: Basic Validation
+
+on: 
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron:  '26 3 20 * *'
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-Dwarnings"
+
+jobs:
+  build-and-test:
+
+    name: Build and Test
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Prepare environment
+      run: |
+        rustup update stable
+        cargo clean
+    - name: Build with cargo
+      run: |
+        cargo build --features "double_precision"
+        cargo build --features "debug"
+        cargo build --release
+        cargo clean
+    - name: Test with cargo
+      run: |
+        cargo test
+        cargo test --features "double_precision"
+        cargo test --features "debug"
+        cargo clean
