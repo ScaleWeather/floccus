@@ -10,17 +10,17 @@ pub fn benchmark(c: &mut Criterion) {
 
     let mut group = c.benchmark_group("virtual_temperature");
 
-    group.bench_function("virtual_temperature::definition1", |b| {
+    group.bench_function("definition1", |b| {
         b.iter(|| virtual_temperature::Definition1::compute(ref_norm.temp, ref_norm.mxrt))
     });
 
-    group.bench_function("virtual_temperature::definition2", |b| {
+    group.bench_function("definition2", |b| {
         b.iter(|| {
             virtual_temperature::Definition2::compute(ref_norm.temp, ref_norm.pres, ref_norm.vapr)
         })
     });
 
-    group.bench_function("virtual_temperature::definition3", |b| {
+    group.bench_function("definition3", |b| {
         b.iter(|| virtual_temperature::Definition3::compute(ref_norm.temp, ref_norm.sphu))
     });
     group.finish();

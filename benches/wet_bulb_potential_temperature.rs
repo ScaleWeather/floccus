@@ -10,7 +10,7 @@ pub fn benchmark(c: &mut Criterion) {
 
     let mut group = c.benchmark_group("wet_bulb_potential_temperature");
 
-    group.bench_function("wet_bulb_potential_temperature::DaviesJones1", |b| {
+    group.bench_function("DaviesJones1", |b| {
         b.iter(|| wet_bulb_potential_temperature::DaviesJones1::compute(ref_norm.thte))
     });
     group.finish();

@@ -10,7 +10,7 @@ pub fn benchmark(c: &mut Criterion) {
 
     let mut group = c.benchmark_group("equivalent_potential_temperature");
 
-    group.bench_function("equivalent_potential_temperature::Bolton1", |b| {
+    group.bench_function("Bolton1", |b| {
         b.iter(|| {
             equivalent_potential_temperature::Bolton1::compute(
                 ref_norm.pres,
@@ -21,7 +21,7 @@ pub fn benchmark(c: &mut Criterion) {
         })
     });
 
-    group.bench_function("equivalent_potential_temperature::Bolton2", |b| {
+    group.bench_function("Bolton2", |b| {
         b.iter(|| {
             equivalent_potential_temperature::Bolton2::compute(
                 ref_norm.temp,
@@ -32,7 +32,7 @@ pub fn benchmark(c: &mut Criterion) {
         })
     });
 
-    group.bench_function("equivalent_potential_temperature::Bryan1", |b| {
+    group.bench_function("Bryan1", |b| {
         b.iter(|| {
             equivalent_potential_temperature::Bryan1::compute(
                 ref_norm.temp,
@@ -43,7 +43,7 @@ pub fn benchmark(c: &mut Criterion) {
         })
     });
 
-    group.bench_function("equivalent_potential_temperature::Paluch1", |b| {
+    group.bench_function("Paluch1", |b| {
         b.iter(|| {
             equivalent_potential_temperature::Paluch1::compute(
                 ref_norm.temp,
