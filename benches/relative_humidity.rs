@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use criterion::Criterion;
 use floccus::{formulas::relative_humidity, Formula2};
 

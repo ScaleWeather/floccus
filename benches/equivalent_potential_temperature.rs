@@ -1,3 +1,4 @@
+#![allow(unused)]
 use criterion::Criterion;
 use floccus::{formulas::equivalent_potential_temperature, Formula4};
 

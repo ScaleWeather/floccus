@@ -1,3 +1,4 @@
+#![allow(unused)]
 use criterion::Criterion;
 use floccus::{formulas::saturation_vapour_pressure, Formula1, Formula2};
 

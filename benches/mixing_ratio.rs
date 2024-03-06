@@ -1,3 +1,4 @@
+#![allow(unused)]
 use criterion::Criterion;
 use floccus::{formulas::mixing_ratio, Formula2};
 

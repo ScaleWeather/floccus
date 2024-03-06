@@ -1,3 +1,4 @@
+#![allow(unused)]
 use criterion::Criterion;
 use floccus::{formulas::virtual_temperature, Formula2, Formula3};
 

@@ -1,3 +1,4 @@
+#![allow(unused)]
 use criterion::Criterion;
 use floccus::{formulas::vapour_pressure_deficit, Formula2};
 
