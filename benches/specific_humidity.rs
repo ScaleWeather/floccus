@@ -7,7 +7,11 @@ include!("./reference_values.rs");
 pub fn benchmark(c: &mut Criterion) {
     let ref_norm = ReferenceValues::normal();
 
-    c.bench_function("specific_humidity::definition1", |b| {
+    let mut group = c.benchmark_group("specific_humidity");
+
+    group.bench_function("definition1", |b| {
         b.iter(|| specific_humidity::Definition1::compute(ref_norm.vapr, ref_norm.pres))
     });
+
+    group.finish();
 }

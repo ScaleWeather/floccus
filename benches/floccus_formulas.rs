@@ -15,6 +15,7 @@ mod wet_bulb_temperature;
 
 criterion_group!(
     benches,
+    saturation_mixing_ratio::benchmark,
     vapour_pressure::benchmark,
     saturation_vapour_pressure::benchmark,
     relative_humidity::benchmark,
@@ -25,7 +26,6 @@ criterion_group!(
     specific_humidity::benchmark,
     mixing_ratio::benchmark,
     virtual_temperature::benchmark,
-    saturation_mixing_ratio::benchmark,
     vapour_pressure_deficit::benchmark
 );
 criterion_main!(benches);
