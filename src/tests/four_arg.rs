@@ -7,8 +7,8 @@ use super::check_result;
 use super::testing_traits::{ReferenceAtmosphere, TestingQuantity};
 use super::Argument;
 use crate::errors::InputError;
+use crate::formulas::Formula4;
 use crate::Float;
-use crate::Formula4;
 use std::mem::discriminant;
 
 pub fn test_with_4args<

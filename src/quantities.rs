@@ -1,7 +1,7 @@
 #![allow(missing_docs)]
 
-mod constructors;
 mod accessors;
+mod constructors;
 mod trait_impls;
 
 use floccus_proc::Name;
@@ -9,13 +9,16 @@ use floccus_proc::Name;
 use crate::{errors::InputError, Float, Storage};
 use std::fmt::Debug;
 
-pub trait QuantityName {
+pub trait ThermodynamicQuantity:
+    Debug + Clone + Copy + PartialEq + PartialOrd + Default + Send + Sync
+{
+}
+
+pub(crate) trait QuantityName {
     fn type_name_as_str() -> &'static str;
 }
 
-pub trait ThermodynamicQuantity:
-    Debug + Clone + Copy + PartialEq + PartialOrd + Default + Send + Sync + QuantityName
-{
+pub(crate) trait QuantityHelpers: QuantityName + ThermodynamicQuantity {
     fn get_si_value(&self) -> Float;
 
     fn name(&self) -> &'static str {

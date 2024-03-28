@@ -84,10 +84,8 @@ pub mod constants;
 mod errors;
 pub mod formulas;
 pub mod quantities;
-mod traits;
 
 pub use errors::InputError;
-pub use traits::{Formula1, Formula2, Formula3, Formula4};
 
 #[cfg(test)]
 mod tests;

@@ -46,8 +46,10 @@ pub enum InputError {
     ///
     ///This error should be handled on case-to-case basis, as it can be returned by functions
     ///for different reasons. Check the documentation of function that you use to learn more
-    ///about when this error can appear. 
-    #[error("Provided arguments result in erronous output. 
-    Check documentation of the function and change one of arguments. Details: {0}")]
+    ///about when this error can appear.
+    #[error(
+        "Provided arguments result in erronous output. 
+    Check documentation of the function and change one of arguments. Details: {0}"
+    )]
     IncorrectArgumentSet(String),
 }

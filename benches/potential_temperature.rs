@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use floccus::{formulas::potential_temperature, Formula3};
+use floccus::{formulas::potential_temperature, formulas::Formula3};
 
 mod utils;
 use utils::ReferenceValues;

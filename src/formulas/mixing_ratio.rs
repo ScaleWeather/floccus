@@ -3,8 +3,8 @@
 //! Mixing ratio is the ratio of the mass of a variable atmospheric constituent to the mass
 //! of dry air ([AMETSOC Glossary](https://glossary.ametsoc.org/wiki/Mixing_ratio)).
 
-use crate::Formula2;
-use crate::quantities::{AtmosphericPressure, MixingRatio, ThermodynamicQuantity, VapourPressure};
+use crate::formulas::Formula2;
+use crate::quantities::{AtmosphericPressure, MixingRatio, QuantityHelpers, VapourPressure};
 use crate::Float;
 use crate::{constants::EPSILON, errors::InputError};
 use float_cmp::approx_eq;

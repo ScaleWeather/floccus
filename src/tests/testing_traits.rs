@@ -13,7 +13,7 @@ pub(crate) enum ReferenceAtmosphere {
     Freezing,
 }
 
-pub(crate) trait TestingQuantity: ThermodynamicQuantity {
+pub(crate) trait TestingQuantity: QuantityHelpers {
     fn new_si(value: Float) -> Self;
     fn imperial(&self) -> Self;
     fn ref_val_si(atm: ReferenceAtmosphere) -> Self;

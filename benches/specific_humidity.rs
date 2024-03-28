@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use floccus::{formulas::specific_humidity, Formula2};
+use floccus::{formulas::specific_humidity, formulas::Formula2};
 
 mod utils;
 use utils::ReferenceValues;

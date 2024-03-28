@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use floccus::{formulas::mixing_ratio, Formula2};
+use floccus::{formulas::mixing_ratio, formulas::Formula2};
 
 mod utils;
 use utils::ReferenceValues;

@@ -6,8 +6,8 @@ use super::check_result;
 use super::testing_traits::{ReferenceAtmosphere, TestingQuantity};
 use super::Argument;
 use crate::errors::InputError;
+use crate::formulas::Formula2;
 use crate::Float;
-use crate::Formula2;
 use std::mem::discriminant;
 
 pub fn test_with_2args<

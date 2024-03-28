@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use floccus::{formulas::vapour_pressure, Formula1, Formula2};
+use floccus::{formulas::vapour_pressure, formulas::{Formula1, Formula2}};
 
 mod utils;
 use utils::ReferenceValues;

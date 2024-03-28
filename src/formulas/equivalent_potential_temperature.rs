@@ -15,10 +15,12 @@ use crate::constants::{C_L, C_P, EPSILON, KAPPA, L_V, R_D, R_V};
 use crate::errors::InputError;
 use crate::quantities::{
     AtmosphericPressure, DewPointTemperature, DryBulbTemperature, EquivalentPotentialTemperature,
-    MixingRatio, PotentialTemperature, RelativeHumidity, ThermodynamicQuantity, VapourPressure,
+    MixingRatio, PotentialTemperature, QuantityHelpers, RelativeHumidity, VapourPressure,
 };
-use crate::{formulas::mixing_ratio, Float};
-use crate::{Formula2, Formula4};
+use crate::{
+    formulas::{mixing_ratio, Formula2, Formula4},
+    Float,
+};
 
 type FormulaQuantity = EquivalentPotentialTemperature;
 

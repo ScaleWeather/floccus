@@ -5,10 +5,10 @@
 //! Formulae to calculate partial vapour pressure of the unsaturated air.
 
 use crate::constants::DIMLESS_ONE;
-use crate::{Formula1, Formula2};
+use crate::formulas::{Formula1, Formula2};
 use crate::quantities::{
-    AtmosphericPressure, DewPointTemperature, RelativeHumidity, SaturationVapourPressure,
-    SpecificHumidity, ThermodynamicQuantity, VapourPressure,
+    AtmosphericPressure, DewPointTemperature, QuantityHelpers, RelativeHumidity,
+    SaturationVapourPressure, SpecificHumidity, VapourPressure,
 };
 use crate::Float;
 use crate::Storage::Pressure;

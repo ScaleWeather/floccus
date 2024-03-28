@@ -6,10 +6,9 @@
 
 use crate::constants::KAPPA;
 use crate::errors::InputError;
-use crate::Formula3;
+use crate::formulas::Formula3;
 use crate::quantities::{
-    AtmosphericPressure, DryBulbTemperature, PotentialTemperature, ThermodynamicQuantity,
-    VapourPressure,
+    AtmosphericPressure, DryBulbTemperature, PotentialTemperature, QuantityHelpers, VapourPressure,
 };
 use crate::Float;
 use float_cmp::approx_eq;

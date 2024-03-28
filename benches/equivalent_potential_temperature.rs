@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use floccus::{formulas::equivalent_potential_temperature, Formula4};
+use floccus::{formulas::equivalent_potential_temperature, formulas::Formula4};
 
 mod utils;
 use utils::ReferenceValues;

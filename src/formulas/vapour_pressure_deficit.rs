@@ -5,9 +5,9 @@
 //! when it is saturated ([Wikipedia](https://en.wikipedia.org/wiki/Vapour-pressure_deficit)).
 
 use crate::errors::InputError;
-use crate::Formula2;
+use crate::formulas::Formula2;
 use crate::quantities::{
-    SaturationVapourPressure, ThermodynamicQuantity, VapourPressure, VapourPressureDeficit,
+    QuantityHelpers, SaturationVapourPressure, VapourPressure, VapourPressureDeficit,
 };
 
 type FormulaQuantity = VapourPressureDeficit;

@@ -6,10 +6,10 @@
 //! saturation but not supersaturation ([AMETSOC Glossary](https://glossary.ametsoc.org/wiki/Saturation_vapor_pressure)).
 
 use crate::errors::InputError;
-use crate::{Formula1, Formula2};
+use crate::formulas::{Formula1, Formula2};
 use crate::quantities::{
-    AtmosphericPressure, DryBulbTemperature, RelativeHumidity, SaturationVapourPressure,
-    ThermodynamicQuantity, VapourPressure,
+    AtmosphericPressure, DryBulbTemperature, QuantityHelpers, RelativeHumidity,
+    SaturationVapourPressure, VapourPressure,
 };
 use crate::Float;
 use crate::Storage::Pressure;
