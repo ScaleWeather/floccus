@@ -1,6 +1,10 @@
+#![allow(unused)]
+
 use criterion::black_box;
 use floccus::quantities::{
-    AtmosphericPressure, DewPointTemperature, DryBulbTemperature, EquivalentPotentialTemperature, MixingRatio, PotentialTemperature, RelativeHumidity, SaturationMixingRatio, SaturationVapourPressure, SpecificHumidity, VapourPressure
+    AtmosphericPressure, DewPointTemperature, DryBulbTemperature, EquivalentPotentialTemperature,
+    MixingRatio, PotentialTemperature, RelativeHumidity, SaturationMixingRatio,
+    SaturationVapourPressure, SpecificHumidity, VapourPressure,
 };
 use uom::si::{pressure::pascal, ratio::ratio, thermodynamic_temperature::kelvin};
 

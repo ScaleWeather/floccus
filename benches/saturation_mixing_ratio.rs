@@ -1,9 +1,8 @@
-#![allow(unused)]
-use criterion::Criterion;
+use criterion::{criterion_group, criterion_main, Criterion};
 use floccus::{formulas::saturation_mixing_ratio, Formula2};
 
-// this is the best way to avoid code duplication I could find
-include!("./reference_values.rs");
+mod utils;
+use utils::ReferenceValues;
 
 pub fn benchmark(c: &mut Criterion) {
     let ref_norm = ReferenceValues::normal();
@@ -20,3 +19,6 @@ pub fn benchmark(c: &mut Criterion) {
 
     group.finish();
 }
+
+criterion_group!(benches, benchmark);
+criterion_main!(benches);

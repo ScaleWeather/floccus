@@ -1,16 +1,14 @@
-#![allow(unused)]
-use criterion::Criterion;
+use criterion::{criterion_group, criterion_main, Criterion};
 use floccus::{formulas::vapour_pressure, Formula1, Formula2};
 
-// this is the best way to avoid code duplication I could find
-include!("./reference_values.rs");
+mod utils;
+use utils::ReferenceValues;
 
 pub fn benchmark(c: &mut Criterion) {
     let ref_norm = ReferenceValues::normal();
     let ref_freeze = ReferenceValues::freeze();
 
     let mut group = c.benchmark_group("vapour_pressure");
-
 
     group.bench_function("definition1", |b| {
         b.iter(|| vapour_pressure::Definition1::compute(ref_norm.sphu, ref_norm.pres))
@@ -57,3 +55,6 @@ pub fn benchmark(c: &mut Criterion) {
     });
     group.finish();
 }
+
+criterion_group!(benches, benchmark);
+criterion_main!(benches);
