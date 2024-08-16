@@ -16,9 +16,9 @@ floccus-proc = "0.3.0"
 thiserror = "1.0"
 float-cmp = "0.9"
 log = { version = "0.4", optional = true }
-ndarray = { version = "0.15", default-features = false, optional = true }
-rayon = { version = "1", default-features = false, optional = true }
-uom = { version = "0", default-features = false, features = [
+ndarray = { version = "0.16", default-features = false, optional = true }
+rayon = { version = "1.10", default-features = false, optional = true }
+uom = { version = "0.36", default-features = false, features = [
     "si",
     "std",
     "autoconvert",
@@ -31,8 +31,8 @@ cfg-if = "1.0"
 doctest = false
 
 [dev-dependencies]
-criterion = "0"
-itertools = "0"
+criterion = "0.5"
+itertools = "0.13"
 testing_logger = "0.1"
 floccus = { path = ".", features = ["double_precision"] }
 
