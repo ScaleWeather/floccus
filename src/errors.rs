@@ -28,7 +28,7 @@ pub enum InputError {
     ///
     ///If you find that in your use case input ranges are too narrow you should first look for a more relevant formula.
     ///If such formula does not exist do not hesitate to create an issue in Github repository.
-    OutOfRange(String),
+    OutOfRange(&'static str),
 
     ///Error returned when provided set of arguments will result in invalid output.
     ///Contains detailed information about the error.

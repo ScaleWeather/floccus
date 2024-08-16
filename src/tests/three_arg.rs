@@ -8,6 +8,7 @@ use super::testing_traits::{ReferenceAtmosphere, TestingQuantity};
 use super::Argument;
 use crate::errors::InputError;
 use crate::formulas::Formula3;
+use crate::tests::check_range_error;
 use crate::Float;
 use std::mem::discriminant;
 
@@ -89,53 +90,50 @@ pub fn test_with_3args<
 
     //the fourth promise of the crate is to return an error with
     //erronous variable name when input is out of range
-    let expected = InputError::OutOfRange(arg1.quantity_name());
     let result = F::compute(
         I1::new_si(arg1.range[0] - 0.1),
         arg2.ref_val(atm),
         arg3.ref_val(atm),
     )
     .unwrap_err();
-    assert_eq!(result, expected);
+    check_range_error(result, arg1.quantity_name());
     let result = F::compute(
         I1::new_si(arg1.range[1] + 0.1),
         arg2.ref_val(atm),
         arg3.ref_val(atm),
     )
     .unwrap_err();
-    assert_eq!(result, expected);
+    check_range_error(result, arg1.quantity_name());
 
-    let expected = InputError::OutOfRange(arg2.quantity_name());
     let result = F::compute(
         arg1.ref_val(atm),
         I2::new_si(arg2.range[0] - 0.1),
         arg3.ref_val(atm),
     )
     .unwrap_err();
-    assert_eq!(result, expected);
+    check_range_error(result, arg2.quantity_name());
     let result = F::compute(
         arg1.ref_val(atm),
         I2::new_si(arg2.range[1] + 0.1),
         arg3.ref_val(atm),
     )
     .unwrap_err();
-    assert_eq!(result, expected);
+    check_range_error(result, arg2.quantity_name());
 
-    let expected = InputError::OutOfRange(arg3.quantity_name());
     let result = F::compute(
         arg1.ref_val(atm),
         arg2.ref_val(atm),
         I3::new_si(arg3.range[0] - 0.1),
     )
     .unwrap_err();
-    assert_eq!(result, expected);
+    check_range_error(result, arg3.quantity_name());
     let result = F::compute(
         arg1.ref_val(atm),
         arg2.ref_val(atm),
         I3::new_si(arg3.range[1] + 0.1),
     )
     .unwrap_err();
-    assert_eq!(result, expected);
+    check_range_error(result, arg3.quantity_name());
 
     let arg_vecs = (-10..=10).map(|i| i as Float / 1000.0).map(|i| {
         (

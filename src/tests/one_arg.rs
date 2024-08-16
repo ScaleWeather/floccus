@@ -7,6 +7,7 @@ use super::testing_traits::{ReferenceAtmosphere, TestingQuantity};
 use super::Argument;
 use crate::errors::InputError;
 use crate::formulas::Formula1;
+use crate::tests::check_range_error;
 use crate::Float;
 use std::mem::discriminant;
 
@@ -60,11 +61,10 @@ pub fn test_with_1arg<O: TestingQuantity, I1: TestingQuantity, F: Formula1<O, I1
 
     //the fourth promise of the crate is to return an error with
     //erronous variable name when input is out of range
-    let expected = InputError::OutOfRange(arg1.quantity_name());
     let result = F::compute(I1::new_si(arg1.range[0] - 0.1)).unwrap_err();
-    assert_eq!(result, expected);
+    check_range_error(result, arg1.quantity_name());
     let result = F::compute(I1::new_si(arg1.range[1] + 0.1)).unwrap_err();
-    assert_eq!(result, expected);
+    check_range_error(result, arg1.quantity_name());
 
     let arg_vecs: Vec<_> = (-10..=10)
         .map(|i| i as Float / 1000.0)

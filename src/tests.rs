@@ -5,14 +5,14 @@ pub(crate) mod testing_traits;
 mod three_arg;
 mod two_arg;
 
-use crate::Float;
+use crate::{Float, InputError};
 use float_cmp::assert_approx_eq;
 use std::marker::PhantomData;
 
+pub use self::four_arg::test_with_4args;
 pub use self::one_arg::test_with_1arg;
 pub use self::three_arg::test_with_3args;
 pub use self::two_arg::test_with_2args;
-pub use self::four_arg::test_with_4args;
 
 use self::testing_traits::{ReferenceAtmosphere, TestingQuantity};
 
@@ -30,8 +30,8 @@ impl<I: TestingQuantity> Argument<I> {
         }
     }
 
-    pub fn quantity_name(&self) -> String {
-        I::type_name_as_str().to_string()
+    pub fn quantity_name(&self) -> &str {
+        I::type_name_as_str()
     }
 
     pub fn ref_val(&self, atm: ReferenceAtmosphere) -> I {
@@ -44,4 +44,12 @@ fn check_result<T: TestingQuantity>(result: T, atm: ReferenceAtmosphere, eps: Fl
     let result = result.get_si_value();
 
     assert_approx_eq!(Float, result, expected, epsilon = eps)
+}
+
+pub fn check_range_error(result: InputError, expected_name: &str) {
+    if let InputError::OutOfRange(name) = result {
+        assert_eq!(name, expected_name)
+    } else {
+        panic!("wrong error type")
+    }
 }
