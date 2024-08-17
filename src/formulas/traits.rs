@@ -2,7 +2,7 @@
 
 use crate::{errors::InputError, quantities::ThermodynamicQuantity};
 #[cfg(feature = "array")]
-use ndarray::{Array, Dimension, FoldWhile, Zip};
+use ndarray::{Array, ArrayView, Dimension, FoldWhile, Zip};
 #[cfg(feature = "parallel")]
 use rayon::iter::{IndexedParallelIterator, IntoParallelIterator, ParallelIterator};
 
@@ -62,7 +62,14 @@ pub trait Formula1<O: ThermodynamicQuantity, I1: ThermodynamicQuantity> {
     #[cfg(feature = "array")]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
-    fn compute_ndarray<D: Dimension>(i1: &Array<I1, D>) -> Result<Array<O, D>, InputError> {
+    fn compute_ndarray<'a, D: Dimension + Copy, A: Into<ArrayView<'a, I1, D>>>(
+        i1: A,
+    ) -> Result<Array<O, D>, InputError>
+    where
+        I1: 'a,
+    {
+        let i1: ArrayView<I1, D> = i1.into();
+
         Zip::from(i1)
             .fold_while(Ok(()), |_, &i1| match Self::validate_inputs(i1) {
                 Ok(_) => FoldWhile::Continue(Ok(())),
@@ -83,9 +90,14 @@ pub trait Formula1<O: ThermodynamicQuantity, I1: ThermodynamicQuantity> {
     #[cfg(feature = "parallel")]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
-    fn compute_ndarray_parallel<D: Dimension>(
-        i1: &Array<I1, D>,
-    ) -> Result<Array<O, D>, InputError> {
+    fn compute_ndarray_parallel<'a, D: Dimension + Copy, A: Into<ArrayView<'a, I1, D>>>(
+        i1: A,
+    ) -> Result<Array<O, D>, InputError>
+    where
+        I1: 'a,
+    {
+        let i1: ArrayView<I1, D> = i1.into();
+
         Zip::from(i1)
             .fold_while(Ok(()), |_, &a| match Self::validate_inputs(a) {
                 Ok(_) => FoldWhile::Continue(Ok(())),
@@ -157,10 +169,22 @@ pub trait Formula2<O: ThermodynamicQuantity, I1: ThermodynamicQuantity, I2: Ther
     #[cfg(feature = "array")]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
-    fn compute_ndarray<D: Dimension>(
-        i1: &Array<I1, D>,
-        i2: &Array<I2, D>,
-    ) -> Result<Array<O, D>, InputError> {
+    fn compute_ndarray<
+        'a,
+        D: Dimension + Copy,
+        A1: Into<ArrayView<'a, I1, D>>,
+        A2: Into<ArrayView<'a, I2, D>>,
+    >(
+        i1: A1,
+        i2: A2,
+    ) -> Result<Array<O, D>, InputError>
+    where
+        I1: 'a,
+        I2: 'a,
+    {
+        let i1: ArrayView<I1, D> = i1.into();
+        let i2: ArrayView<I2, D> = i2.into();
+
         Zip::from(i1)
             .and(i2)
             .fold_while(Ok(()), |_, &i1, &i2| match Self::validate_inputs(i1, i2) {
@@ -187,10 +211,22 @@ pub trait Formula2<O: ThermodynamicQuantity, I1: ThermodynamicQuantity, I2: Ther
     #[cfg(feature = "parallel")]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
-    fn compute_ndarray_parallel<D: Dimension>(
-        i1: &Array<I1, D>,
-        i2: &Array<I2, D>,
-    ) -> Result<Array<O, D>, InputError> {
+    fn compute_ndarray_parallel<
+        'a,
+        D: Dimension + Copy,
+        A1: Into<ArrayView<'a, I1, D>>,
+        A2: Into<ArrayView<'a, I2, D>>,
+    >(
+        i1: A1,
+        i2: A2,
+    ) -> Result<Array<O, D>, InputError>
+    where
+        I1: 'a,
+        I2: 'a,
+    {
+        let i1: ArrayView<I1, D> = i1.into();
+        let i2: ArrayView<I2, D> = i2.into();
+
         Zip::from(i1)
             .and(i2)
             .fold_while(Ok(()), |_, &i1, &i2| match Self::validate_inputs(i1, i2) {
@@ -273,11 +309,26 @@ pub trait Formula3<
     #[cfg(feature = "array")]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
-    fn compute_ndarray<D: Dimension>(
-        i1: &Array<I1, D>,
-        i2: &Array<I2, D>,
-        i3: &Array<I3, D>,
-    ) -> Result<Array<O, D>, InputError> {
+    fn compute_ndarray<
+        'a,
+        D: Dimension + Copy,
+        A1: Into<ArrayView<'a, I1, D>>,
+        A2: Into<ArrayView<'a, I2, D>>,
+        A3: Into<ArrayView<'a, I3, D>>,
+    >(
+        i1: A1,
+        i2: A2,
+        i3: A3,
+    ) -> Result<Array<O, D>, InputError>
+    where
+        I1: 'a,
+        I2: 'a,
+        I3: 'a,
+    {
+        let i1: ArrayView<I1, D> = i1.into();
+        let i2: ArrayView<I2, D> = i2.into();
+        let i3: ArrayView<I3, D> = i3.into();
+
         Zip::from(i1)
             .and(i2)
             .and(i3)
@@ -309,11 +360,26 @@ pub trait Formula3<
     #[cfg(feature = "parallel")]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
-    fn compute_ndarray_parallel<D: Dimension>(
-        i1: &Array<I1, D>,
-        i2: &Array<I2, D>,
-        i3: &Array<I3, D>,
-    ) -> Result<Array<O, D>, InputError> {
+    fn compute_ndarray_parallel<
+        'a,
+        D: Dimension + Copy,
+        A1: Into<ArrayView<'a, I1, D>>,
+        A2: Into<ArrayView<'a, I2, D>>,
+        A3: Into<ArrayView<'a, I3, D>>,
+    >(
+        i1: A1,
+        i2: A2,
+        i3: A3,
+    ) -> Result<Array<O, D>, InputError>
+    where
+        I1: 'a,
+        I2: 'a,
+        I3: 'a,
+    {
+        let i1: ArrayView<I1, D> = i1.into();
+        let i2: ArrayView<I2, D> = i2.into();
+        let i3: ArrayView<I3, D> = i3.into();
+
         Zip::from(i1)
             .and(i2)
             .and(i3)
@@ -403,12 +469,30 @@ pub trait Formula4<
     #[cfg(feature = "array")]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
-    fn compute_ndarray<D: Dimension>(
-        i1: &Array<I1, D>,
-        i2: &Array<I2, D>,
-        i3: &Array<I3, D>,
-        i4: &Array<I4, D>,
-    ) -> Result<Array<O, D>, InputError> {
+    fn compute_ndarray<
+        'a,
+        D: Dimension + Copy,
+        A1: Into<ArrayView<'a, I1, D>>,
+        A2: Into<ArrayView<'a, I2, D>>,
+        A3: Into<ArrayView<'a, I3, D>>,
+        A4: Into<ArrayView<'a, I4, D>>,
+    >(
+        i1: A1,
+        i2: A2,
+        i3: A3,
+        i4: A4,
+    ) -> Result<Array<O, D>, InputError>
+    where
+        I1: 'a,
+        I2: 'a,
+        I3: 'a,
+        I4: 'a,
+    {
+        let i1: ArrayView<I1, D> = i1.into();
+        let i2: ArrayView<I2, D> = i2.into();
+        let i3: ArrayView<I3, D> = i3.into();
+        let i4: ArrayView<I4, D> = i4.into();
+
         Zip::from(i1)
             .and(i2)
             .and(i3)
@@ -449,12 +533,30 @@ pub trait Formula4<
     #[cfg(feature = "parallel")]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
-    fn compute_ndarray_parallel<D: Dimension>(
-        i1: &Array<I1, D>,
-        i2: &Array<I2, D>,
-        i3: &Array<I3, D>,
-        i4: &Array<I4, D>,
-    ) -> Result<Array<O, D>, InputError> {
+    fn compute_ndarray_parallel<
+        'a,
+        D: Dimension + Copy,
+        A1: Into<ArrayView<'a, I1, D>>,
+        A2: Into<ArrayView<'a, I2, D>>,
+        A3: Into<ArrayView<'a, I3, D>>,
+        A4: Into<ArrayView<'a, I4, D>>,
+    >(
+        i1: A1,
+        i2: A2,
+        i3: A3,
+        i4: A4,
+    ) -> Result<Array<O, D>, InputError>
+    where
+        I1: 'a,
+        I2: 'a,
+        I3: 'a,
+        I4: 'a,
+    {
+        let i1: ArrayView<I1, D> = i1.into();
+        let i2: ArrayView<I2, D> = i2.into();
+        let i3: ArrayView<I3, D> = i3.into();
+        let i4: ArrayView<I4, D> = i4.into();
+
         Zip::from(i1)
             .and(i2)
             .and(i3)
