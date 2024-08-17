@@ -3,6 +3,7 @@
 #![warn(clippy::cargo)]
 #![allow(clippy::excessive_precision)]
 #![allow(clippy::must_use_candidate)]
+#![allow(missing_docs)] // TODO: Remove it
 
 //! Crate providing formulae for air thermodynamic calculations.
 //!
