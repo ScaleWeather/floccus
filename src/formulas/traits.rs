@@ -14,31 +14,20 @@ pub trait Formula1<O: ThermodynamicQuantity, I1: ThermodynamicQuantity> {
     #[allow(clippy::missing_errors_doc)]
     fn validate_inputs(i1: I1) -> Result<(), InputError>;
 
-    #[allow(clippy::missing_errors_doc)]
     #[allow(missing_docs)]
+    #[allow(clippy::missing_errors_doc)]
     #[inline]
-    fn compute(i1: I1) -> Result<O, InputError> {
-        cfg_if::cfg_if! {
-            if #[cfg(feature = "debug")] {
-                cfg_if::cfg_if! {
-                    if #[cfg(debug_assertions)] {
-                        Self::validate_inputs_loggerr(i1)?;
-                    }
-                }
-            } else {
-                Self::validate_inputs(i1)?;
-            }
-        }
-
-        Ok(Self::compute_unchecked(i1))
+    #[cfg(not(feature = "debug"))]
+    fn validate_inputs_internal(i1: I1) -> Result<(), InputError> {
+        Self::validate_inputs(i1)
     }
 
     #[cfg(feature = "debug")]
     #[cfg(debug_assertions)]
-    #[inline(always)]
+    #[inline]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
-    fn validate_inputs_loggerr(i1: I1) -> Result<(), InputError> {
+    fn validate_inputs_internal(i1: I1) -> Result<(), InputError> {
         use std::any::type_name;
 
         Self::validate_inputs(i1).or_else(|err| {
@@ -51,6 +40,14 @@ pub trait Formula1<O: ThermodynamicQuantity, I1: ThermodynamicQuantity> {
             );
             Err(err)
         })
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    #[allow(missing_docs)]
+    #[inline]
+    fn compute(i1: I1) -> Result<O, InputError> {
+        Self::validate_inputs_internal(i1)?;
+        Ok(Self::compute_unchecked(i1))
     }
 
     #[allow(missing_docs)]
@@ -71,7 +68,7 @@ pub trait Formula1<O: ThermodynamicQuantity, I1: ThermodynamicQuantity> {
         let i1: ArrayView<I1, D> = i1.into();
 
         Zip::from(i1)
-            .fold_while(Ok(()), |_, &i1| match Self::validate_inputs(i1) {
+            .fold_while(Ok(()), |_, &i1| match Self::validate_inputs_internal(i1) {
                 Ok(_) => FoldWhile::Continue(Ok(())),
                 Err(e) => FoldWhile::Done(Err(e)),
             })
@@ -99,7 +96,7 @@ pub trait Formula1<O: ThermodynamicQuantity, I1: ThermodynamicQuantity> {
         let i1: ArrayView<I1, D> = i1.into();
 
         Zip::from(i1)
-            .fold_while(Ok(()), |_, &a| match Self::validate_inputs(a) {
+            .fold_while(Ok(()), |_, &a| match Self::validate_inputs_internal(a) {
                 Ok(_) => FoldWhile::Continue(Ok(())),
                 Err(e) => FoldWhile::Done(Err(e)),
             })
@@ -117,31 +114,20 @@ pub trait Formula2<O: ThermodynamicQuantity, I1: ThermodynamicQuantity, I2: Ther
     #[allow(clippy::missing_errors_doc)]
     fn validate_inputs(i1: I1, i2: I2) -> Result<(), InputError>;
 
-    #[allow(clippy::missing_errors_doc)]
     #[allow(missing_docs)]
+    #[allow(clippy::missing_errors_doc)]
     #[inline]
-    fn compute(i1: I1, i2: I2) -> Result<O, InputError> {
-        cfg_if::cfg_if! {
-            if #[cfg(feature = "debug")] {
-                cfg_if::cfg_if! {
-                    if #[cfg(debug_assertions)] {
-                        Self::validate_inputs_loggerr(i1,i2)?;
-                    }
-                }
-            } else {
-                Self::validate_inputs(i1,i2)?;
-            }
-        }
-
-        Ok(Self::compute_unchecked(i1, i2))
+    #[cfg(not(feature = "debug"))]
+    fn validate_inputs_internal(i1: I1, i2: I2) -> Result<(), InputError> {
+        Self::validate_inputs(i1, i2)
     }
 
     #[cfg(feature = "debug")]
     #[cfg(debug_assertions)]
-    #[inline(always)]
+    #[inline]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
-    fn validate_inputs_loggerr(i1: I1, i2: I2) -> Result<(), InputError> {
+    fn validate_inputs_internal(i1: I1, i2: I2) -> Result<(), InputError> {
         use std::any::type_name;
 
         Self::validate_inputs(i1, i2).or_else(|err| {
@@ -155,6 +141,14 @@ pub trait Formula2<O: ThermodynamicQuantity, I1: ThermodynamicQuantity, I2: Ther
             );
             Err(err)
         })
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    #[allow(missing_docs)]
+    #[inline]
+    fn compute(i1: I1, i2: I2) -> Result<O, InputError> {
+        Self::validate_inputs_internal(i1, i2)?;
+        Ok(Self::compute_unchecked(i1, i2))
     }
 
     #[allow(missing_docs)]
@@ -187,9 +181,11 @@ pub trait Formula2<O: ThermodynamicQuantity, I1: ThermodynamicQuantity, I2: Ther
 
         Zip::from(i1)
             .and(i2)
-            .fold_while(Ok(()), |_, &i1, &i2| match Self::validate_inputs(i1, i2) {
-                Ok(_) => FoldWhile::Continue(Ok(())),
-                Err(e) => FoldWhile::Done(Err(e)),
+            .fold_while(Ok(()), |_, &i1, &i2| {
+                match Self::validate_inputs_internal(i1, i2) {
+                    Ok(_) => FoldWhile::Continue(Ok(())),
+                    Err(e) => FoldWhile::Done(Err(e)),
+                }
             })
             .into_inner()?;
 
@@ -229,9 +225,11 @@ pub trait Formula2<O: ThermodynamicQuantity, I1: ThermodynamicQuantity, I2: Ther
 
         Zip::from(i1)
             .and(i2)
-            .fold_while(Ok(()), |_, &i1, &i2| match Self::validate_inputs(i1, i2) {
-                Ok(_) => FoldWhile::Continue(Ok(())),
-                Err(e) => FoldWhile::Done(Err(e)),
+            .fold_while(Ok(()), |_, &i1, &i2| {
+                match Self::validate_inputs_internal(i1, i2) {
+                    Ok(_) => FoldWhile::Continue(Ok(())),
+                    Err(e) => FoldWhile::Done(Err(e)),
+                }
             })
             .into_inner()?;
 
@@ -255,31 +253,20 @@ pub trait Formula3<
     #[allow(clippy::missing_errors_doc)]
     fn validate_inputs(i1: I1, i2: I2, i3: I3) -> Result<(), InputError>;
 
-    #[allow(clippy::missing_errors_doc)]
     #[allow(missing_docs)]
+    #[allow(clippy::missing_errors_doc)]
     #[inline]
-    fn compute(i1: I1, i2: I2, i3: I3) -> Result<O, InputError> {
-        cfg_if::cfg_if! {
-            if #[cfg(feature = "debug")] {
-                cfg_if::cfg_if! {
-                    if #[cfg(debug_assertions)] {
-                        Self::validate_inputs_loggerr(i1, i2, i3)?;
-                    }
-                }
-            } else {
-                Self::validate_inputs(i1,i2,i3)?;
-            }
-        }
-
-        Ok(Self::compute_unchecked(i1, i2, i3))
+    #[cfg(not(feature = "debug"))]
+    fn validate_inputs_internal(i1: I1, i2: I2, i3: I3) -> Result<(), InputError> {
+        Self::validate_inputs(i1, i2, i3)
     }
 
     #[cfg(feature = "debug")]
     #[cfg(debug_assertions)]
-    #[inline(always)]
+    #[inline]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
-    fn validate_inputs_loggerr(i1: I1, i2: I2, i3: I3) -> Result<(), InputError> {
+    fn validate_inputs_internal(i1: I1, i2: I2, i3: I3) -> Result<(), InputError> {
         use std::any::type_name;
 
         Self::validate_inputs(i1, i2, i3).or_else(|err| {
@@ -294,6 +281,14 @@ pub trait Formula3<
             );
             Err(err)
         })
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    #[allow(missing_docs)]
+    #[inline]
+    fn compute(i1: I1, i2: I2, i3: I3) -> Result<O, InputError> {
+        Self::validate_inputs_internal(i1, i2, i3)?;
+        Ok(Self::compute_unchecked(i1, i2, i3))
     }
 
     #[allow(missing_docs)]
@@ -332,12 +327,13 @@ pub trait Formula3<
         Zip::from(i1)
             .and(i2)
             .and(i3)
-            .fold_while(Ok(()), |_, &i1, &i2, &i3| {
-                match Self::validate_inputs(i1, i2, i3) {
+            .fold_while(
+                Ok(()),
+                |_, &i1, &i2, &i3| match Self::validate_inputs_internal(i1, i2, i3) {
                     Ok(_) => FoldWhile::Continue(Ok(())),
                     Err(e) => FoldWhile::Done(Err(e)),
-                }
-            })
+                },
+            )
             .into_inner()?;
 
         Ok(Zip::from(i1)
@@ -383,12 +379,13 @@ pub trait Formula3<
         Zip::from(i1)
             .and(i2)
             .and(i3)
-            .fold_while(Ok(()), |_, &i1, &i2, &i3| {
-                match Self::validate_inputs(i1, i2, i3) {
+            .fold_while(
+                Ok(()),
+                |_, &i1, &i2, &i3| match Self::validate_inputs_internal(i1, i2, i3) {
                     Ok(_) => FoldWhile::Continue(Ok(())),
                     Err(e) => FoldWhile::Done(Err(e)),
-                }
-            })
+                },
+            )
             .into_inner()?;
 
         Ok(Zip::from(i1)
@@ -413,31 +410,28 @@ pub trait Formula4<
     #[allow(clippy::missing_errors_doc)]
     fn validate_inputs(i1: I1, i2: I2, i3: I3, i4: I4) -> Result<(), InputError>;
 
+    #[allow(missing_docs)]
+    #[allow(clippy::missing_errors_doc)]
+    #[inline]
+    #[cfg(not(feature = "debug"))]
+    fn validate_inputs_internal(i1: I1, i2: I2, i3: I3, i4: I4) -> Result<(), InputError> {
+        Self::validate_inputs(i1, i2, i3, i4)
+    }
+
     #[allow(clippy::missing_errors_doc)]
     #[allow(missing_docs)]
     #[inline]
     fn compute(i1: I1, i2: I2, i3: I3, i4: I4) -> Result<O, InputError> {
-        cfg_if::cfg_if! {
-            if #[cfg(feature = "debug")] {
-                cfg_if::cfg_if! {
-                    if #[cfg(debug_assertions)] {
-                        Self::validate_inputs_loggerr(i1,i2,i3,i4)?;
-                    }
-                }
-            } else {
-                Self::validate_inputs(i1,i2,i3,i4)?;
-            }
-        }
-
+        Self::validate_inputs_internal(i1, i2, i3, i4)?;
         Ok(Self::compute_unchecked(i1, i2, i3, i4))
     }
 
     #[cfg(feature = "debug")]
     #[cfg(debug_assertions)]
-    #[inline(always)]
+    #[inline]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
-    fn validate_inputs_loggerr(i1: I1, i2: I2, i3: I3, i4: I4) -> Result<(), InputError> {
+    fn validate_inputs_internal(i1: I1, i2: I2, i3: I3, i4: I4) -> Result<(), InputError> {
         use std::any::type_name;
 
         Self::validate_inputs(i1, i2, i3, i4).or_else(|err| {
@@ -499,7 +493,7 @@ pub trait Formula4<
             .and(i4)
             .fold_while(
                 Ok(()),
-                |_, &i1, &i2, &i3, &i4| match Self::validate_inputs(i1, i2, i3, i4) {
+                |_, &i1, &i2, &i3, &i4| match Self::validate_inputs_internal(i1, i2, i3, i4) {
                     Ok(_) => FoldWhile::Continue(Ok(())),
                     Err(e) => FoldWhile::Done(Err(e)),
                 },
@@ -563,7 +557,7 @@ pub trait Formula4<
             .and(i4)
             .fold_while(
                 Ok(()),
-                |_, &i1, &i2, &i3, &i4| match Self::validate_inputs(i1, i2, i3, i4) {
+                |_, &i1, &i2, &i3, &i4| match Self::validate_inputs_internal(i1, i2, i3, i4) {
                     Ok(_) => FoldWhile::Continue(Ok(())),
                     Err(e) => FoldWhile::Done(Err(e)),
                 },
