@@ -14,17 +14,16 @@ pub trait Formula1<O: ThermodynamicQuantity, I1: ThermodynamicQuantity> {
     #[allow(clippy::missing_errors_doc)]
     fn validate_inputs(i1: I1) -> Result<(), InputError>;
 
+    #[inline]
+    #[cfg(any(not(debug_assertions), not(feature = "debug")))]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
-    #[inline]
-    #[cfg(not(feature = "debug"))]
     fn validate_inputs_internal(i1: I1) -> Result<(), InputError> {
         Self::validate_inputs(i1)
     }
 
-    #[cfg(feature = "debug")]
-    #[cfg(debug_assertions)]
     #[inline]
+    #[cfg(all(debug_assertions, feature = "debug"))]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
     fn validate_inputs_internal(i1: I1) -> Result<(), InputError> {
@@ -114,17 +113,16 @@ pub trait Formula2<O: ThermodynamicQuantity, I1: ThermodynamicQuantity, I2: Ther
     #[allow(clippy::missing_errors_doc)]
     fn validate_inputs(i1: I1, i2: I2) -> Result<(), InputError>;
 
+    #[inline]
+    #[cfg(any(not(debug_assertions), not(feature = "debug")))]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
-    #[inline]
-    #[cfg(not(feature = "debug"))]
     fn validate_inputs_internal(i1: I1, i2: I2) -> Result<(), InputError> {
         Self::validate_inputs(i1, i2)
     }
 
-    #[cfg(feature = "debug")]
-    #[cfg(debug_assertions)]
     #[inline]
+    #[cfg(all(debug_assertions, feature = "debug"))]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
     fn validate_inputs_internal(i1: I1, i2: I2) -> Result<(), InputError> {
@@ -253,17 +251,16 @@ pub trait Formula3<
     #[allow(clippy::missing_errors_doc)]
     fn validate_inputs(i1: I1, i2: I2, i3: I3) -> Result<(), InputError>;
 
+    #[inline]
+    #[cfg(any(not(debug_assertions), not(feature = "debug")))]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
-    #[inline]
-    #[cfg(not(feature = "debug"))]
     fn validate_inputs_internal(i1: I1, i2: I2, i3: I3) -> Result<(), InputError> {
         Self::validate_inputs(i1, i2, i3)
     }
 
-    #[cfg(feature = "debug")]
-    #[cfg(debug_assertions)]
     #[inline]
+    #[cfg(all(debug_assertions, feature = "debug"))]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
     fn validate_inputs_internal(i1: I1, i2: I2, i3: I3) -> Result<(), InputError> {
@@ -410,10 +407,10 @@ pub trait Formula4<
     #[allow(clippy::missing_errors_doc)]
     fn validate_inputs(i1: I1, i2: I2, i3: I3, i4: I4) -> Result<(), InputError>;
 
+    #[inline]
+    #[cfg(any(not(debug_assertions), not(feature = "debug")))]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
-    #[inline]
-    #[cfg(not(feature = "debug"))]
     fn validate_inputs_internal(i1: I1, i2: I2, i3: I3, i4: I4) -> Result<(), InputError> {
         Self::validate_inputs(i1, i2, i3, i4)
     }
@@ -426,9 +423,8 @@ pub trait Formula4<
         Ok(Self::compute_unchecked(i1, i2, i3, i4))
     }
 
-    #[cfg(feature = "debug")]
-    #[cfg(debug_assertions)]
     #[inline]
+    #[cfg(all(debug_assertions, feature = "debug"))]
     #[allow(missing_docs)]
     #[allow(clippy::missing_errors_doc)]
     fn validate_inputs_internal(i1: I1, i2: I2, i3: I3, i4: I4) -> Result<(), InputError> {
