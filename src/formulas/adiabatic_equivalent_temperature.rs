@@ -100,7 +100,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn definition1() {
+    fn definition1_norm() {
         test_with_2args::<FormulaQuantity, DryBulbTemperature, MixingRatio, Definition1>(
             Argument::new([253., 324.]),
             Argument::new([0.000_000_1, 2.0]),
@@ -110,7 +110,7 @@ mod tests {
     }
 
     #[test]
-    fn definition2() {
+    fn definition2_norm() {
         test_with_2args::<
             FormulaQuantity,
             EquivalentPotentialTemperature,
@@ -121,6 +121,31 @@ mod tests {
             Argument::new([100., 150_000.]),
             ReferenceAtmosphere::Normal,
             1.,
+        );
+    }
+
+    #[test]
+    fn definition1_freez() {
+        test_with_2args::<FormulaQuantity, DryBulbTemperature, MixingRatio, Definition1>(
+            Argument::new([253., 324.]),
+            Argument::new([0.000_000_1, 2.0]),
+            ReferenceAtmosphere::Freezing,
+            1e-12,
+        );
+    }
+
+    #[test]
+    fn definition2_freez() {
+        test_with_2args::<
+            FormulaQuantity,
+            EquivalentPotentialTemperature,
+            AtmosphericPressure,
+            Definition2,
+        >(
+            Argument::new([173., 373.]),
+            Argument::new([100., 150_000.]),
+            ReferenceAtmosphere::Freezing,
+            1e-1,
         );
     }
 }

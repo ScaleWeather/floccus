@@ -32,6 +32,7 @@ doctest = false
 [dev-dependencies]
 criterion = "0.5"
 itertools = "0.13"
+log = "0.4"
 testing_logger = "0.1"
 floccus = { path = ".", features = ["double_precision"] }
 
