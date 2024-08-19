@@ -50,6 +50,26 @@ impl PotentialTemperature {
     }
 }
 
+impl IsobaricEquivalentTemperature {
+    pub fn get<T>(&self) -> Float
+    where
+        T: uom::si::thermodynamic_temperature::Unit
+            + uom::si::thermodynamic_temperature::Conversion<Float>,
+    {
+        self.0.get::<T>()
+    }
+}
+
+impl AdiabaticEquivalentTemperature {
+    pub fn get<T>(&self) -> Float
+    where
+        T: uom::si::thermodynamic_temperature::Unit
+            + uom::si::thermodynamic_temperature::Conversion<Float>,
+    {
+        self.0.get::<T>()
+    }
+}
+
 impl EquivalentPotentialTemperature {
     pub fn get<T>(&self) -> Float
     where

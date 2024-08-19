@@ -5,6 +5,8 @@ impl ThermodynamicQuantity for DryBulbTemperature {}
 impl ThermodynamicQuantity for WetBulbTemperature {}
 impl ThermodynamicQuantity for DewPointTemperature {}
 impl ThermodynamicQuantity for VirtualTemperature {}
+impl ThermodynamicQuantity for IsobaricEquivalentTemperature {}
+impl ThermodynamicQuantity for AdiabaticEquivalentTemperature {}
 impl ThermodynamicQuantity for PotentialTemperature {}
 impl ThermodynamicQuantity for EquivalentPotentialTemperature {}
 impl ThermodynamicQuantity for WetBulbPotentialTemperature {}
@@ -38,6 +40,16 @@ impl QuantityHelpers for VirtualTemperature {
     }
 }
 impl QuantityHelpers for PotentialTemperature {
+    fn get_si_value(&self) -> Float {
+        self.get::<kelvin>()
+    }
+}
+impl QuantityHelpers for IsobaricEquivalentTemperature {
+    fn get_si_value(&self) -> Float {
+        self.get::<kelvin>()
+    }
+}
+impl QuantityHelpers for AdiabaticEquivalentTemperature {
     fn get_si_value(&self) -> Float {
         self.get::<kelvin>()
     }

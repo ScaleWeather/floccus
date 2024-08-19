@@ -1,3 +1,5 @@
+use std::f64::NAN;
+
 use crate::Float;
 
 pub(crate) const TEMP_NORM: Float = 300.0;
@@ -15,6 +17,8 @@ pub(crate) const THETA_NORM: Float = 301.66581400702955;
 pub(crate) const THETAW_NORM: Float = 292.0717306393948;
 pub(crate) const WBT_NORM: Float = 293.42728654340516;
 pub(crate) const VRT_NORM: Float = 302.1926517941886;
+pub(crate) const TIE_NORM: Float = 330.29726646682764;
+pub(crate) const TAE_NORM: Float = 331.8799684989062;
 
 pub(crate) const TEMP_FREEZ: Float = 260.0;
 pub(crate) const DWPT_FREEZ: Float = 255.0;
@@ -31,3 +35,5 @@ pub(crate) const THETA_FREEZ: Float = 260.0915766593588;
 pub(crate) const THETAW_FREEZ: Float = 258.6611332391296;
 pub(crate) const WBT_FREEZ: Float = 258.40501060754224;
 pub(crate) const VRT_FREEZ: Float = 260.12112343315795;
+pub(crate) const TIE_FREEZ: Float = NAN;
+pub(crate) const TAE_FREEZ: Float = NAN;

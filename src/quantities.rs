@@ -49,6 +49,12 @@ pub struct DewPointTemperature(pub Storage::ThermodynamicTemperature);
 pub struct VirtualTemperature(pub Storage::ThermodynamicTemperature);
 
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default, Name)]
+pub struct IsobaricEquivalentTemperature(pub Storage::ThermodynamicTemperature);
+
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default, Name)]
+pub struct AdiabaticEquivalentTemperature(pub Storage::ThermodynamicTemperature);
+
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default, Name)]
 pub struct PotentialTemperature(pub Storage::ThermodynamicTemperature);
 
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default, Name)]

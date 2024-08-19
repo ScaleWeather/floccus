@@ -12,5 +12,7 @@ pub mod wet_bulb_potential_temperature;
 pub mod wet_bulb_temperature;
 
 mod traits;
+pub mod isobaric_equivalent_temperature;
+pub mod adiabatic_equivalent_temperature;
 
 pub use traits::{Formula1, Formula2, Formula3, Formula4};

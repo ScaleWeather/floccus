@@ -11,7 +11,7 @@ use uom::si::ratio::ratio;
 use uom::si::specific_heat_capacity::joule_per_kilogram_kelvin;
 use uom::si::thermodynamic_temperature::kelvin;
 
-use crate::constants::{C_L, C_P, EPSILON, KAPPA, L_V, R_D, R_V};
+use crate::constants::{C_L, C_P, EPSILON, KAPPA, L_V, REF_PRES, R_D, R_V};
 use crate::errors::InputError;
 use crate::quantities::{
     AtmosphericPressure, DewPointTemperature, DryBulbTemperature, EquivalentPotentialTemperature,
@@ -78,7 +78,7 @@ impl
         let mixing_ratio = mixing_ratio.0.get::<ratio>();
         let relative_humidity = relative_humidity.0.get::<ratio>();
 
-        let p0 = 100_000.0;
+        let p0 = REF_PRES.get::<pascal>();
         let r_d = R_D.get::<joule_per_kilogram_kelvin>();
         let r_v = R_V.get::<joule_per_kilogram_kelvin>();
         let l_v = L_V.get::<joule_per_kilogram>();
@@ -242,6 +242,7 @@ impl
         let dewpoint = dewpoint.0.get::<kelvin>();
         let mixing_ratio = mixing_ratio.0.get::<ratio>();
         let vapour_pressure = vapour_pressure.0.get::<pascal>();
+        let p0 = REF_PRES.get::<pascal>();
 
         let kappa = KAPPA.get::<ratio>();
 
@@ -251,7 +252,7 @@ impl
             (1.0 / ((1.0 / (dewpoint - 56.0)) + ((temperature / dewpoint).ln() / 800.0))) + 56.0;
 
         let theta_dl = temperature
-            * (100_000.0 / (pressure - vapour_pressure)).powf(kappa)
+            * (p0 / (pressure - vapour_pressure)).powf(kappa)
             * (temperature / lcl_temp).powf(0.28 * mixing_ratio);
 
         let result = theta_dl

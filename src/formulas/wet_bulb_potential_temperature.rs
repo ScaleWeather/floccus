@@ -3,15 +3,13 @@
 use uom::si::ratio::ratio;
 use uom::si::thermodynamic_temperature::{degree_celsius, kelvin};
 
+use crate::constants::LAMBDA;
+use crate::errors::InputError;
 use crate::formulas::Formula1;
 use crate::quantities::{
     EquivalentPotentialTemperature, QuantityHelpers, WetBulbPotentialTemperature,
 };
 use crate::Storage;
-use crate::{
-    constants::{C_P, R_D},
-    errors::InputError,
-};
 
 type FormulaQuantity = WetBulbPotentialTemperature;
 
@@ -36,7 +34,7 @@ impl Formula1<FormulaQuantity, EquivalentPotentialTemperature> for DaviesJones1 
     fn compute_unchecked(
         equivalent_potential_temperature: EquivalentPotentialTemperature,
     ) -> WetBulbPotentialTemperature {
-        let lambda = (C_P / R_D).get::<ratio>();
+        let lambda = LAMBDA.get::<ratio>();
         let equivalent_potential_temperature = equivalent_potential_temperature.0.get::<kelvin>();
         let result = 45.114 - 51.489 * (273.15 / equivalent_potential_temperature).powf(lambda);
 

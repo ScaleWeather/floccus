@@ -95,7 +95,14 @@ pub const R_V: Storage::SpecificHeatCapacity = Storage::SpecificHeatCapacity {
     value: R.value / M_V.value,
 };
 
-// Internal Constants (commonly appearing in formulas to use them with oum units)
+// Internal Constants (commonly appearing in formulas to use them with uom units)
+
+/// Reference pressure level of 1000hPa. Used in adiabatic processes
+pub(crate) const REF_PRES: Storage::Pressure = Storage::Pressure {
+    dimension: PhantomData,
+    units: PhantomData,
+    value: 100_000.,
+};
 
 /// Ratio of molar masses of dry air and water vapour
 pub(crate) const EPSILON: Storage::Ratio = Storage::Ratio {
@@ -111,12 +118,20 @@ pub(crate) const KAPPA: Storage::Ratio = Storage::Ratio {
     value: R_D.value / C_P.value,
 };
 
+/// Inverse of KAPPA
+pub(crate) const LAMBDA: Storage::Ratio = Storage::Ratio {
+    dimension: PhantomData,
+    units: PhantomData,
+    value: C_P.value / R_D.value,
+};
+
 pub(crate) const DIMLESS_ONE: Storage::Ratio = Storage::Ratio {
     dimension: PhantomData,
     units: PhantomData,
     value: 1.0,
 };
 
+/// Useful to convert TemperatureInterval into ThermodynamicTemperature
 pub(crate) const ZERO_KELVIN: Storage::ThermodynamicTemperature =
     Storage::ThermodynamicTemperature {
         dimension: PhantomData,

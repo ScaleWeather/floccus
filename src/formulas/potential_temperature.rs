@@ -4,7 +4,7 @@
 //! adiabatically and reversibly from its initial state to a
 //! standard pressure, p0 = 100 kPa ([AMETSOC Glossary](https://glossary.ametsoc.org/wiki/Potential_temperature)).
 
-use crate::constants::KAPPA;
+use crate::constants::{KAPPA, REF_PRES};
 use crate::errors::InputError;
 use crate::formulas::Formula3;
 use crate::quantities::{
@@ -77,9 +77,10 @@ impl Formula3<FormulaQuantity, DryBulbTemperature, AtmosphericPressure, VapourPr
         let temperature = temperature.0.get::<kelvin>();
         let pressure = pressure.0.get::<pascal>();
         let vapour_pressure = vapour_pressure.0.get::<pascal>();
+        let p0 = REF_PRES.get::<pascal>();
 
         let kappa = KAPPA.get::<ratio>();
-        let result = temperature * (100_000.0 / (pressure - vapour_pressure)).powf(kappa);
+        let result = temperature * (p0 / (pressure - vapour_pressure)).powf(kappa);
 
         PotentialTemperature::new::<kelvin>(result)
     }

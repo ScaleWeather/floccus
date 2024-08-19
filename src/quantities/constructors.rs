@@ -50,6 +50,26 @@ impl PotentialTemperature {
     }
 }
 
+impl IsobaricEquivalentTemperature {
+    pub fn new<T>(value: Float) -> Self
+    where
+        T: uom::si::thermodynamic_temperature::Unit
+            + uom::si::thermodynamic_temperature::Conversion<Float>,
+    {
+        Self(Storage::ThermodynamicTemperature::new::<T>(value))
+    }
+}
+
+impl AdiabaticEquivalentTemperature {
+    pub fn new<T>(value: Float) -> Self
+    where
+        T: uom::si::thermodynamic_temperature::Unit
+            + uom::si::thermodynamic_temperature::Conversion<Float>,
+    {
+        Self(Storage::ThermodynamicTemperature::new::<T>(value))
+    }
+}
+
 impl EquivalentPotentialTemperature {
     pub fn new<T>(value: Float) -> Self
     where
