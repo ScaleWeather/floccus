@@ -137,9 +137,9 @@ pub fn test_with_3args<
 
     let arg_vecs = (-10..=10).map(|i| i as Float / 1000.0).map(|i| {
         (
-            I1::new_si(arg1.ref_val(atm).get_si_value() + i),
-            I2::new_si(arg2.ref_val(atm).get_si_value() + i),
-            I3::new_si(arg3.ref_val(atm).get_si_value() + i),
+            I1::new_si((1.0 + i) * arg1.ref_val(atm).get_si_value()),
+            I2::new_si((1.0 + i) * arg2.ref_val(atm).get_si_value()),
+            I3::new_si((1.0 + i) * arg3.ref_val(atm).get_si_value()),
         )
     });
 

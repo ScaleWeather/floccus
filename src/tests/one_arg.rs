@@ -68,7 +68,7 @@ pub fn test_with_1arg<O: TestingQuantity, I1: TestingQuantity, F: Formula1<O, I1
 
     let arg_vecs: Vec<_> = (-10..=10)
         .map(|i| i as Float / 1000.0)
-        .map(|i| I1::new_si(arg1.ref_val(atm).get_si_value() + i))
+        .map(|i| I1::new_si((1.0 + i) * arg1.ref_val(atm).get_si_value()))
         .collect();
 
     #[cfg(feature = "array")]
