@@ -24,7 +24,7 @@ pub struct DaviesJones1;
 
 impl Formula1<FormulaQuantity, EquivalentPotentialTemperature> for DaviesJones1 {
     #[inline(always)]
-    fn validate_inputs(
+    fn validate_inputs_internal(
         equivalent_potential_temperature: EquivalentPotentialTemperature,
     ) -> Result<(), InputError> {
         equivalent_potential_temperature.check_range_si(257.0, 377.0)?;
@@ -57,7 +57,7 @@ pub struct DaviesJones2;
 
 impl Formula1<FormulaQuantity, EquivalentPotentialTemperature> for DaviesJones2 {
     #[inline(always)]
-    fn validate_inputs(
+    fn validate_inputs_internal(
         equivalent_potential_temperature: EquivalentPotentialTemperature,
     ) -> Result<(), InputError> {
         equivalent_potential_temperature.check_range_si(174.0, 377.0)?;

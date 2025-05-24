@@ -29,19 +29,19 @@ jobs:
         cargo test
         cargo test --no-default-features
         cargo test --features "double_precision"
-        cargo test --features "debug"
+        cargo test --features "argdebug"
         cargo test --features "array"
         cargo test --features "parallel"
-        cargo test --features "double_precision, debug"
+        cargo test --features "double_precision, argdebug"
         cargo test --features "double_precision, array"
         cargo test --features "double_precision, parallel"
-        cargo test --features "debug, array"
-        cargo test --features "debug, parallel"
+        cargo test --features "argdebug, array"
+        cargo test --features "argdebug, parallel"
         cargo test --features "array, parallel"
-        cargo test --features "double_precision, debug, array"
-        cargo test --features "double_precision, debug, parallel"
+        cargo test --features "double_precision, argdebug, array"
+        cargo test --features "double_precision, argdebug, parallel"
         cargo test --features "double_precision, array, parallel"
-        cargo test --features "debug, array, parallel"
+        cargo test --features "argdebug, array, parallel"
         cargo test --all-features
         cargo clean
     - name: Check release builds
@@ -49,17 +49,17 @@ jobs:
         cargo build --release
         cargo build --release --no-default-features
         cargo build --release --features "double_precision"
-        cargo build --release --features "debug"
+        cargo build --release --features "argdebug"
         cargo build --release --features "array"
         cargo build --release --features "parallel"
-        cargo build --release --features "double_precision, debug"
+        cargo build --release --features "double_precision, argdebug"
         cargo build --release --features "double_precision, array"
         cargo build --release --features "double_precision, parallel"
-        cargo build --release --features "debug, array"
-        cargo build --release --features "debug, parallel"
+        cargo build --release --features "argdebug, array"
+        cargo build --release --features "argdebug, parallel"
         cargo build --release --features "array, parallel"
-        cargo build --release --features "double_precision, debug, array"
-        cargo build --release --features "double_precision, debug, parallel"
+        cargo build --release --features "double_precision, argdebug, array"
+        cargo build --release --features "double_precision, argdebug, parallel"
         cargo build --release --features "double_precision, array, parallel"
-        cargo build --release --features "debug, array, parallel"
+        cargo build --release --features "argdebug, array, parallel"
         cargo build --release --all-features

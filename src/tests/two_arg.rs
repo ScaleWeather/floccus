@@ -145,21 +145,4 @@ pub fn test_with_2args<
         result_imperial.get_si_value(),
         epsilon = 1e-12
     );
-
-    #[cfg(feature = "debug")]
-    testing_logger::setup();
-    #[cfg(feature = "debug")]
-    let _ = F::compute(I1::new_si(-9999.0), I2::new_si(-9999.0));
-
-    #[cfg(feature = "debug")]
-    testing_logger::validate(|captured_logs| {
-        assert_eq!(captured_logs.len(), 1);
-        let body = &captured_logs[0].body;
-        assert!(body.contains("Formula"));
-        assert!(body.contains("calculating"));
-        assert!(body.contains("from"));
-        assert!(body.contains("inputs"));
-        assert!(body.contains("returned error:"));
-        assert_eq!(captured_logs[0].level, log::Level::Error);
-    });
 }

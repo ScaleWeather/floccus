@@ -22,7 +22,7 @@ pub struct Definition1;
 
 impl Formula2<FormulaQuantity, MixingRatio, SaturationMixingRatio> for Definition1 {
     #[inline(always)]
-    fn validate_inputs(
+    fn validate_inputs_internal(
         mixing_ratio: MixingRatio,
         saturation_mixing_ratio: SaturationMixingRatio,
     ) -> Result<(), InputError> {
@@ -51,7 +51,7 @@ pub struct Definition2;
 
 impl Formula2<FormulaQuantity, VapourPressure, SaturationVapourPressure> for Definition2 {
     #[inline(always)]
-    fn validate_inputs(
+    fn validate_inputs_internal(
         vapour_pressure: VapourPressure,
         saturation_vapour_pressure: SaturationVapourPressure,
     ) -> Result<(), InputError> {

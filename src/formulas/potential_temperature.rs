@@ -39,7 +39,7 @@ impl Formula3<FormulaQuantity, DryBulbTemperature, AtmosphericPressure, VapourPr
     for Definition1
 {
     #[inline(always)]
-    fn validate_inputs(
+    fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,
         vapour_pressure: VapourPressure,

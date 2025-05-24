@@ -28,7 +28,7 @@ pub struct Definition1;
 
 impl Formula2<FormulaQuantity, VapourPressure, RelativeHumidity> for Definition1 {
     #[inline(always)]
-    fn validate_inputs(
+    fn validate_inputs_internal(
         vapour_pressure: VapourPressure,
         relative_humidity: RelativeHumidity,
     ) -> Result<(), InputError> {
@@ -59,7 +59,7 @@ pub struct Buck1;
 
 impl Formula2<FormulaQuantity, DryBulbTemperature, AtmosphericPressure> for Buck1 {
     #[inline(always)]
-    fn validate_inputs(
+    fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,
     ) -> Result<(), InputError> {
@@ -108,7 +108,7 @@ pub struct Buck2;
 
 impl Formula2<FormulaQuantity, DryBulbTemperature, AtmosphericPressure> for Buck2 {
     #[inline(always)]
-    fn validate_inputs(
+    fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,
     ) -> Result<(), InputError> {
@@ -157,7 +157,7 @@ pub struct Buck3;
 
 impl Formula2<FormulaQuantity, DryBulbTemperature, AtmosphericPressure> for Buck3 {
     #[inline(always)]
-    fn validate_inputs(
+    fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,
     ) -> Result<(), InputError> {
@@ -201,7 +201,7 @@ pub struct Buck3Simplified;
 
 impl Formula1<FormulaQuantity, DryBulbTemperature> for Buck3Simplified {
     #[inline(always)]
-    fn validate_inputs(temperature: DryBulbTemperature) -> Result<(), InputError> {
+    fn validate_inputs_internal(temperature: DryBulbTemperature) -> Result<(), InputError> {
         temperature.check_range_si(253.0, 324.0)?;
 
         Ok(())
@@ -235,7 +235,7 @@ pub struct Buck4;
 
 impl Formula2<FormulaQuantity, DryBulbTemperature, AtmosphericPressure> for Buck4 {
     #[inline(always)]
-    fn validate_inputs(
+    fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,
     ) -> Result<(), InputError> {
@@ -279,7 +279,7 @@ pub struct Buck4Simplified;
 
 impl Formula1<FormulaQuantity, DryBulbTemperature> for Buck4Simplified {
     #[inline(always)]
-    fn validate_inputs(temperature: DryBulbTemperature) -> Result<(), InputError> {
+    fn validate_inputs_internal(temperature: DryBulbTemperature) -> Result<(), InputError> {
         temperature.check_range_si(223.0, 274.0)?;
 
         Ok(())
@@ -312,7 +312,7 @@ pub struct Tetens1;
 
 impl Formula1<FormulaQuantity, DryBulbTemperature> for Tetens1 {
     #[inline(always)]
-    fn validate_inputs(temperature: DryBulbTemperature) -> Result<(), InputError> {
+    fn validate_inputs_internal(temperature: DryBulbTemperature) -> Result<(), InputError> {
         temperature.check_range_si(273.0, 353.0)?;
 
         Ok(())
@@ -345,7 +345,7 @@ pub struct Wexler1;
 
 impl Formula1<FormulaQuantity, DryBulbTemperature> for Wexler1 {
     #[inline(always)]
-    fn validate_inputs(temperature: DryBulbTemperature) -> Result<(), InputError> {
+    fn validate_inputs_internal(temperature: DryBulbTemperature) -> Result<(), InputError> {
         temperature.check_range_si(273.0, 374.0)?;
 
         Ok(())
@@ -390,7 +390,7 @@ pub struct Wexler2;
 
 impl Formula1<FormulaQuantity, DryBulbTemperature> for Wexler2 {
     #[inline(always)]
-    fn validate_inputs(temperature: DryBulbTemperature) -> Result<(), InputError> {
+    fn validate_inputs_internal(temperature: DryBulbTemperature) -> Result<(), InputError> {
         temperature.check_range_si(173.0, 274.0)?;
 
         Ok(())

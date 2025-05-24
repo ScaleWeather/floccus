@@ -25,7 +25,7 @@ pub struct Definition1;
 
 impl Formula2<FormulaQuantity, VapourPressure, AtmosphericPressure> for Definition1 {
     #[inline(always)]
-    fn validate_inputs(
+    fn validate_inputs_internal(
         vapour_pressure: VapourPressure,
         pressure: AtmosphericPressure,
     ) -> Result<(), InputError> {

@@ -25,7 +25,7 @@ pub struct Definition1;
 
 impl Formula2<FormulaQuantity, DryBulbTemperature, MixingRatio> for Definition1 {
     #[inline(always)]
-    fn validate_inputs(
+    fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         mixing_ratio: MixingRatio,
     ) -> Result<(), InputError> {

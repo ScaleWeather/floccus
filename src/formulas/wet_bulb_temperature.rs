@@ -28,7 +28,7 @@ pub struct Stull1;
 
 impl Formula2<FormulaQuantity, DryBulbTemperature, RelativeHumidity> for Stull1 {
     #[inline(always)]
-    fn validate_inputs(
+    fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         relative_humidity: RelativeHumidity,
     ) -> Result<(), InputError> {
@@ -73,7 +73,7 @@ impl Formula2<FormulaQuantity, AdiabaticEquivalentTemperature, AtmosphericPressu
     for DaviesJones1
 {
     #[inline(always)]
-    fn validate_inputs(
+    fn validate_inputs_internal(
         equivalent_temperature: AdiabaticEquivalentTemperature,
         pressure: AtmosphericPressure,
     ) -> Result<(), InputError> {

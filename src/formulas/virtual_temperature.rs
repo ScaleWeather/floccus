@@ -23,7 +23,7 @@ pub struct Definition1;
 
 impl Formula2<FormulaQuantity, DryBulbTemperature, MixingRatio> for Definition1 {
     #[inline(always)]
-    fn validate_inputs(
+    fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         mixing_ratio: MixingRatio,
     ) -> Result<(), InputError> {
@@ -61,7 +61,7 @@ impl Formula3<FormulaQuantity, DryBulbTemperature, AtmosphericPressure, VapourPr
     for Definition2
 {
     #[inline(always)]
-    fn validate_inputs(
+    fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,
         vapour_pressure: VapourPressure,
@@ -96,7 +96,7 @@ pub struct Definition3;
 
 impl Formula2<FormulaQuantity, DryBulbTemperature, SpecificHumidity> for Definition3 {
     #[inline(always)]
-    fn validate_inputs(
+    fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         specific_humidity: SpecificHumidity,
     ) -> Result<(), InputError> {

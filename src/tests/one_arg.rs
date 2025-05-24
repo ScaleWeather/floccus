@@ -2,13 +2,13 @@ use float_cmp::assert_approx_eq;
 #[cfg(feature = "array")]
 use ndarray::Array1;
 
+use super::Argument;
 use super::check_result;
 use super::testing_traits::{ReferenceAtmosphere, TestingQuantity};
-use super::Argument;
+use crate::Float;
 use crate::errors::InputError;
 use crate::formulas::Formula1;
 use crate::tests::check_range_error;
-use crate::Float;
 use std::mem::discriminant;
 
 pub fn test_with_1arg<O: TestingQuantity, I1: TestingQuantity, F: Formula1<O, I1>>(
@@ -120,21 +120,4 @@ pub fn test_with_1arg<O: TestingQuantity, I1: TestingQuantity, F: Formula1<O, I1
         result_imperial.get_si_value(),
         epsilon = 1e-12
     );
-
-    #[cfg(feature = "debug")]
-    testing_logger::setup();
-    #[cfg(feature = "debug")]
-    let _ = F::compute(I1::new_si(-9999.0));
-
-    #[cfg(feature = "debug")]
-    testing_logger::validate(|captured_logs| {
-        assert_eq!(captured_logs.len(), 1);
-        let body = &captured_logs[0].body;
-        assert!(body.contains("Formula"));
-        assert!(body.contains("calculating"));
-        assert!(body.contains("from"));
-        assert!(body.contains("inputs"));
-        assert!(body.contains("returned error:"));
-        assert_eq!(captured_logs[0].level, log::Level::Error);
-    });
 }

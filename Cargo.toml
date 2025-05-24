@@ -14,7 +14,9 @@ exclude = [".github/*"]
 [dependencies]
 thiserror = "2.0"
 float-cmp = "0.10"
-log = { version = "0.4", optional = true }
+tracing = { version = "0.1", optional = true, default-features = false, features = [
+    "attributes",
+] }
 ndarray = { version = "0.16", default-features = false, optional = true }
 rayon = { version = "1.10", default-features = false, optional = true }
 uom = { version = "0.37", default-features = false, features = [
@@ -22,7 +24,6 @@ uom = { version = "0.37", default-features = false, features = [
     "std",
     "autoconvert",
     "f32",
-    "f64",
 ] }
 
 [lib]
@@ -37,8 +38,8 @@ floccus = { path = ".", features = ["double_precision"] }
 
 [features]
 default = []
-debug = ["dep:log"]
-double_precision = []
+argdebug = ["dep:tracing"]
+double_precision = ["uom/f64"]
 array = ["dep:ndarray"]
 parallel = ["array", "ndarray/rayon", "dep:rayon"]
 

@@ -51,7 +51,7 @@ impl
     > for Kerry1
 {
     #[inline(always)]
-    fn validate_inputs(
+    fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,
         mixing_ratio: MixingRatio,
@@ -117,7 +117,7 @@ impl
     > for Bryan1
 {
     #[inline(always)]
-    fn validate_inputs(
+    fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         mixing_ratio: MixingRatio,
         relative_humidity: RelativeHumidity,
@@ -181,7 +181,7 @@ impl
     > for Bolton1
 {
     #[inline(always)]
-    fn validate_inputs(
+    fn validate_inputs_internal(
         pressure: AtmosphericPressure,
         temperature: DryBulbTemperature,
         dewpoint: DewPointTemperature,
@@ -308,7 +308,7 @@ impl
         EquivalentPotentialTemperature::new::<kelvin>(result)
     }
 
-    fn validate_inputs(
+    fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         dewpoint: DewPointTemperature,
         mixing_ratio: MixingRatio,
