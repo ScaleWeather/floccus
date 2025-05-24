@@ -16,8 +16,7 @@ pub(crate) trait QuantityHelpers: ThermodynamicQuantity {
         type_name::<Self>()
     }
 
-    #[must_use]
-    #[inline(always)]
+    #[inline]
     fn check_range_si(&self, lower_bound: Float, upper_bound: Float) -> Result<(), InputError> {
         if !(lower_bound..=upper_bound).contains(&self.get_si_value()) {
             return Err(InputError::OutOfRange(Self::name()));

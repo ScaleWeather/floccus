@@ -24,7 +24,7 @@ type FormulaQuantity = SaturationMixingRatio;
 pub struct Definition1;
 
 impl Formula2<FormulaQuantity, AtmosphericPressure, SaturationVapourPressure> for Definition1 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         pressure: AtmosphericPressure,
         saturation_vapour_pressure: SaturationVapourPressure,
@@ -51,7 +51,7 @@ impl Formula2<FormulaQuantity, AtmosphericPressure, SaturationVapourPressure> fo
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         pressure: AtmosphericPressure,
         saturation_vapour_pressure: SaturationVapourPressure,
@@ -71,7 +71,7 @@ impl Formula2<FormulaQuantity, AtmosphericPressure, SaturationVapourPressure> fo
 pub struct Definition2;
 
 impl Formula2<FormulaQuantity, MixingRatio, RelativeHumidity> for Definition2 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         mixing_ratio: MixingRatio,
         relative_humidity: RelativeHumidity,
@@ -82,7 +82,7 @@ impl Formula2<FormulaQuantity, MixingRatio, RelativeHumidity> for Definition2 {
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         mixing_ratio: MixingRatio,
         relative_humidity: RelativeHumidity,

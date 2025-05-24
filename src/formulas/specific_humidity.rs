@@ -24,7 +24,7 @@ type FormulaQuantity = SpecificHumidity;
 pub struct Definition1;
 
 impl Formula2<FormulaQuantity, VapourPressure, AtmosphericPressure> for Definition1 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         vapour_pressure: VapourPressure,
         pressure: AtmosphericPressure,
@@ -35,7 +35,7 @@ impl Formula2<FormulaQuantity, VapourPressure, AtmosphericPressure> for Definiti
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         vapour_pressure: VapourPressure,
         pressure: AtmosphericPressure,

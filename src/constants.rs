@@ -39,7 +39,7 @@ pub const C_P: Storage::SpecificHeatCapacity = Storage::SpecificHeatCapacity {
     value: 1004.709,
 };
 
-/// Specific heat capacity of dry air at constant volume` (ECMWF, 2020)
+/// Specific heat capacity of dry air at constant volume (ECMWF, 2020)
 pub const C_V: Storage::SpecificHeatCapacity = Storage::SpecificHeatCapacity {
     dimension: PhantomData,
     units: PhantomData,

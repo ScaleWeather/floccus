@@ -21,13 +21,13 @@ type FormulaQuantity = WetBulbTemperature;
 ///
 /// Result error is within -1K to +0.65K, with mean absolute error of 0.28K
 ///
-/// Valid `temperature` range: 253K - 324K
-
+/// Valid `temperature` range: 253K - 324K\
+/// 
 /// Valid `relative_humidity` range: 0.05 - 0.99
 pub struct Stull1;
 
 impl Formula2<FormulaQuantity, DryBulbTemperature, RelativeHumidity> for Stull1 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         relative_humidity: RelativeHumidity,
@@ -38,7 +38,7 @@ impl Formula2<FormulaQuantity, DryBulbTemperature, RelativeHumidity> for Stull1 
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         temperature: DryBulbTemperature,
         relative_humidity: RelativeHumidity,
@@ -72,7 +72,7 @@ pub struct DaviesJones1;
 impl Formula2<FormulaQuantity, AdiabaticEquivalentTemperature, AtmosphericPressure>
     for DaviesJones1
 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         equivalent_temperature: AdiabaticEquivalentTemperature,
         pressure: AtmosphericPressure,
@@ -82,7 +82,7 @@ impl Formula2<FormulaQuantity, AdiabaticEquivalentTemperature, AtmosphericPressu
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         equivalent_temperature: AdiabaticEquivalentTemperature,
         pressure: AtmosphericPressure,

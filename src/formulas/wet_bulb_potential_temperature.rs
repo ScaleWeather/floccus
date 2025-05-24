@@ -23,7 +23,7 @@ type FormulaQuantity = WetBulbPotentialTemperature;
 pub struct DaviesJones1;
 
 impl Formula1<FormulaQuantity, EquivalentPotentialTemperature> for DaviesJones1 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         equivalent_potential_temperature: EquivalentPotentialTemperature,
     ) -> Result<(), InputError> {
@@ -32,7 +32,7 @@ impl Formula1<FormulaQuantity, EquivalentPotentialTemperature> for DaviesJones1 
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         equivalent_potential_temperature: EquivalentPotentialTemperature,
     ) -> WetBulbPotentialTemperature {
@@ -56,7 +56,7 @@ impl Formula1<FormulaQuantity, EquivalentPotentialTemperature> for DaviesJones1 
 pub struct DaviesJones2;
 
 impl Formula1<FormulaQuantity, EquivalentPotentialTemperature> for DaviesJones2 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         equivalent_potential_temperature: EquivalentPotentialTemperature,
     ) -> Result<(), InputError> {
@@ -65,22 +65,22 @@ impl Formula1<FormulaQuantity, EquivalentPotentialTemperature> for DaviesJones2 
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         equivalent_potential_temperature: EquivalentPotentialTemperature,
     ) -> WetBulbPotentialTemperature {
         let theta_e = equivalent_potential_temperature.get::<kelvin>();
 
         let x = theta_e / 273.15;
-        let a0 = 7.101574;
-        let a1 = -20.68208;
-        let a2 = 16.11182;
-        let a3 = 2.574631;
-        let a4 = -5.205688;
-        let b1 = -3.552497;
-        let b2 = 3.781782;
-        let b3 = -0.6899655;
-        let b4 = -0.5929340;
+        let a0 = 7.101_574;
+        let a1 = -20.682_08;
+        let a2 = 16.111_82;
+        let a3 = 2.574_631;
+        let a4 = -5.205_688;
+        let b1 = -3.552_497;
+        let b2 = 3.781_782;
+        let b3 = -0.689_965_5;
+        let b4 = -0.592_934_0;
 
         let exponent = (a0 + a1 * x + a2 * x.powi(2) + a3 * x.powi(3) + a4 * x.powi(4))
             / (1. + b1 * x + b2 * x.powi(2) + b3 * x.powi(3) + b4 * x.powi(4));

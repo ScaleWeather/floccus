@@ -20,7 +20,7 @@ type FormulaQuantity = VapourPressureDeficit;
 pub struct Definition1;
 
 impl Formula2<FormulaQuantity, VapourPressure, SaturationVapourPressure> for Definition1 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         vapour_pressure: VapourPressure,
         saturation_vapour_pressure: SaturationVapourPressure,
@@ -31,7 +31,7 @@ impl Formula2<FormulaQuantity, VapourPressure, SaturationVapourPressure> for Def
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         vapour_pressure: VapourPressure,
         saturation_vapour_pressure: SaturationVapourPressure,

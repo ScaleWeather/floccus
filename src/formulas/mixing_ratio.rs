@@ -24,7 +24,7 @@ type FormulaQuantity = MixingRatio;
 pub struct Definition1;
 
 impl Formula2<FormulaQuantity, AtmosphericPressure, VapourPressure> for Definition1 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         pressure: AtmosphericPressure,
         vapour_pressure: VapourPressure,
@@ -51,7 +51,7 @@ impl Formula2<FormulaQuantity, AtmosphericPressure, VapourPressure> for Definiti
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         pressure: AtmosphericPressure,
         vapour_pressure: VapourPressure,

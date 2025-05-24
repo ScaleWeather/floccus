@@ -30,7 +30,7 @@ type FormulaQuantity = VapourPressure;
 pub struct Definition1;
 
 impl Formula2<FormulaQuantity, SpecificHumidity, AtmosphericPressure> for Definition1 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         specific_humidity: SpecificHumidity,
         pressure: AtmosphericPressure,
@@ -41,7 +41,7 @@ impl Formula2<FormulaQuantity, SpecificHumidity, AtmosphericPressure> for Defini
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         specific_humidity: SpecificHumidity,
         pressure: AtmosphericPressure,
@@ -64,7 +64,7 @@ impl Formula2<FormulaQuantity, SpecificHumidity, AtmosphericPressure> for Defini
 pub struct Definition2;
 
 impl Formula2<FormulaQuantity, SaturationVapourPressure, RelativeHumidity> for Definition2 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         saturation_vapour_pressure: SaturationVapourPressure,
         relative_humidity: RelativeHumidity,
@@ -75,7 +75,7 @@ impl Formula2<FormulaQuantity, SaturationVapourPressure, RelativeHumidity> for D
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         saturation_vapour_pressure: SaturationVapourPressure,
         relative_humidity: RelativeHumidity,
@@ -97,7 +97,7 @@ impl Formula2<FormulaQuantity, SaturationVapourPressure, RelativeHumidity> for D
 pub struct Buck1;
 
 impl Formula2<FormulaQuantity, DewPointTemperature, AtmosphericPressure> for Buck1 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         dewpoint: DewPointTemperature,
         pressure: AtmosphericPressure,
@@ -108,7 +108,7 @@ impl Formula2<FormulaQuantity, DewPointTemperature, AtmosphericPressure> for Buc
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         dewpoint: DewPointTemperature,
         pressure: AtmosphericPressure,
@@ -146,7 +146,7 @@ impl Formula2<FormulaQuantity, DewPointTemperature, AtmosphericPressure> for Buc
 pub struct Buck2;
 
 impl Formula2<FormulaQuantity, DewPointTemperature, AtmosphericPressure> for Buck2 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         dewpoint: DewPointTemperature,
         pressure: AtmosphericPressure,
@@ -157,7 +157,7 @@ impl Formula2<FormulaQuantity, DewPointTemperature, AtmosphericPressure> for Buc
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         dewpoint: DewPointTemperature,
         pressure: AtmosphericPressure,
@@ -195,7 +195,7 @@ impl Formula2<FormulaQuantity, DewPointTemperature, AtmosphericPressure> for Buc
 pub struct Buck3;
 
 impl Formula2<FormulaQuantity, DewPointTemperature, AtmosphericPressure> for Buck3 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         dewpoint: DewPointTemperature,
         pressure: AtmosphericPressure,
@@ -206,7 +206,7 @@ impl Formula2<FormulaQuantity, DewPointTemperature, AtmosphericPressure> for Buc
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         dewpoint: DewPointTemperature,
         pressure: AtmosphericPressure,
@@ -239,14 +239,14 @@ impl Formula2<FormulaQuantity, DewPointTemperature, AtmosphericPressure> for Buc
 pub struct Buck3Simplified;
 
 impl Formula1<FormulaQuantity, DewPointTemperature> for Buck3Simplified {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(dewpoint: DewPointTemperature) -> Result<(), InputError> {
         dewpoint.check_range_si(253.0, 324.0)?;
 
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(dewpoint: DewPointTemperature) -> VapourPressure {
         let dewpoint = dewpoint.0.get::<degree_celsius>();
 
@@ -273,7 +273,7 @@ impl Formula1<FormulaQuantity, DewPointTemperature> for Buck3Simplified {
 pub struct Buck4;
 
 impl Formula2<FormulaQuantity, DewPointTemperature, AtmosphericPressure> for Buck4 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         dewpoint: DewPointTemperature,
         pressure: AtmosphericPressure,
@@ -284,7 +284,7 @@ impl Formula2<FormulaQuantity, DewPointTemperature, AtmosphericPressure> for Buc
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         dewpoint: DewPointTemperature,
         pressure: AtmosphericPressure,
@@ -317,15 +317,14 @@ impl Formula2<FormulaQuantity, DewPointTemperature, AtmosphericPressure> for Buc
 pub struct Buck4Simplified;
 
 impl Formula1<FormulaQuantity, DewPointTemperature> for Buck4Simplified {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(dewpoint: DewPointTemperature) -> Result<(), InputError> {
         dewpoint.check_range_si(223.0, 274.0)?;
 
         Ok(())
     }
 
-    #[inline(always)]
-
+    #[inline]
     fn compute_unchecked(dewpoint: DewPointTemperature) -> VapourPressure {
         let dewpoint = dewpoint.0.get::<degree_celsius>();
 
@@ -350,14 +349,14 @@ impl Formula1<FormulaQuantity, DewPointTemperature> for Buck4Simplified {
 pub struct Tetens1;
 
 impl Formula1<FormulaQuantity, DewPointTemperature> for Tetens1 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(dewpoint: DewPointTemperature) -> Result<(), InputError> {
         dewpoint.check_range_si(273.0, 353.0)?;
 
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(dewpoint: DewPointTemperature) -> VapourPressure {
         let dewpoint = dewpoint.0.get::<degree_celsius>();
 
@@ -383,14 +382,14 @@ impl Formula1<FormulaQuantity, DewPointTemperature> for Tetens1 {
 pub struct Wexler1;
 
 impl Formula1<FormulaQuantity, DewPointTemperature> for Wexler1 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(dewpoint: DewPointTemperature) -> Result<(), InputError> {
         dewpoint.check_range_si(273.0, 374.0)?;
 
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(dewpoint: DewPointTemperature) -> VapourPressure {
         let dewpoint = dewpoint.get_si_value();
 
@@ -428,14 +427,14 @@ impl Formula1<FormulaQuantity, DewPointTemperature> for Wexler1 {
 pub struct Wexler2;
 
 impl Formula1<FormulaQuantity, DewPointTemperature> for Wexler2 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(dewpoint: DewPointTemperature) -> Result<(), InputError> {
         dewpoint.check_range_si(173.0, 274.0)?;
 
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(dewpoint: DewPointTemperature) -> VapourPressure {
         let dewpoint = dewpoint.0.get::<kelvin>();
 

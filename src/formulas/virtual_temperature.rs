@@ -22,7 +22,7 @@ type FormulaQuantity = VirtualTemperature;
 pub struct Definition1;
 
 impl Formula2<FormulaQuantity, DryBulbTemperature, MixingRatio> for Definition1 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         mixing_ratio: MixingRatio,
@@ -33,7 +33,7 @@ impl Formula2<FormulaQuantity, DryBulbTemperature, MixingRatio> for Definition1 
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         temperature: DryBulbTemperature,
         mixing_ratio: MixingRatio,
@@ -60,7 +60,7 @@ pub struct Definition2;
 impl Formula3<FormulaQuantity, DryBulbTemperature, AtmosphericPressure, VapourPressure>
     for Definition2
 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,
@@ -73,7 +73,7 @@ impl Formula3<FormulaQuantity, DryBulbTemperature, AtmosphericPressure, VapourPr
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,
@@ -95,7 +95,7 @@ impl Formula3<FormulaQuantity, DryBulbTemperature, AtmosphericPressure, VapourPr
 pub struct Definition3;
 
 impl Formula2<FormulaQuantity, DryBulbTemperature, SpecificHumidity> for Definition3 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         specific_humidity: SpecificHumidity,
@@ -106,7 +106,7 @@ impl Formula2<FormulaQuantity, DryBulbTemperature, SpecificHumidity> for Definit
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         temperature: DryBulbTemperature,
         specific_humidity: SpecificHumidity,

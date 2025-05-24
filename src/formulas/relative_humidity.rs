@@ -21,7 +21,7 @@ type FormulaQuantity = RelativeHumidity;
 pub struct Definition1;
 
 impl Formula2<FormulaQuantity, MixingRatio, SaturationMixingRatio> for Definition1 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         mixing_ratio: MixingRatio,
         saturation_mixing_ratio: SaturationMixingRatio,
@@ -32,7 +32,7 @@ impl Formula2<FormulaQuantity, MixingRatio, SaturationMixingRatio> for Definitio
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         mixing_ratio: MixingRatio,
         saturation_mixing_ratio: SaturationMixingRatio,
@@ -50,7 +50,7 @@ impl Formula2<FormulaQuantity, MixingRatio, SaturationMixingRatio> for Definitio
 pub struct Definition2;
 
 impl Formula2<FormulaQuantity, VapourPressure, SaturationVapourPressure> for Definition2 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         vapour_pressure: VapourPressure,
         saturation_vapour_pressure: SaturationVapourPressure,
@@ -61,7 +61,7 @@ impl Formula2<FormulaQuantity, VapourPressure, SaturationVapourPressure> for Def
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         vapour_pressure: VapourPressure,
         saturation_vapour_pressure: SaturationVapourPressure,

@@ -29,7 +29,7 @@ type FormulaQuantity = AdiabaticEquivalentTemperature;
 pub struct Definition1;
 
 impl Formula2<FormulaQuantity, DryBulbTemperature, MixingRatio> for Definition1 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         mixing_ratio: MixingRatio,
@@ -40,7 +40,7 @@ impl Formula2<FormulaQuantity, DryBulbTemperature, MixingRatio> for Definition1 
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         temperature: DryBulbTemperature,
         mixing_ratio: MixingRatio,
@@ -64,7 +64,7 @@ pub struct Definition2;
 impl Formula2<FormulaQuantity, EquivalentPotentialTemperature, AtmosphericPressure>
     for Definition2
 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         equivalent_potential_temperature: EquivalentPotentialTemperature,
         pressure: AtmosphericPressure,
@@ -75,7 +75,7 @@ impl Formula2<FormulaQuantity, EquivalentPotentialTemperature, AtmosphericPressu
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         equivalent_potential_temperature: EquivalentPotentialTemperature,
         pressure: AtmosphericPressure,

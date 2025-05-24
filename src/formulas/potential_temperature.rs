@@ -38,7 +38,7 @@ pub struct Definition1;
 impl Formula3<FormulaQuantity, DryBulbTemperature, AtmosphericPressure, VapourPressure>
     for Definition1
 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,
@@ -68,7 +68,7 @@ impl Formula3<FormulaQuantity, DryBulbTemperature, AtmosphericPressure, VapourPr
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,

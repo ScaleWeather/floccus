@@ -5,14 +5,14 @@
 //! liquid or solid phase; that is, the vapor pressure of a system that has attained
 //! saturation but not supersaturation ([AMETSOC Glossary](https://glossary.ametsoc.org/wiki/Saturation_vapor_pressure)).
 
+use crate::Float;
+use crate::Storage::Pressure;
 use crate::errors::InputError;
 use crate::formulas::{Formula1, Formula2};
 use crate::quantities::{
     AtmosphericPressure, DryBulbTemperature, QuantityHelpers, RelativeHumidity,
     SaturationVapourPressure, VapourPressure,
 };
-use crate::Float;
-use crate::Storage::Pressure;
 
 use uom::si::pressure::{hectopascal, kilopascal, pascal};
 use uom::si::thermodynamic_temperature::{degree_celsius, kelvin};
@@ -27,7 +27,7 @@ type FormulaQuantity = SaturationVapourPressure;
 pub struct Definition1;
 
 impl Formula2<FormulaQuantity, VapourPressure, RelativeHumidity> for Definition1 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         vapour_pressure: VapourPressure,
         relative_humidity: RelativeHumidity,
@@ -38,7 +38,7 @@ impl Formula2<FormulaQuantity, VapourPressure, RelativeHumidity> for Definition1
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         vapour_pressure: VapourPressure,
         relative_humidity: RelativeHumidity,
@@ -58,7 +58,7 @@ impl Formula2<FormulaQuantity, VapourPressure, RelativeHumidity> for Definition1
 pub struct Buck1;
 
 impl Formula2<FormulaQuantity, DryBulbTemperature, AtmosphericPressure> for Buck1 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,
@@ -69,7 +69,7 @@ impl Formula2<FormulaQuantity, DryBulbTemperature, AtmosphericPressure> for Buck
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,
@@ -107,7 +107,7 @@ impl Formula2<FormulaQuantity, DryBulbTemperature, AtmosphericPressure> for Buck
 pub struct Buck2;
 
 impl Formula2<FormulaQuantity, DryBulbTemperature, AtmosphericPressure> for Buck2 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,
@@ -118,7 +118,7 @@ impl Formula2<FormulaQuantity, DryBulbTemperature, AtmosphericPressure> for Buck
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,
@@ -156,7 +156,7 @@ impl Formula2<FormulaQuantity, DryBulbTemperature, AtmosphericPressure> for Buck
 pub struct Buck3;
 
 impl Formula2<FormulaQuantity, DryBulbTemperature, AtmosphericPressure> for Buck3 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,
@@ -167,7 +167,7 @@ impl Formula2<FormulaQuantity, DryBulbTemperature, AtmosphericPressure> for Buck
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,
@@ -200,14 +200,14 @@ impl Formula2<FormulaQuantity, DryBulbTemperature, AtmosphericPressure> for Buck
 pub struct Buck3Simplified;
 
 impl Formula1<FormulaQuantity, DryBulbTemperature> for Buck3Simplified {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(temperature: DryBulbTemperature) -> Result<(), InputError> {
         temperature.check_range_si(253.0, 324.0)?;
 
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(temperature: DryBulbTemperature) -> SaturationVapourPressure {
         let dewpoint = temperature.0.get::<degree_celsius>();
 
@@ -234,7 +234,7 @@ impl Formula1<FormulaQuantity, DryBulbTemperature> for Buck3Simplified {
 pub struct Buck4;
 
 impl Formula2<FormulaQuantity, DryBulbTemperature, AtmosphericPressure> for Buck4 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,
@@ -245,7 +245,7 @@ impl Formula2<FormulaQuantity, DryBulbTemperature, AtmosphericPressure> for Buck
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,
@@ -278,15 +278,14 @@ impl Formula2<FormulaQuantity, DryBulbTemperature, AtmosphericPressure> for Buck
 pub struct Buck4Simplified;
 
 impl Formula1<FormulaQuantity, DryBulbTemperature> for Buck4Simplified {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(temperature: DryBulbTemperature) -> Result<(), InputError> {
         temperature.check_range_si(223.0, 274.0)?;
 
         Ok(())
     }
 
-    #[inline(always)]
-
+    #[inline]
     fn compute_unchecked(temperature: DryBulbTemperature) -> SaturationVapourPressure {
         let dewpoint = temperature.0.get::<degree_celsius>();
 
@@ -311,14 +310,14 @@ impl Formula1<FormulaQuantity, DryBulbTemperature> for Buck4Simplified {
 pub struct Tetens1;
 
 impl Formula1<FormulaQuantity, DryBulbTemperature> for Tetens1 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(temperature: DryBulbTemperature) -> Result<(), InputError> {
         temperature.check_range_si(273.0, 353.0)?;
 
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(temperature: DryBulbTemperature) -> SaturationVapourPressure {
         let dewpoint = temperature.0.get::<degree_celsius>();
 
@@ -344,14 +343,14 @@ impl Formula1<FormulaQuantity, DryBulbTemperature> for Tetens1 {
 pub struct Wexler1;
 
 impl Formula1<FormulaQuantity, DryBulbTemperature> for Wexler1 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(temperature: DryBulbTemperature) -> Result<(), InputError> {
         temperature.check_range_si(273.0, 374.0)?;
 
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(temperature: DryBulbTemperature) -> SaturationVapourPressure {
         let dewpoint = temperature.get_si_value();
 
@@ -367,11 +366,13 @@ impl Formula1<FormulaQuantity, DryBulbTemperature> for Wexler1 {
             2.858_487,
         ];
 
-        let mut ln_p = g[7] * dewpoint.ln();
-
-        for i in 0..=6 {
-            ln_p += g[i] * dewpoint.powi(i as i32 - 2);
-        }
+        let ln_p = g
+            .iter()
+            .enumerate()
+            .take(7)
+            .fold(g[7] * dewpoint.ln(), |acc, (i, &x)| {
+                acc + x * dewpoint.powi(i as i32 - 2)
+            });
 
         let result = Pressure::new::<pascal>(ln_p.exp());
 
@@ -389,14 +390,14 @@ impl Formula1<FormulaQuantity, DryBulbTemperature> for Wexler1 {
 pub struct Wexler2;
 
 impl Formula1<FormulaQuantity, DryBulbTemperature> for Wexler2 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(temperature: DryBulbTemperature) -> Result<(), InputError> {
         temperature.check_range_si(173.0, 274.0)?;
 
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(temperature: DryBulbTemperature) -> SaturationVapourPressure {
         let dewpoint = temperature.0.get::<kelvin>();
 
@@ -410,11 +411,13 @@ impl Formula1<FormulaQuantity, DryBulbTemperature> for Wexler2 {
             0.691_865_1,
         ];
 
-        let mut ln_p = big_k[5] * dewpoint.ln();
-
-        for j in 0..=4 {
-            ln_p += big_k[j] * dewpoint.powi(j as i32 - 1);
-        }
+        let ln_p = big_k
+            .iter()
+            .enumerate()
+            .take(5)
+            .fold(big_k[5] * dewpoint.ln(), |acc, (i, &x)| {
+                acc + x * dewpoint.powi(i as i32 - 1)
+            });
 
         let result = Pressure::new::<pascal>(ln_p.exp());
 
@@ -426,7 +429,7 @@ impl Formula1<FormulaQuantity, DryBulbTemperature> for Wexler2 {
 mod tests {
     use crate::{
         quantities::{AtmosphericPressure, DryBulbTemperature, RelativeHumidity, VapourPressure},
-        tests::{test_with_1arg, test_with_2args, testing_traits::ReferenceAtmosphere, Argument},
+        tests::{Argument, test_with_1arg, test_with_2args, testing_traits::ReferenceAtmosphere},
     };
 
     use super::*;

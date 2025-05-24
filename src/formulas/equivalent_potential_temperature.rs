@@ -50,7 +50,7 @@ impl
         RelativeHumidity,
     > for Kerry1
 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,
@@ -65,7 +65,7 @@ impl
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         temperature: DryBulbTemperature,
         pressure: AtmosphericPressure,
@@ -116,7 +116,7 @@ impl
         PotentialTemperature,
     > for Bryan1
 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         temperature: DryBulbTemperature,
         mixing_ratio: MixingRatio,
@@ -131,7 +131,7 @@ impl
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         temperature: DryBulbTemperature,
         mixing_ratio: MixingRatio,
@@ -180,7 +180,7 @@ impl
         VapourPressure,
     > for Bolton1
 {
-    #[inline(always)]
+    #[inline]
     fn validate_inputs_internal(
         pressure: AtmosphericPressure,
         temperature: DryBulbTemperature,
@@ -224,7 +224,7 @@ impl
         Ok(())
     }
 
-    #[inline(always)]
+    #[inline]
     fn compute_unchecked(
         pressure: AtmosphericPressure,
         temperature: DryBulbTemperature,

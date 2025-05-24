@@ -5,7 +5,6 @@ use thiserror::Error;
 #[derive(Error, Debug, PartialEq, Eq, Clone)]
 ///Error enum returned when provided input will cause function to return erronous result
 ///eg. `Inf` or `NaN`
-
 pub enum InputError {
     #[error("Value of {0} out of a reasonable range.")]
     ///Error returned when provided input is out of reasonable range.
