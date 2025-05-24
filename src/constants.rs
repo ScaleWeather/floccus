@@ -131,7 +131,7 @@ pub(crate) const DIMLESS_ONE: Storage::Ratio = Storage::Ratio {
     value: 1.0,
 };
 
-/// Useful to convert TemperatureInterval into ThermodynamicTemperature
+/// Useful to convert `TemperatureInterval` into `ThermodynamicTemperature`
 pub(crate) const ZERO_KELVIN: Storage::ThermodynamicTemperature =
     Storage::ThermodynamicTemperature {
         dimension: PhantomData,

@@ -43,12 +43,12 @@ fn check_result<T: TestingQuantity>(result: T, atm: ReferenceAtmosphere, eps: Fl
     let expected = T::ref_val_si(atm).get_si_value();
     let result = result.get_si_value();
 
-    assert_approx_eq!(Float, result, expected, epsilon = eps)
+    assert_approx_eq!(Float, result, expected, epsilon = eps);
 }
 
 pub fn check_range_error(result: InputError, expected_name: &str) {
     if let InputError::OutOfRange(name) = result {
-        assert_eq!(name, expected_name)
+        assert_eq!(name, expected_name);
     } else {
         panic!("wrong error type")
     }

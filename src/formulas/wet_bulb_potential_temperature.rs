@@ -49,7 +49,7 @@ impl Formula1<FormulaQuantity, EquivalentPotentialTemperature> for DaviesJones1 
 /// Formula for computing wet bulb potential temperature from equivalent potential temperature.
 ///
 /// Derived by R. Davies-Jones (2008) [(doi:10.1175/2007MWR2224.1)](https://doi.org/10.1175/2007MWR2224.1).
-/// This is a very accurate rational-function approximation of [DaviesJones1] and two other (unimplemented)
+/// This is a very accurate rational-function approximation of [`DaviesJones1`] and two other (unimplemented)
 /// formulas.  
 ///
 /// Valid `equivalent_potential_temperature` range: 174K - 377K

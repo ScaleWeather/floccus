@@ -217,12 +217,9 @@ impl
 
         let mixing_ratio = mixing_ratio::Definition1::compute_unchecked(pressure, vapour_pressure);
 
-        mixing_ratio.check_range_si(0.000_000_1, 2.0).or_else(|_| {
-            Err(InputError::IncorrectArgumentSet(
+        mixing_ratio.check_range_si(0.000_000_1, 2.0).map_err(|_| InputError::IncorrectArgumentSet(
                 "pressure and vapour_pressure must give mixing_ratio less than 2 so cannot be close to each other",
-            ))
-        }
-        )?;
+            ))?;
 
         Ok(())
     }

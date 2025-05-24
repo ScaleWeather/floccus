@@ -128,7 +128,7 @@ impl Formula2<FormulaQuantity, AdiabaticEquivalentTemperature, AtmosphericPressu
             t_w = eq_4_9();
             #[cfg(test)]
             log::info!("eq 4.9");
-        } else if indicator < 1.0 && indicator >= 0.4 {
+        } else if (0.4..1.0).contains(&indicator) {
             t_w = eq_4_10();
             #[cfg(test)]
             log::info!("eq 4.10");
@@ -200,7 +200,7 @@ mod tests {
         let wbt = DaviesJones1::compute_unchecked(t_e, pressure);
         testing_logger::validate(|captured_logs| {
             assert_eq!(captured_logs.len(), 1);
-            assert_eq!(captured_logs[0].body, "eq 4.8")
+            assert_eq!(captured_logs[0].body, "eq 4.8");
         });
         assert_approx_eq!(f64, 238.88007446399956, wbt.get_si_value());
 
@@ -210,7 +210,7 @@ mod tests {
         let wbt = DaviesJones1::compute_unchecked(t_e, pressure);
         testing_logger::validate(|captured_logs| {
             assert_eq!(captured_logs.len(), 1);
-            assert_eq!(captured_logs[0].body, "eq 4.9")
+            assert_eq!(captured_logs[0].body, "eq 4.9");
         });
         assert_approx_eq!(f64, 256.61913438141625, wbt.get_si_value());
 
@@ -220,7 +220,7 @@ mod tests {
         let wbt = DaviesJones1::compute_unchecked(t_e, pressure);
         testing_logger::validate(|captured_logs| {
             assert_eq!(captured_logs.len(), 1);
-            assert_eq!(captured_logs[0].body, "eq 4.10")
+            assert_eq!(captured_logs[0].body, "eq 4.10");
         });
         assert_approx_eq!(f64, 291.2797584152462, wbt.get_si_value());
 
@@ -230,7 +230,7 @@ mod tests {
         let wbt = DaviesJones1::compute_unchecked(t_e, pressure);
         testing_logger::validate(|captured_logs| {
             assert_eq!(captured_logs.len(), 1);
-            assert_eq!(captured_logs[0].body, "eq 4.11")
+            assert_eq!(captured_logs[0].body, "eq 4.11");
         });
         assert_approx_eq!(f64, 300.1638142668842, wbt.get_si_value());
     }
