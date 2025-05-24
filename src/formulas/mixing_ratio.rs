@@ -3,9 +3,9 @@
 //! Mixing ratio is the ratio of the mass of a variable atmospheric constituent to the mass
 //! of dry air ([AMETSOC Glossary](https://glossary.ametsoc.org/wiki/Mixing_ratio)).
 
+use crate::Float;
 use crate::formulas::Formula2;
 use crate::quantities::{AtmosphericPressure, MixingRatio, QuantityHelpers, VapourPressure};
-use crate::Float;
 use crate::{constants::EPSILON, errors::InputError};
 use float_cmp::approx_eq;
 
@@ -33,9 +33,9 @@ impl Formula2<FormulaQuantity, AtmosphericPressure, VapourPressure> for Definiti
         vapour_pressure.check_range_si(0.0, 50_000.0)?;
 
         if vapour_pressure.0 > pressure.0 {
-            return Err(InputError::IncorrectArgumentSet(String::from(
+            return Err(InputError::IncorrectArgumentSet(
                 "vapour_pressure cannot be greater than pressure",
-            )));
+            ));
         }
 
         if approx_eq!(
@@ -44,9 +44,9 @@ impl Formula2<FormulaQuantity, AtmosphericPressure, VapourPressure> for Definiti
             vapour_pressure.get_si_value(),
             ulps = 2
         ) {
-            return Err(InputError::IncorrectArgumentSet(String::from(
+            return Err(InputError::IncorrectArgumentSet(
                 "pressure and vapour_pressure cannot be equal",
-            )));
+            ));
         }
         Ok(())
     }
@@ -63,7 +63,7 @@ impl Formula2<FormulaQuantity, AtmosphericPressure, VapourPressure> for Definiti
 #[cfg(test)]
 mod tests {
 
-    use crate::tests::{test_with_2args, testing_traits::ReferenceAtmosphere, Argument};
+    use crate::tests::{Argument, test_with_2args, testing_traits::ReferenceAtmosphere};
 
     use super::*;
 

@@ -54,15 +54,15 @@ impl Formula3<FormulaQuantity, DryBulbTemperature, AtmosphericPressure, VapourPr
             vapour_pressure.get_si_value(),
             ulps = 2
         ) {
-            return Err(InputError::IncorrectArgumentSet(String::from(
+            return Err(InputError::IncorrectArgumentSet(
                 "pressure and vapour_pressure cannot be equal",
-            )));
+            ));
         }
 
         if vapour_pressure.0 > pressure.0 {
-            return Err(InputError::IncorrectArgumentSet(String::from(
+            return Err(InputError::IncorrectArgumentSet(
                 "vapour_pressure cannot be greater or equal to pressure",
-            )));
+            ));
         }
 
         Ok(())

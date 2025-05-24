@@ -3,12 +3,12 @@
 //! Saturation mixing ration is the value of the mixing ratio of saturated air at the
 //! given temperature and pressure ([AMETSOC Glossary](https://glossary.ametsoc.org/wiki/Saturation_mixing_ratio)).
 
+use crate::Float;
 use crate::formulas::Formula2;
 use crate::quantities::{
     AtmosphericPressure, MixingRatio, QuantityHelpers, RelativeHumidity, SaturationMixingRatio,
     SaturationVapourPressure,
 };
-use crate::Float;
 use crate::{constants::EPSILON, errors::InputError};
 use float_cmp::approx_eq;
 
@@ -33,9 +33,9 @@ impl Formula2<FormulaQuantity, AtmosphericPressure, SaturationVapourPressure> fo
         saturation_vapour_pressure.check_range_si(0.0, 50_000.0)?;
 
         if saturation_vapour_pressure.0 > pressure.0 {
-            return Err(InputError::IncorrectArgumentSet(String::from(
+            return Err(InputError::IncorrectArgumentSet(
                 "saturation_vapour_pressure cannot be greater than pressure",
-            )));
+            ));
         }
 
         if approx_eq!(
@@ -44,9 +44,9 @@ impl Formula2<FormulaQuantity, AtmosphericPressure, SaturationVapourPressure> fo
             saturation_vapour_pressure.get_si_value(),
             ulps = 2
         ) {
-            return Err(InputError::IncorrectArgumentSet(String::from(
+            return Err(InputError::IncorrectArgumentSet(
                 "pressure and saturation_vapour_pressure cannot be equal",
-            )));
+            ));
         }
         Ok(())
     }
@@ -93,7 +93,7 @@ impl Formula2<FormulaQuantity, MixingRatio, RelativeHumidity> for Definition2 {
 
 #[cfg(test)]
 mod tests {
-    use crate::tests::{test_with_2args, testing_traits::ReferenceAtmosphere, Argument};
+    use crate::tests::{Argument, test_with_2args, testing_traits::ReferenceAtmosphere};
 
     use super::*;
 

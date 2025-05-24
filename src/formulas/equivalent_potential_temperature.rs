@@ -199,19 +199,19 @@ impl
             ulps = 2
         ) {
             return Err(InputError::IncorrectArgumentSet(
-                "pressure must be greater than vapour pressure".to_string(),
+                "pressure must be greater than vapour pressure",
             ));
         }
 
         if vapour_pressure.0 > pressure.0 {
             return Err(InputError::IncorrectArgumentSet(
-                "pressure must be greater than vapour pressure".to_string(),
+                "pressure must be greater than vapour pressure",
             ));
         }
 
         if dewpoint.0 > temperature.0 {
             return Err(InputError::IncorrectArgumentSet(
-                "dewpoint must be less than temperature".to_string(),
+                "dewpoint must be less than temperature"
             ));
         }
 
@@ -219,7 +219,7 @@ impl
 
         mixing_ratio.check_range_si(0.000_000_1, 2.0).or_else(|_| {
             Err(InputError::IncorrectArgumentSet(
-                "pressure and vapour_pressure must give mixing_ratio less than 2 so cannot be close to each other".to_string(),
+                "pressure and vapour_pressure must give mixing_ratio less than 2 so cannot be close to each other",
             ))
         }
         )?;

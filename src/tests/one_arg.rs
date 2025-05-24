@@ -53,7 +53,7 @@ pub fn test_with_1arg<O: TestingQuantity, I1: TestingQuantity, F: Formula1<O, I1
         match result {
             Ok(r) => assert!(r.get_si_value().is_finite()),
             Err(e) => assert_eq!(
-                discriminant(&InputError::IncorrectArgumentSet(String::new())),
+                discriminant(&InputError::IncorrectArgumentSet("")),
                 discriminant(&e)
             ),
         }

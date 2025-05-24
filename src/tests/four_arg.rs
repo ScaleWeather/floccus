@@ -133,7 +133,7 @@ pub fn test_with_4args<
                         Ok(r) => assert!(r.get_si_value().is_finite()),
 
                         Err(e) => assert_eq!(
-                            discriminant(&InputError::IncorrectArgumentSet(String::new())),
+                            discriminant(&InputError::IncorrectArgumentSet("")),
                             discriminant(&e)
                         ),
                     }

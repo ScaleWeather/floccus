@@ -2,13 +2,13 @@ use float_cmp::assert_approx_eq;
 #[cfg(feature = "array")]
 use ndarray::Array1;
 
+use super::Argument;
 use super::check_result;
 use super::testing_traits::{ReferenceAtmosphere, TestingQuantity};
-use super::Argument;
+use crate::Float;
 use crate::errors::InputError;
 use crate::formulas::Formula2;
 use crate::tests::check_range_error;
-use crate::Float;
 use std::mem::discriminant;
 
 pub fn test_with_2args<
@@ -61,7 +61,7 @@ pub fn test_with_2args<
             match result {
                 Ok(r) => assert!(r.get_si_value().is_finite()),
                 Err(e) => assert_eq!(
-                    discriminant(&InputError::IncorrectArgumentSet(String::new())),
+                    discriminant(&InputError::IncorrectArgumentSet("")),
                     discriminant(&e)
                 ),
             }

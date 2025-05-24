@@ -51,5 +51,5 @@ pub enum InputError {
         "Provided arguments result in erronous output. 
     Check documentation of the function and change one of arguments. Details: {0}"
     )]
-    IncorrectArgumentSet(String),
+    IncorrectArgumentSet(&'static str),
 }
