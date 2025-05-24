@@ -12,7 +12,6 @@ license = "Apache-2.0"
 exclude = [".github/*"]
 
 [dependencies]
-floccus-proc = "0.3.0"
 thiserror = "2.0"
 float-cmp = "0.10"
 log = { version = "0.4", optional = true }

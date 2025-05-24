@@ -31,7 +31,7 @@ impl<I: TestingQuantity> Argument<I> {
     }
 
     pub fn quantity_name(&self) -> &str {
-        I::type_name_as_str()
+        I::name()
     }
 
     pub fn ref_val(&self, atm: ReferenceAtmosphere) -> I {
