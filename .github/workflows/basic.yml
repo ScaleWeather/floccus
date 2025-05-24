@@ -1,0 +1,65 @@
+name: Basic Validation
+
+on: 
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron:  '26 3 20 * *'
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-Dwarnings"
+
+jobs:
+  build-and-test:
+
+    name: Build and Test
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Prepare environment
+      run: |
+        rustup update stable
+        cargo clean
+    - name: Test with cargo
+      run: |
+        cargo test
+        cargo test --no-default-features
+        cargo test --features "double_precision"
+        cargo test --features "argdebug"
+        cargo test --features "array"
+        cargo test --features "parallel"
+        cargo test --features "double_precision, argdebug"
+        cargo test --features "double_precision, array"
+        cargo test --features "double_precision, parallel"
+        cargo test --features "argdebug, array"
+        cargo test --features "argdebug, parallel"
+        cargo test --features "array, parallel"
+        cargo test --features "double_precision, argdebug, array"
+        cargo test --features "double_precision, argdebug, parallel"
+        cargo test --features "double_precision, array, parallel"
+        cargo test --features "argdebug, array, parallel"
+        cargo test --all-features
+        cargo clean
+    - name: Check release builds
+      run: |
+        cargo build --release
+        cargo build --release --no-default-features
+        cargo build --release --features "double_precision"
+        cargo build --release --features "argdebug"
+        cargo build --release --features "array"
+        cargo build --release --features "parallel"
+        cargo build --release --features "double_precision, argdebug"
+        cargo build --release --features "double_precision, array"
+        cargo build --release --features "double_precision, parallel"
+        cargo build --release --features "argdebug, array"
+        cargo build --release --features "argdebug, parallel"
+        cargo build --release --features "array, parallel"
+        cargo build --release --features "double_precision, argdebug, array"
+        cargo build --release --features "double_precision, argdebug, parallel"
+        cargo build --release --features "double_precision, array, parallel"
+        cargo build --release --features "argdebug, array, parallel"
+        cargo build --release --all-features

@@ -1,11 +1,19 @@
-use criterion::{Criterion, black_box, criterion_group, criterion_main};
-use floccus::wet_bulb_temperature;
+use criterion::{criterion_group, criterion_main, Criterion};
+use floccus::{formulas::wet_bulb_temperature, formulas::Formula2};
 
-pub fn wet_bulb_temperature_benchmark(c: &mut Criterion) {
-    c.bench_function("wet_bulb_temperature::stull1", |b| {
-        b.iter(|| wet_bulb_temperature::stull1(black_box(300.0), black_box(0.5)))
+mod utils;
+use utils::ReferenceValues;
+
+pub fn benchmark(c: &mut Criterion) {
+    let ref_norm = ReferenceValues::normal();
+
+    let mut group = c.benchmark_group("wet_bulb_temperature");
+
+    group.bench_function("stull1", |b| {
+        b.iter(|| wet_bulb_temperature::Stull1::compute(ref_norm.temp, ref_norm.rehu))
     });
+    group.finish();
 }
 
-criterion_group!(benches, wet_bulb_temperature_benchmark);
+criterion_group!(benches, benchmark);
 criterion_main!(benches);

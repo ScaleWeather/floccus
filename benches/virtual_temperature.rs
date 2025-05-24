@@ -1,19 +1,29 @@
-use criterion::{Criterion, black_box, criterion_group, criterion_main};
-use floccus::virtual_temperature;
+use criterion::{criterion_group, criterion_main, Criterion};
+use floccus::{formulas::virtual_temperature, formulas::{Formula2, Formula3}};
 
-pub fn virtual_temperature_benchmark(c: &mut Criterion) {
-    c.bench_function("virtual_temperature::general1", |b| {
-        b.iter(|| virtual_temperature::general1(black_box(300.0), black_box(0.022)))
+mod utils;
+use utils::ReferenceValues;
+
+pub fn benchmark(c: &mut Criterion) {
+    let ref_norm = ReferenceValues::normal();
+
+    let mut group = c.benchmark_group("virtual_temperature");
+
+    group.bench_function("definition1", |b| {
+        b.iter(|| virtual_temperature::Definition1::compute(ref_norm.temp, ref_norm.mxrt))
     });
 
-    c.bench_function("virtual_temperature::general2", |b| {
-        b.iter(|| virtual_temperature::general2(black_box(300.0), black_box(101325.0), black_box(3550.0)))
+    group.bench_function("definition2", |b| {
+        b.iter(|| {
+            virtual_temperature::Definition2::compute(ref_norm.temp, ref_norm.pres, ref_norm.vapr)
+        })
     });
 
-    c.bench_function("virtual_temperature::general3", |b| {
-        b.iter(|| virtual_temperature::general3(black_box(300.0), black_box(0.022)))
+    group.bench_function("definition3", |b| {
+        b.iter(|| virtual_temperature::Definition3::compute(ref_norm.temp, ref_norm.sphu))
     });
+    group.finish();
 }
 
-criterion_group!(benches, virtual_temperature_benchmark);
+criterion_group!(benches, benchmark);
 criterion_main!(benches);

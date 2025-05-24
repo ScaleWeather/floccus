@@ -1,11 +1,20 @@
-use criterion::{Criterion, black_box, criterion_group, criterion_main};
-use floccus::specific_humidity;
+use criterion::{criterion_group, criterion_main, Criterion};
+use floccus::{formulas::specific_humidity, formulas::Formula2};
 
-pub fn specific_humidity_benchmark(c: &mut Criterion) {
-    c.bench_function("specific_humidity::general1", |b| {
-        b.iter(|| specific_humidity::general1(black_box(3000.0), black_box(101325.0)))
+mod utils;
+use utils::ReferenceValues;
+
+pub fn benchmark(c: &mut Criterion) {
+    let ref_norm = ReferenceValues::normal();
+
+    let mut group = c.benchmark_group("specific_humidity");
+
+    group.bench_function("definition1", |b| {
+        b.iter(|| specific_humidity::Definition1::compute(ref_norm.vapr, ref_norm.pres))
     });
+
+    group.finish();
 }
 
-criterion_group!(benches, specific_humidity_benchmark);
+criterion_group!(benches, benchmark);
 criterion_main!(benches);

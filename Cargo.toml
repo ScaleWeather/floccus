@@ -1,41 +1,50 @@
 [package]
 name = "floccus"
-version = "0.3.7"
+version = "0.4.0-alpha.9"
 authors = ["Jakub Lewandowski <scaleweather@gmail.com>"]
-edition = "2021"
+edition = "2024"
 description = "Formulae for air thermodynamic calculations"
 repository = "https://github.com/ScaleWeather/floccus"
 readme = "README.md"
 keywords = ["oceanography", "thermodynamics", "meteorology", "weather"]
 categories = ["mathematics", "science"]
 license = "Apache-2.0"
-exclude = [
-    ".github/*",
-]
+exclude = [".github/*"]
 
 [dependencies]
-thiserror = "^1.0.30"
-float-cmp = "^0.9.0"
-floccus-proc = {version = "0.2.5", optional = true}
-log = "^0.4.14"
+thiserror = "2.0"
+float-cmp = "0.10"
+tracing = { version = "0.1", optional = true, default-features = false, features = [
+    "attributes",
+] }
+ndarray = { version = "0.16", default-features = false, optional = true }
+rayon = { version = "1.10", default-features = false, optional = true }
+uom = { version = "0.37", default-features = false, features = [
+    "si",
+    "std",
+    "autoconvert",
+    "f32",
+] }
+
+[lib]
+doctest = false
 
 [dev-dependencies]
-criterion = "0.4.0"
+criterion = "0.6"
+itertools = "0.14"
+log = "0.4"
+testing_logger = "0.1"
+floccus = { path = ".", features = ["double_precision"] }
 
 [features]
-debug = ["floccus-proc"]
-double_precision = []
+default = []
+argdebug = ["dep:tracing"]
+double_precision = ["uom/f64"]
+array = ["dep:ndarray"]
+parallel = ["array", "ndarray/rayon", "dep:rayon"]
 
 [[bench]]
-name = "virtual_temperature"
-harness = false
-
-[[bench]]
-name = "vapour_pressure"
-harness = false
-
-[[bench]]
-name = "vapour_pressure_deficit"
+name = "equivalent_potential_temperature"
 harness = false
 
 [[bench]]
@@ -43,11 +52,18 @@ name = "mixing_ratio"
 harness = false
 
 [[bench]]
-name = "wet_bulb_temperature"
-harness = false
+name = "potential_temperature"
 
 [[bench]]
 name = "relative_humidity"
+harness = false
+
+[[bench]]
+name = "saturation_mixing_ratio"
+harness = false
+
+[[bench]]
+name = "saturation_vapour_pressure"
 harness = false
 
 [[bench]]
@@ -55,13 +71,21 @@ name = "specific_humidity"
 harness = false
 
 [[bench]]
-name = "potential_temperature"
+name = "vapour_pressure_deficit"
 harness = false
 
 [[bench]]
-name = "equivalent_potential_temperature"
+name = "vapour_pressure"
+harness = false
+
+[[bench]]
+name = "virtual_temperature"
 harness = false
 
 [[bench]]
 name = "wet_bulb_potential_temperature"
+harness = false
+
+[[bench]]
+name = "wet_bulb_temperature"
 harness = false

@@ -1,9 +1,9 @@
 # floccus
 
-[![License](https://img.shields.io/github/license/ScaleWeather/floccus)](https://choosealicense.com/licenses/apache-2.0/)
-[![Crates.io](https://img.shields.io/crates/v/floccus)](https://crates.io/crates/floccus)
-[![dependency status](https://deps.rs/repo/github/ScaleWeather/floccus/status.svg)](https://deps.rs/repo/github/ScaleWeather/floccus)
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/ScaleWeather/floccus/rust.yml?branch=main&label=cargo%20build)](https://github.com/ScaleWeather/floccus/actions)
+[![Github Repository](https://img.shields.io/badge/Github-Repository-blue?style=flat-square&logo=github&color=blue)](https://github.com/ScaleWeather/floccus)
+[![Crates.io](https://img.shields.io/crates/v/floccus?style=flat-square)](https://crates.io/crates/floccus)
+[![License](https://img.shields.io/github/license/ScaleWeather/floccus?style=flat-square)](https://choosealicense.com/licenses/apache-2.0/)
+[![dependency status](https://deps.rs/repo/github/ScaleWeather/floccus/status.svg?style=flat-square)](https://deps.rs/repo/github/ScaleWeather/floccus)
 
 Rust crate providing formulae for air thermodynamic calculations.
 
@@ -58,6 +58,9 @@ To prevent any unexpected behavior, all functions check whether provided inputs 
 Exact limits are specified in the documentation of each function.
 If the input is out of range the function will return an `InputError::OutOfRange` with erroneous input specified.
 
+Each function also has `_unchecked` and `_validate` versions. The `_validate` version only checks the inputs with bounds defined for its "parent" function.
+The `_unchecked` version performs only the calculation without any input checking. All "parent" functions simply call `_validate` and then `_unchecked`.
+
 ## Debugging
 
 If additional information is needed about which function returns the error and why, `debug` feature can be enabled.
@@ -66,6 +69,4 @@ information about the error. This feature potentially is not zero-cost so it is 
 
 ## Benchmarks
 
-Functions provided in this crate are intended for use in, i. a., numerical models. To provide the user information about performance overhead of each function all functions are benchmarked using [criterion.rs](https://bheisler.github.io/criterion.rs/book/index.html). Github Actions automatically runs all benchmarks.
-
-To check the latest benchmark results the newest workflow on [Github Actions page of floccus](https://github.com/ScaleWeather/floccus/actions).
+Functions provided in this crate are intended for use in, i. a., numerical models. To provide the user information about performance overhead of each function all functions are can be benchmarked using [criterion.rs](https://bheisler.github.io/criterion.rs/book/index.html).

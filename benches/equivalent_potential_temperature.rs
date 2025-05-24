@@ -1,11 +1,59 @@
-use criterion::{Criterion, black_box, criterion_group, criterion_main};
-use floccus::equivalent_potential_temperature;
+use criterion::{criterion_group, criterion_main, Criterion};
+use floccus::{formulas::equivalent_potential_temperature, formulas::Formula4};
 
-pub fn equivalent_potential_temperature_benchmark(c: &mut Criterion) {
-    c.bench_function("equivalent_potential_temperature::bryan1", |b| {
-        b.iter(|| equivalent_potential_temperature::bryan1(black_box(300.0), black_box(101325.0), black_box(3000.0)))
+mod utils;
+use utils::ReferenceValues;
+
+pub fn benchmark(c: &mut Criterion) {
+    let ref_norm = ReferenceValues::normal();
+
+    let mut group = c.benchmark_group("equivalent_potential_temperature");
+
+    group.bench_function("Bolton1", |b| {
+        b.iter(|| {
+            equivalent_potential_temperature::Bolton1::compute(
+                ref_norm.pres,
+                ref_norm.temp,
+                ref_norm.dwpt,
+                ref_norm.vapr,
+            )
+        })
     });
+
+    group.bench_function("Bolton2", |b| {
+        b.iter(|| {
+            equivalent_potential_temperature::Bolton2::compute(
+                ref_norm.temp,
+                ref_norm.dwpt,
+                ref_norm.mxrt,
+                ref_norm.thet,
+            )
+        })
+    });
+
+    group.bench_function("Bryan1", |b| {
+        b.iter(|| {
+            equivalent_potential_temperature::Bryan1::compute(
+                ref_norm.temp,
+                ref_norm.mxrt,
+                ref_norm.rehu,
+                ref_norm.thet,
+            )
+        })
+    });
+
+    group.bench_function("Paluch1", |b| {
+        b.iter(|| {
+            equivalent_potential_temperature::Kerry1::compute(
+                ref_norm.temp,
+                ref_norm.pres,
+                ref_norm.mxrt,
+                ref_norm.rehu,
+            )
+        })
+    });
+    group.finish();
 }
 
-criterion_group!(benches, equivalent_potential_temperature_benchmark);
+criterion_group!(benches, benchmark);
 criterion_main!(benches);
