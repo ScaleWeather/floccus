@@ -1,10 +1,6 @@
 #![allow(missing_docs)]
 
-mod accessors;
-mod constructors;
-mod trait_impls;
-
-use crate::{Float, Storage, errors::InputError};
+use crate::{Float, errors::InputError};
 use std::any::type_name;
 use std::fmt::Debug;
 
@@ -31,53 +27,76 @@ pub(crate) trait QuantityHelpers: ThermodynamicQuantity {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
-pub struct DryBulbTemperature(pub Storage::ThermodynamicTemperature);
+macro_rules! define_quantity {
+    ($quantity:ident, $storage:ident, $uom_module:ident, $si_unit:ident) => {
+        #[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+        pub struct $quantity(pub crate::Storage::$storage);
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
-pub struct WetBulbTemperature(pub Storage::ThermodynamicTemperature);
+        impl $quantity {
+            pub fn get<T>(&self) -> Float
+            where
+                T: uom::si::$uom_module::Unit + uom::si::$uom_module::Conversion<Float>,
+            {
+                self.0.get::<T>()
+            }
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
-pub struct DewPointTemperature(pub Storage::ThermodynamicTemperature);
+            pub fn new<T>(value: Float) -> Self
+            where
+                T: uom::si::$uom_module::Unit + uom::si::$uom_module::Conversion<Float>,
+            {
+                Self(crate::Storage::$storage::new::<T>(value))
+            }
+        }
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
-pub struct VirtualTemperature(pub Storage::ThermodynamicTemperature);
+        impl ThermodynamicQuantity for $quantity {}
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
-pub struct IsobaricEquivalentTemperature(pub Storage::ThermodynamicTemperature);
+        impl QuantityHelpers for $quantity {
+            fn get_si_value(&self) -> Float {
+                self.get::<uom::si::$uom_module::$si_unit>()
+            }
+        }
+    };
+}
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
-pub struct AdiabaticEquivalentTemperature(pub Storage::ThermodynamicTemperature);
+macro_rules! define_temperature {
+    ($quantity:ident) => {
+        define_quantity!(
+            $quantity,
+            ThermodynamicTemperature,
+            thermodynamic_temperature,
+            kelvin
+        );
+    };
+}
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
-pub struct PotentialTemperature(pub Storage::ThermodynamicTemperature);
+macro_rules! define_pressure {
+    ($quantity:ident) => {
+        define_quantity!($quantity, Pressure, pressure, pascal);
+    };
+}
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
-pub struct EquivalentPotentialTemperature(pub Storage::ThermodynamicTemperature);
+macro_rules! define_ratio {
+    ($quantity:ident) => {
+        define_quantity!($quantity, Ratio, ratio, ratio);
+    };
+}
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
-pub struct WetBulbPotentialTemperature(pub Storage::ThermodynamicTemperature);
+define_temperature!(DryBulbTemperature);
+define_temperature!(WetBulbTemperature);
+define_temperature!(DewPointTemperature);
+define_temperature!(VirtualTemperature);
+define_temperature!(IsobaricEquivalentTemperature);
+define_temperature!(AdiabaticEquivalentTemperature);
+define_temperature!(PotentialTemperature);
+define_temperature!(EquivalentPotentialTemperature);
+define_temperature!(WetBulbPotentialTemperature);
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
-pub struct AtmosphericPressure(pub Storage::Pressure);
+define_pressure!(AtmosphericPressure);
+define_pressure!(VapourPressure);
+define_pressure!(SaturationVapourPressure);
+define_pressure!(VapourPressureDeficit);
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
-pub struct VapourPressure(pub Storage::Pressure);
-
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
-pub struct SaturationVapourPressure(pub Storage::Pressure);
-
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
-pub struct VapourPressureDeficit(pub Storage::Pressure);
-
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
-pub struct MixingRatio(pub Storage::Ratio);
-
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
-pub struct SaturationMixingRatio(pub Storage::Ratio);
-
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
-pub struct SpecificHumidity(pub Storage::Ratio);
-
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
-pub struct RelativeHumidity(pub Storage::Ratio);
+define_ratio!(MixingRatio);
+define_ratio!(SaturationMixingRatio);
+define_ratio!(SpecificHumidity);
+define_ratio!(RelativeHumidity);
