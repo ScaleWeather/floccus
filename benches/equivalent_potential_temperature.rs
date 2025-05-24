@@ -44,7 +44,7 @@ pub fn benchmark(c: &mut Criterion) {
 
     group.bench_function("Paluch1", |b| {
         b.iter(|| {
-            equivalent_potential_temperature::Paluch1::compute(
+            equivalent_potential_temperature::Kerry1::compute(
                 ref_norm.temp,
                 ref_norm.pres,
                 ref_norm.mxrt,

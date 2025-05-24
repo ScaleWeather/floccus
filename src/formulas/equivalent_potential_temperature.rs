@@ -28,10 +28,9 @@ type FormulaQuantity = EquivalentPotentialTemperature;
 /// temperature, pressure and mixing ratio and relative humidity.
 ///
 /// Implementation of this formula assumes no liquid or solid water in the air parcel.
-///
-/// First appeared in Paluch, Ilga (1979). J. Atmos. Sci., 36, 2467-2478
-///
-/// Provided in Emmanuel, Kerry (1994). Atmospheric Convection. Oxford University Press.
+/// 
+/// Appears in Emmanuel, Kerry (1994). Atmospheric Convection. Oxford University Press.
+/// as equation 4.5.11
 ///
 /// Valid `temperature` range: 253K - 324K
 ///
@@ -40,7 +39,7 @@ type FormulaQuantity = EquivalentPotentialTemperature;
 /// Valid `mixing_ratio` range: 0.000_000_1 - 2.0
 ///
 /// Valid `relative_humidity` range: 0.000_000_1 - 2.0
-pub struct Paluch1;
+pub struct Kerry1;
 
 impl
     Formula4<
@@ -49,7 +48,7 @@ impl
         AtmosphericPressure,
         MixingRatio,
         RelativeHumidity,
-    > for Paluch1
+    > for Kerry1
 {
     #[inline(always)]
     fn validate_inputs(
@@ -341,7 +340,7 @@ mod tests {
             AtmosphericPressure,
             MixingRatio,
             RelativeHumidity,
-            Paluch1,
+            Kerry1,
         >(
             Argument::new([253.0, 324.0]),
             Argument::new([100.0, 150_000.0]),
