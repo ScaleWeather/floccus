@@ -1,6 +1,6 @@
 #![allow(unused)]
 
-use criterion::black_box;
+use std::hint::black_box;
 use floccus::quantities::{
     AtmosphericPressure, DewPointTemperature, DryBulbTemperature, EquivalentPotentialTemperature,
     MixingRatio, PotentialTemperature, RelativeHumidity, SaturationMixingRatio,
