@@ -1,8 +1,8 @@
 [package]
 name = "floccus"
-version = "0.4.0-alpha.8"
+version = "0.4.0-alpha.9"
 authors = ["Jakub Lewandowski <scaleweather@gmail.com>"]
-edition = "2021"
+edition = "2024"
 description = "Formulae for air thermodynamic calculations"
 repository = "https://github.com/ScaleWeather/floccus"
 readme = "README.md"
@@ -13,12 +13,12 @@ exclude = [".github/*"]
 
 [dependencies]
 floccus-proc = "0.3.0"
-thiserror = "1.0"
-float-cmp = "0.9"
+thiserror = "2.0"
+float-cmp = "0.10"
 log = { version = "0.4", optional = true }
 ndarray = { version = "0.16", default-features = false, optional = true }
 rayon = { version = "1.10", default-features = false, optional = true }
-uom = { version = "0.36", default-features = false, features = [
+uom = { version = "0.37", default-features = false, features = [
     "si",
     "std",
     "autoconvert",
@@ -30,8 +30,8 @@ uom = { version = "0.36", default-features = false, features = [
 doctest = false
 
 [dev-dependencies]
-criterion = "0.5"
-itertools = "0.13"
+criterion = "0.6"
+itertools = "0.14"
 log = "0.4"
 testing_logger = "0.1"
 floccus = { path = ".", features = ["double_precision"] }
