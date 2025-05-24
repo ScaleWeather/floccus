@@ -65,12 +65,11 @@ pub trait Formula1<O: ThermodynamicQuantity, I1: ThermodynamicQuantity> {
     {
         let i1: ArrayView<I1, D> = i1.into();
 
-        Zip::from(i1)
-            .fold_while(Ok(()), |_, &a| match Self::validate_inputs(a) {
-                Ok(_) => FoldWhile::Continue(Ok(())),
-                Err(e) => FoldWhile::Done(Err(e)),
-            })
-            .into_inner()?;
+        Zip::from(i1).par_fold(
+            || Ok(()),
+            |_, &i1| Self::validate_inputs(i1),
+            |a, b| a.and(b),
+        )?;
 
         Ok(Zip::from(i1).par_map_collect(|&a| Self::compute_unchecked(a)))
     }
@@ -119,11 +118,9 @@ pub trait Formula2<O: ThermodynamicQuantity, I1: ThermodynamicQuantity, I2: Ther
 
         Zip::from(i1)
             .and(i2)
-            .fold_while(Ok(()), |_, &i1, &i2| {
-                match Self::validate_inputs(i1, i2) {
-                    Ok(_) => FoldWhile::Continue(Ok(())),
-                    Err(e) => FoldWhile::Done(Err(e)),
-                }
+            .fold_while(Ok(()), |_, &i1, &i2| match Self::validate_inputs(i1, i2) {
+                Ok(_) => FoldWhile::Continue(Ok(())),
+                Err(e) => FoldWhile::Done(Err(e)),
             })
             .into_inner()?;
 
@@ -157,15 +154,11 @@ pub trait Formula2<O: ThermodynamicQuantity, I1: ThermodynamicQuantity, I2: Ther
         let i1: ArrayView<I1, D> = i1.into();
         let i2: ArrayView<I2, D> = i2.into();
 
-        Zip::from(i1)
-            .and(i2)
-            .fold_while(Ok(()), |_, &i1, &i2| {
-                match Self::validate_inputs(i1, i2) {
-                    Ok(_) => FoldWhile::Continue(Ok(())),
-                    Err(e) => FoldWhile::Done(Err(e)),
-                }
-            })
-            .into_inner()?;
+        Zip::from(i1).and(i2).par_fold(
+            || Ok(()),
+            |_, &i1, &i2| Self::validate_inputs(i1, i2),
+            |a, b| a.and(b),
+        )?;
 
         Ok(Zip::from(i1)
             .and(i2)
@@ -228,13 +221,12 @@ pub trait Formula3<
         Zip::from(i1)
             .and(i2)
             .and(i3)
-            .fold_while(
-                Ok(()),
-                |_, &i1, &i2, &i3| match Self::validate_inputs(i1, i2, i3) {
+            .fold_while(Ok(()), |_, &i1, &i2, &i3| {
+                match Self::validate_inputs(i1, i2, i3) {
                     Ok(_) => FoldWhile::Continue(Ok(())),
                     Err(e) => FoldWhile::Done(Err(e)),
-                },
-            )
+                }
+            })
             .into_inner()?;
 
         Ok(Zip::from(i1)
@@ -273,17 +265,11 @@ pub trait Formula3<
         let i2: ArrayView<I2, D> = i2.into();
         let i3: ArrayView<I3, D> = i3.into();
 
-        Zip::from(i1)
-            .and(i2)
-            .and(i3)
-            .fold_while(
-                Ok(()),
-                |_, &i1, &i2, &i3| match Self::validate_inputs(i1, i2, i3) {
-                    Ok(_) => FoldWhile::Continue(Ok(())),
-                    Err(e) => FoldWhile::Done(Err(e)),
-                },
-            )
-            .into_inner()?;
+        Zip::from(i1).and(i2).and(i3).par_fold(
+            || Ok(()),
+            |_, &i1, &i2, &i3| Self::validate_inputs(i1, i2, i3),
+            |a, b| a.and(b),
+        )?;
 
         Ok(Zip::from(i1)
             .and(i2)
@@ -410,18 +396,11 @@ pub trait Formula4<
         let i3: ArrayView<I3, D> = i3.into();
         let i4: ArrayView<I4, D> = i4.into();
 
-        Zip::from(i1)
-            .and(i2)
-            .and(i3)
-            .and(i4)
-            .fold_while(
-                Ok(()),
-                |_, &i1, &i2, &i3, &i4| match Self::validate_inputs(i1, i2, i3, i4) {
-                    Ok(_) => FoldWhile::Continue(Ok(())),
-                    Err(e) => FoldWhile::Done(Err(e)),
-                },
-            )
-            .into_inner()?;
+        Zip::from(i1).and(i2).and(i3).and(i4).par_fold(
+            || Ok(()),
+            |_, &i1, &i2, &i3, &i4| Self::validate_inputs(i1, i2, i3, i4),
+            |a, b| a.and(b),
+        )?;
 
         Ok(Zip::from(i1)
             .and(i2)
